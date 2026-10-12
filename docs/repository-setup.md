@@ -26,6 +26,13 @@ Git and Git LFS directly.
 
 ## Scope
 
+**Current update:** the project is a complete, playable open-source AC3
+reconstruction in development. Tooling v0.3.0 implements the BPH index reader;
+both supplied Japanese archives are now included through Git LFS and their
+BINs match the recovered baseline. See [BPH validation](bph-validation.md).
+There is no playable build yet. The paragraphs below record the earlier
+repository setup stage and are retained as history.
+
 The project remains a research toolkit with a planned human-performed English
 dub and enhanced visuals. Its next bounded coding task is the validated
 `ACE.BPH` index reader described in `first-agent-task.md`.

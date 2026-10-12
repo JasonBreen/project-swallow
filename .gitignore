@@ -57,3 +57,4 @@ SYSTEM.CNF
 
 # Owner-approved full reference archives in this private repository.
 !/discs/english-v0.9b3/*.tar.bz2
+!/discs/japanese/*.7z

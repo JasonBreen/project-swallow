@@ -1,11 +1,12 @@
 # Project Swallow: coding-agent instructions
 
 ## Goal and current state
-Preserve the Japanese AC3 gameplay and branching campaign while investigating a modern runtime, enhanced artwork, and a human-performed English dub. The implemented product is a read-only research toolkit, not a playable game.
+Build a complete, playable, open-source reconstruction of Ace Combat 3: Electrosphere for modern PCs. Preserve the Japanese gameplay and branching campaign, with enhanced artwork and a human-performed English dub. The current implementation is the read-only disc and archive toolchain; a playable game build does not exist yet. Describe the game as the project goal and tooling as its present development stage.
 
 ## Work contract
 - Work in the current local workspace. Do not spawn cloud sessions or parallel agents without an explicit request.
 - On this machine, the owner requires Project Swallow work on `G:`. Use `G:\Project-Swallow` for the checkout and keep temporary disc, LFS, and verification data on `G:`; do not stage project data on `C:`.
+- Do not use C for this project. The current toolchain is Python; assess future runtime choices within the owner's language constraint.
 - Keep each task bounded: inspect evidence, implement one interface, add synthetic tests, run them, and report exact results and unresolved questions.
 - Start from `docs/disc-inventory.md` and the checked-in metadata reports. Disc identity is content-addressed; never infer it from the filename alone.
 - Read ISO file extents. Do not hard-code LBAs, file sizes, or disc-specific asset numbers in parsers.

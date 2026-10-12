@@ -1,6 +1,6 @@
-"""Read ISO 9660 directory metadata from a raw PlayStation MODE2/2352 BIN.
+"""Read ISO metadata and bounded Form 1 ranges from MODE2/2352 BINs.
 
-This tool deliberately does not copy or extract copyrighted game files.
+Source images are opened read-only; Form 2 requires a separate media reader.
 """
 
 from __future__ import annotations
@@ -110,6 +110,39 @@ class PlayStationDisc:
         if lba < 0 or length < 0 or lba + blocks > self.sector_count:
             raise DiscFormatError('Directory extends beyond disc')
         return b''.join(self._sector(file, lba + i) for i in range(blocks))[:length]
+
+    def validate_file_extent(self, entry: FileEntry) -> None:
+        """Check a contiguous ISO file's bounds without reading its payload."""
+        if entry.is_directory or entry.flags & 0x02:
+            raise DiscFormatError(f'Expected a file, not a directory: {entry.path}')
+        if entry.flags & 0x80:
+            raise DiscFormatError(f'Multi-extent file is unsupported: {entry.path}')
+        sectors = (entry.size + USER_DATA_SIZE - 1) // USER_DATA_SIZE
+        if entry.size < 0 or entry.lba < 0 or entry.lba + sectors > self.sector_count:
+            raise DiscFormatError(f'File extent outside image: {entry.path}')
+
+    def read_file(self, entry: FileEntry, *, offset: int = 0,
+                  length: int | None = None) -> bytes:
+        """Read a bounded logical Form 1 range, excluding raw sector headers.
+
+        All source access is read-only. A call returns at most 16 MiB; callers
+        reading larger files must request bounded ranges. Form 2 is an error.
+        """
+        self.validate_file_extent(entry)
+        if length is None:
+            length = entry.size - offset
+        if offset < 0 or length < 0 or offset + length > entry.size:
+            raise DiscFormatError(f'Read range outside file: {entry.path}')
+        if length > 16 * 1024 * 1024:
+            raise DiscFormatError('File read exceeds 16 MiB limit; request a range')
+        if length == 0:
+            return b''
+        start_sector, skip = divmod(offset, USER_DATA_SIZE)
+        count = (skip + length + USER_DATA_SIZE - 1) // USER_DATA_SIZE
+        with self.path.open('rb') as stream:
+            data = b''.join(self._sector(stream, entry.lba + start_sector + i)
+                            for i in range(count))
+        return data[skip:skip + length]
 
     @staticmethod
     def _record(data: bytes) -> tuple[int, int, int, str] | None:
