@@ -1,0 +1,60 @@
+{
+  "schema_version": 1,
+  "verified_date": "2026-10-12",
+  "archives": [
+    {
+      "path": "discs/english-v0.9b3/Ace Combat 3 Electrosphere (English v0.9b3)[Disc 1].tar.bz2",
+      "size_bytes": 451360415,
+      "sha256": "232c52ebe9aea2be943dbb43c4869d3cd89824a42d54cad6b6ac0f48f28e501d",
+      "baseline_report": "docs/reports/en1.json",
+      "bin_matches_baseline": true,
+      "members": [
+        {
+          "name": "Ace Combat 3 Electrosphere (English v0.9b3)[Disc 1].bin",
+          "size_bytes": 715238496,
+          "hashes": {
+            "md5": "deca6b0cf45d4358a3ec1a13817df04a",
+            "sha1": "d0cd75f4dc9683f3f2d571cf157c2c4c7e5ace56",
+            "sha256": "4a6aca534e396236e704886cb1f7000ee64012910435d1beb3e65a0ab1369d80"
+          }
+        },
+        {
+          "name": "Ace Combat 3 Electrosphere (English v0.9b3)[Disc 1].cue",
+          "size_bytes": 117,
+          "hashes": {
+            "md5": "7cb9e11c557cccbe1ae46775fd1719de",
+            "sha1": "b84c806d7d9f2bf2cc426de8ef9cee69a5ea5997",
+            "sha256": "d10cd123c80be792368b9e435f090fa89e86a2e4ef31246771e22b01c395faaf"
+          }
+        }
+      ]
+    },
+    {
+      "path": "discs/english-v0.9b3/Ace Combat 3 Electrosphere (English v0.9b3)[Disc 2].tar.bz2",
+      "size_bytes": 459268683,
+      "sha256": "7c4f9866fabb36aa5915c40748a81366a7bda9b561103511edbb967ee9900286",
+      "baseline_report": "docs/reports/en2.json",
+      "bin_matches_baseline": true,
+      "members": [
+        {
+          "name": "Ace Combat 3 Electrosphere (English v0.9b3)[Disc 2].bin",
+          "size_bytes": 722936592,
+          "hashes": {
+            "md5": "0193416e6167c50b2b59f816703cb9ac",
+            "sha1": "299d0e1a6f8da7d8a96952c555dd6376f8592e79",
+            "sha256": "4d7297fa25d8aacf828c54c8168a62f9dc577506b4644f706589ced0b85ceffe"
+          }
+        },
+        {
+          "name": "Ace Combat 3 Electrosphere (English v0.9b3)[Disc 2].cue",
+          "size_bytes": 117,
+          "hashes": {
+            "md5": "ab069087dbaaf2ab9af20ace2c00eb1d",
+            "sha1": "b5f9a8cfe3076da1d8035e7460880c67c15cdb6e",
+            "sha256": "87a522af0bdb44961ce1c0c15c8e3a975222875366c01f6dc0d76119ca68e13a"
+          }
+        }
+      ]
+    }
+  ]
+}

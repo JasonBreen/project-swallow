@@ -17,6 +17,17 @@ An independent project investigating the complete Japanese two-disc *Ace Combat 
 
 ## Run without installing dependencies (Python 3.11+)
 
+The private repository includes the two supplied English v0.9b3-labeled disc archives through Git LFS. Install Git LFS before cloning:
+
+```powershell
+git lfs install
+git clone https://github.com/JasonBreen/project-swallow.git
+cd project-swallow
+git lfs pull
+```
+
+See [reference discs](discs/README.md) for the archive inventory, hashes, extraction instructions, and a clone that downloads tooling only. The Japanese reference reports are retained from the earlier analysis; the owner's Japanese archives will be added when supplied.
+
 PowerShell, from the extracted `project-swallow` directory:
 
 ```powershell
@@ -56,6 +67,6 @@ Read the [measured baseline](docs/disc-inventory.md), [validation record](docs/v
 
 ## License and contributions
 
-This repository's original source code, tests, and documentation are MIT-licensed. External game data and third-party work retain their own rights and are not included. The tools consume local input images. Project Swallow is independent of Bandai Namco.
+This repository's original source code, tests, and documentation are MIT-licensed. The owner-supplied reference disc archives are included through Git LFS in this private repository. Their game data and other third-party work retain their own rights and are excluded from the MIT license. The tools consume locally extracted input images. Project Swallow is independent of Bandai Namco.
 
 See [CONTRIBUTING.md](CONTRIBUTING.md), [AGENTS.md](AGENTS.md), and [CREDITS.md](CREDITS.md).

@@ -5,6 +5,7 @@ Preserve the Japanese AC3 gameplay and branching campaign while investigating a 
 
 ## Work contract
 - Work in the current local workspace. Do not spawn cloud sessions or parallel agents without an explicit request.
+- On this machine, the owner requires Project Swallow work on `G:`. Use `G:\Project-Swallow` for the checkout and keep temporary disc, LFS, and verification data on `G:`; do not stage project data on `C:`.
 - Keep each task bounded: inspect evidence, implement one interface, add synthetic tests, run them, and report exact results and unresolved questions.
 - Start from `docs/disc-inventory.md` and the checked-in metadata reports. Disc identity is content-addressed; never infer it from the filename alone.
 - Read ISO file extents. Do not hard-code LBAs, file sizes, or disc-specific asset numbers in parsers.
@@ -12,7 +13,7 @@ Preserve the Japanese AC3 gameplay and branching campaign while investigating a 
 - Do not silently read MODE2 Form 2 media as 2048-byte Form 1 data. The current file-hashing API explicitly skips it; XA support is a separate task.
 - Preserve original flight behavior as the reference. Do not replace it with generic flight-simulator physics or select an entire engine stack without measured evidence and project approval.
 - Never mark an unknown format field as decoded without validation. Record hypotheses and counterexamples.
-- Keep source discs, raw extracts, credentials, and recordings outside commits. Read source images without modifying them.
+- The owner explicitly requested full supplied disc archives in this private repository using Git LFS. Track approved archives under `discs/` through LFS, record their hashes, and read source images without modifying them. Keep raw extracts, credentials, and unfinished recordings outside commits. See `discs/README.md` for the current inputs and storage workflow.
 - Voices are performed by the project team; voice cloning is not part of the current scope.
 
 ## Check before finishing

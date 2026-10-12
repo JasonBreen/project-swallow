@@ -1,4 +1,4 @@
-# Never accidentally add source discs, dumps, or licensed commercial assets.
+# Raw extracts stay local; approved compressed reference discs use Git LFS below.
 *.bin
 *.iso
 *.img
@@ -54,3 +54,6 @@ local-reports/
 *.SPH
 SLPS_*
 SYSTEM.CNF
+
+# Owner-approved full reference archives in this private repository.
+!/discs/english-v0.9b3/*.tar.bz2
