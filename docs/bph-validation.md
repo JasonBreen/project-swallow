@@ -21,6 +21,9 @@ python -m unittest discover -s tests -v
 
 CI runs synthetic tests on Windows and Linux, Python 3.11–3.14, without fetching
 LFS objects. A local result and a hosted CI result are separate evidence.
+The parser commit `7394bb9` passed all eight platform/version jobs on GitHub
+in both its push and pull-request runs on 2026-10-12. Later documentation-only
+commits have their own check results in the pull request.
 
 ## Four-disc validation
 
