@@ -1,0 +1,94 @@
+{
+  "left_image": "Ace Combat 3 - Electrosphere (Japan) (Disc 1).bin",
+  "right_image": "Ace Combat 3 - Electrosphere (Japan) (Disc 2).bin",
+  "comparison_basis": "ISO path plus logical MODE2 Form 1 file SHA256; unsupported files are never declared identical.",
+  "summary": {
+    "identical_form1_content": 3,
+    "content_unverified": 1,
+    "different_form1_content": 2,
+    "only_left": 1,
+    "only_right": 1
+  },
+  "files": [
+    {
+      "path": "ACE.BPB",
+      "status": "identical_form1_content",
+      "left_size": 94976000,
+      "right_size": 94976000,
+      "left_lba": 611,
+      "right_lba": 611,
+      "left_sha256": "3f8193de0a05b966b2ffa3c6d07d3709b13cba7fc0ee895c0758c489800d9811",
+      "right_sha256": "3f8193de0a05b966b2ffa3c6d07d3709b13cba7fc0ee895c0758c489800d9811"
+    },
+    {
+      "path": "ACE.BPH",
+      "status": "identical_form1_content",
+      "left_size": 4612,
+      "right_size": 4612,
+      "left_lba": 606,
+      "right_lba": 606,
+      "left_sha256": "58045301ab1572a9af8b497e4fc2baf9402a9ea96c1278a8d7c0888dc85b9361",
+      "right_sha256": "58045301ab1572a9af8b497e4fc2baf9402a9ea96c1278a8d7c0888dc85b9361"
+    },
+    {
+      "path": "ACE.SPB",
+      "status": "content_unverified",
+      "left_size": 527171584,
+      "right_size": 533725184,
+      "left_lba": 46986,
+      "right_lba": 46986,
+      "left_sha256": null,
+      "right_sha256": null
+    },
+    {
+      "path": "ACE.SPH",
+      "status": "different_form1_content",
+      "left_size": 3916,
+      "right_size": 3916,
+      "left_lba": 609,
+      "right_lba": 609,
+      "left_sha256": "7285da4427f5b6171917817364dcf36307ae9a07e10c2ffd5b4d86b529704fb8",
+      "right_sha256": "b03bde9f4b5909b6c4ad18858b56373410feaf03c15fe3fce36ca66bde5d931e"
+    },
+    {
+      "path": "ACE3.BIN",
+      "status": "identical_form1_content",
+      "left_size": 710656,
+      "right_size": 710656,
+      "left_lba": 259,
+      "right_lba": 259,
+      "left_sha256": "2c3f2ce41268176128973ea0cd9b28784a26c0061bff5550c99599388f13ebe9",
+      "right_sha256": "2c3f2ce41268176128973ea0cd9b28784a26c0061bff5550c99599388f13ebe9"
+    },
+    {
+      "path": "SLPS_020.20",
+      "status": "only_left",
+      "left_size": 481280,
+      "right_size": null,
+      "left_lba": 24,
+      "right_lba": null,
+      "left_sha256": "daddca3ac3299372370a8cf7a046eb066537a39cf53216904009c46f2924b0e5",
+      "right_sha256": null
+    },
+    {
+      "path": "SLPS_020.21",
+      "status": "only_right",
+      "left_size": null,
+      "right_size": 481280,
+      "left_lba": null,
+      "right_lba": 24,
+      "left_sha256": null,
+      "right_sha256": "daddca3ac3299372370a8cf7a046eb066537a39cf53216904009c46f2924b0e5"
+    },
+    {
+      "path": "SYSTEM.CNF",
+      "status": "different_form1_content",
+      "left_size": 67,
+      "right_size": 67,
+      "left_lba": 23,
+      "right_lba": 23,
+      "left_sha256": "3ef432b44d5067184255b48adb9949e43cf9615c6dec38272aca97ca1e77f727",
+      "right_sha256": "6b9f63f6027d9e77733a70ea3b2cf052bf42cdf98f5f6f582d5d68642fcc9e23"
+    }
+  ]
+}

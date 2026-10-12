@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "swallow-tools"
+version = "0.2.0"
+description = "Original, open-source PlayStation disc inventory tools for Project Swallow"
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [{name = "Project Swallow contributors"}]
+dependencies = []
+
+[project.scripts]
+swallow-disc = "swallow_tools.cli:main"
+swallow-compare = "swallow_tools.compare:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]

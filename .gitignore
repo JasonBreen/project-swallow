@@ -1,0 +1,56 @@
+# Never accidentally add source discs, dumps, or licensed commercial assets.
+*.bin
+*.iso
+*.img
+*.chd
+*.cue
+*.ccd
+*.sub
+*.7z
+*.zip
+*.rar
+*.tar
+*.tar.bz2
+*.pbp
+*.cso
+*.m3u
+*.xa
+*.str
+*.tim
+*.vag
+*.bpb
+*.bph
+*.spb
+*.sph
+# Private, local-only material and generated assets
+private/
+source-discs/
+asset-dumps/
+generated/
+recordings/raw/
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+*.egg-info/
+.venv/
+venv/
+build/
+dist/
+
+# Local configuration and recordings
+.env
+.env.*
+!.env.example
+local-reports/
+*.wav
+*.flac
+*.mp4
+*.exe
+*.BIN
+*.BPB
+*.BPH
+*.SPB
+*.SPH
+SLPS_*
+SYSTEM.CNF

@@ -1,0 +1,124 @@
+{
+  "source_image": "Ace Combat 3 Electrosphere (English v0.9b3)[Disc 1].bin",
+  "size_bytes": 715238496,
+  "sector_size": 2352,
+  "sector_count": 304098,
+  "volume_id": "ACE3ES1",
+  "files": [
+    {
+      "path": "ACE.BPB",
+      "size": 94062592,
+      "lba": 611,
+      "is_directory": false,
+      "raw_name": "ACE.BPB;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "3d417f7f8bc3b31911ceec8e10c5a50bd96cd28597d3a52b382c276e2b75c0e6",
+        "hashed_bytes": 94062592
+      }
+    },
+    {
+      "path": "ACE.BPH",
+      "size": 4612,
+      "lba": 606,
+      "is_directory": false,
+      "raw_name": "ACE.BPH;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "af9d5297befa9c850358e84634a6b4d7f8cc461c38d155816269362815c86cb1",
+        "hashed_bytes": 4612
+      }
+    },
+    {
+      "path": "ACE.SPB",
+      "size": 527171584,
+      "lba": 46540,
+      "is_directory": false,
+      "raw_name": "ACE.SPB;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "unsupported_form2",
+        "sha256": null,
+        "reason": "MODE2 Form 2 sector at LBA 46540; XA-aware hashing is not implemented"
+      }
+    },
+    {
+      "path": "ACE.SPH",
+      "size": 3916,
+      "lba": 609,
+      "is_directory": false,
+      "raw_name": "ACE.SPH;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "7285da4427f5b6171917817364dcf36307ae9a07e10c2ffd5b4d86b529704fb8",
+        "hashed_bytes": 3916
+      }
+    },
+    {
+      "path": "ACE3.BIN",
+      "size": 710656,
+      "lba": 259,
+      "is_directory": false,
+      "raw_name": "ACE3.BIN;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "ba0557ecf85261c4ec3b7b96d4c63c7faf415bf098554037fce102cf10a5ecb2",
+        "hashed_bytes": 710656
+      }
+    },
+    {
+      "path": "SLPS_020.20",
+      "size": 481280,
+      "lba": 24,
+      "is_directory": false,
+      "raw_name": "SLPS_020.20;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "daddca3ac3299372370a8cf7a046eb066537a39cf53216904009c46f2924b0e5",
+        "hashed_bytes": 481280
+      }
+    },
+    {
+      "path": "SYSTEM.CNF",
+      "size": 67,
+      "lba": 23,
+      "is_directory": false,
+      "raw_name": "SYSTEM.CNF;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "3ef432b44d5067184255b48adb9949e43cf9615c6dec38272aca97ca1e77f727",
+        "hashed_bytes": 67
+      }
+    }
+  ],
+  "cue": {
+    "filename": "Ace Combat 3 Electrosphere (English v0.9b3)[Disc 1].cue",
+    "references": [
+      {
+        "filename": "Ace Combat 3 Electrosphere (English v0.9b3)[Disc 1].bin",
+        "present": true
+      }
+    ],
+    "references_ok": true
+  },
+  "hashes": {
+    "md5": "deca6b0cf45d4358a3ec1a13817df04a",
+    "sha1": "d0cd75f4dc9683f3f2d571cf157c2c4c7e5ace56",
+    "sha256": "4a6aca534e396236e704886cb1f7000ee64012910435d1beb3e65a0ab1369d80"
+  },
+  "profile": {
+    "id": "en1",
+    "disc_number": 1,
+    "label": "AC3 Disc 1, uploaded English v0.9b3 label",
+    "md5": "deca6b0cf45d4358a3ec1a13817df04a",
+    "size_bytes": 715238496,
+    "provenance": "Local reference only. Translation identity/version is taken from the upload label, not independently authenticated."
+  },
+  "known_revision": "AC3 Disc 1, uploaded English v0.9b3 label"
+}

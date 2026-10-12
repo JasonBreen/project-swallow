@@ -1,0 +1,124 @@
+{
+  "source_image": "Ace Combat 3 - Electrosphere (Japan) (Disc 2).bin",
+  "size_bytes": 723813888,
+  "sector_size": 2352,
+  "sector_count": 307744,
+  "volume_id": "ACE3ES2",
+  "files": [
+    {
+      "path": "ACE.BPB",
+      "size": 94976000,
+      "lba": 611,
+      "is_directory": false,
+      "raw_name": "ACE.BPB;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "3f8193de0a05b966b2ffa3c6d07d3709b13cba7fc0ee895c0758c489800d9811",
+        "hashed_bytes": 94976000
+      }
+    },
+    {
+      "path": "ACE.BPH",
+      "size": 4612,
+      "lba": 606,
+      "is_directory": false,
+      "raw_name": "ACE.BPH;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "58045301ab1572a9af8b497e4fc2baf9402a9ea96c1278a8d7c0888dc85b9361",
+        "hashed_bytes": 4612
+      }
+    },
+    {
+      "path": "ACE.SPB",
+      "size": 533725184,
+      "lba": 46986,
+      "is_directory": false,
+      "raw_name": "ACE.SPB;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "unsupported_form2",
+        "sha256": null,
+        "reason": "MODE2 Form 2 sector at LBA 46986; XA-aware hashing is not implemented"
+      }
+    },
+    {
+      "path": "ACE.SPH",
+      "size": 3916,
+      "lba": 609,
+      "is_directory": false,
+      "raw_name": "ACE.SPH;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "b03bde9f4b5909b6c4ad18858b56373410feaf03c15fe3fce36ca66bde5d931e",
+        "hashed_bytes": 3916
+      }
+    },
+    {
+      "path": "ACE3.BIN",
+      "size": 710656,
+      "lba": 259,
+      "is_directory": false,
+      "raw_name": "ACE3.BIN;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "2c3f2ce41268176128973ea0cd9b28784a26c0061bff5550c99599388f13ebe9",
+        "hashed_bytes": 710656
+      }
+    },
+    {
+      "path": "SLPS_020.21",
+      "size": 481280,
+      "lba": 24,
+      "is_directory": false,
+      "raw_name": "SLPS_020.21;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "daddca3ac3299372370a8cf7a046eb066537a39cf53216904009c46f2924b0e5",
+        "hashed_bytes": 481280
+      }
+    },
+    {
+      "path": "SYSTEM.CNF",
+      "size": 67,
+      "lba": 23,
+      "is_directory": false,
+      "raw_name": "SYSTEM.CNF;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "6b9f63f6027d9e77733a70ea3b2cf052bf42cdf98f5f6f582d5d68642fcc9e23",
+        "hashed_bytes": 67
+      }
+    }
+  ],
+  "cue": {
+    "filename": "Ace Combat 3 - Electrosphere (Japan) (Disc 2).cue",
+    "references": [
+      {
+        "filename": "Ace Combat 3 - Electrosphere (J) (v1.1) (Disc 2) [SLPS-02021].bin",
+        "present": false
+      }
+    ],
+    "references_ok": false
+  },
+  "hashes": {
+    "md5": "50760963ae8a26ea0188b165f05b33a1",
+    "sha1": "a23e046b1eb695e02d214d269fca70dbe0a437f7",
+    "sha256": "cfd9cd36ba858aa81927306ec761a228c8e88be48f1b1db9ac9d7f2bdbe8c854"
+  },
+  "profile": {
+    "id": "jp2",
+    "disc_number": 2,
+    "label": "AC3 Japanese Disc 2, LWT Revision 1 fingerprint",
+    "md5": "50760963ae8a26ea0188b165f05b33a1",
+    "size_bytes": 723813888,
+    "provenance": "Matches Load Word Team published MD5; SHA256 measured locally. Disc 2 fingerprint is also listed for the Asian release."
+  },
+  "known_revision": "AC3 Japanese Disc 2, LWT Revision 1 fingerprint"
+}
