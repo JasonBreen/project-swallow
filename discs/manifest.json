@@ -55,6 +55,74 @@
           }
         }
       ]
+    },
+    {
+      "path": "discs/japanese/Ace Combat 3 - Electrosphere (Japan) (Disc 1).7z",
+      "size_bytes": 377176022,
+      "sha256": "6d2f0944a7ebf6b7b64b698a1b9b3a1fec687972dda782d8d0db9adbbe369166",
+      "baseline_report": "docs/reports/jp1.json",
+      "bin_matches_baseline": true,
+      "members": [
+        {
+          "name": "Ace Combat 3 - Electrosphere (Japan) (Disc 1).bin",
+          "size_bytes": 716287488,
+          "hashes": {
+            "md5": "30f7dce98b6901290cb26c9baf27268f",
+            "sha1": "8c6d58308eb389a7b18bc213a6d1e23d14fd3c10",
+            "sha256": "cfdec8640cfb0fe5c1ad1ad8c76c958d756fbe75d73e1f449d468ebbafb8d60f"
+          }
+        },
+        {
+          "name": "Ace Combat 3 - Electrosphere (Japan) (Disc 1).cue",
+          "size_bytes": 127,
+          "hashes": {
+            "md5": "74ddbfc513b38967a1991e55ec1af545",
+            "sha1": "283f05f18609cdc13b9677d72bba6096f42110f3",
+            "sha256": "f9cbdcfd3eff22b53f92d8a090480be9176d06ac9e10849414b07fc670e8ae22"
+          }
+        }
+      ],
+      "additional_archive_members": [
+        {
+          "name": "readme.html",
+          "size_bytes": 730,
+          "status": "preserved in original archive; not executed"
+        }
+      ]
+    },
+    {
+      "path": "discs/japanese/Ace Combat 3 - Electrosphere (Japan) (Disc 2).7z",
+      "size_bytes": 380185348,
+      "sha256": "0213be3c78a16858052553edeca660a3deb9b4dda9abb4f0ba6b7d94048a6e24",
+      "baseline_report": "docs/reports/jp2.json",
+      "bin_matches_baseline": true,
+      "members": [
+        {
+          "name": "Ace Combat 3 - Electrosphere (Japan) (Disc 2).bin",
+          "size_bytes": 723813888,
+          "hashes": {
+            "md5": "50760963ae8a26ea0188b165f05b33a1",
+            "sha1": "a23e046b1eb695e02d214d269fca70dbe0a437f7",
+            "sha256": "cfd9cd36ba858aa81927306ec761a228c8e88be48f1b1db9ac9d7f2bdbe8c854"
+          }
+        },
+        {
+          "name": "Ace Combat 3 - Electrosphere (Japan) (Disc 2).cue",
+          "size_bytes": 127,
+          "hashes": {
+            "md5": "4927d2fb261ba4394c2673f4df2038d3",
+            "sha1": "2f30acbf8f73e589bf141f27da507cab6b88e163",
+            "sha256": "146fbce62601a5855bdbba3f9b0b664dbf494c4dcd7b02f04ac70683f69f89cc"
+          }
+        }
+      ],
+      "additional_archive_members": [
+        {
+          "name": "readme.html",
+          "size_bytes": 730,
+          "status": "preserved in original archive; not executed"
+        }
+      ]
     }
   ]
 }
