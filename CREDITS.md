@@ -10,6 +10,7 @@ Project Swallow is inspired by the long history of Ace Combat preservation and f
 Any imported code or assets require separate license/provenance review and any necessary permissions. Content is not automatically covered by Project Swallow's MIT license.
 
 - psx-spx / PlayStation Specifications — CD sector layout and XA documentation: https://psx-spx.consoledev.net/cdromformat/
+- psx-spx / PlayStation Specifications — AC3 BPH/SPH archive facts checked against the supplied images: https://psx-spx.consoledev.net/cdromfileformats/
 - GitHub Actions official documentation — current action usage referenced by the workflow: https://github.com/actions/checkout and https://github.com/actions/setup-python
 
 English-labeled v0.9b3 source uploads are recorded as local evidence; this package does not establish their translation authorship or conflate them with other patch releases. No third-party implementation code was imported into this update.

@@ -1,5 +1,12 @@
 # First bounded coding assignment: BPH archive-index research
 
+**Completed in tooling v0.3.0 on 2026-10-12.** The typed parser, metadata CLI,
+25 new synthetic tests, four-disc validation, and full byte accounting are
+documented in [bph-format.md](bph-format.md) and [bph-validation.md](bph-validation.md).
+The original assignment below is retained as the acceptance record. Its known
+evidence describes the pre-implementation state. Next: nested BPB containers
+and compression identification.
+
 Read `AGENTS.md`, `docs/disc-inventory.md`, and the reports before changing code.
 
 **Goal:** implement and document a read-only BPH index parser with falsifiable validation rules, not a generic binary-to-JSON guesser.

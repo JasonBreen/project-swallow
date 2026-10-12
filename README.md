@@ -1,72 +1,113 @@
-# Project Swallow
+<div align="center">
 
-**AI-assisted AC3 research tooling, a modern presentation target, and a human English voice cast.**
+![Project Swallow — Ace Combat 3: Electrosphere, rebuilt for a new generation](docs/assets/project-swallow-banner.svg)
 
-An independent project investigating the complete Japanese two-disc *Ace Combat 3: Electrosphere* experience. The goal is to preserve original gameplay while developing an open toolchain, enhanced presentation, and an English dub performed by the team.
+**A complete, playable, open-source reconstruction of ACE COMBAT 3: ELECTROSPHERE.**
 
-## What exists today — tooling v0.2.0
+*The full Japanese campaign. The original flight experience. A new way into the Electrosphere.*
 
-- Read-only raw MODE2/2352 BIN directory inspection, CUE filename checks, and whole-image MD5/SHA1/SHA256.
-- Content-addressed recognition for two verified Japanese reference images and two locally fingerprinted English-labeled uploads.
-- Streaming SHA256 of supported logical Form 1 files, plus a file-comparison CLI that ignores sector relocation when comparing content.
-- Explicit unsupported results for Form 2 media: no misleading 'identical' verdict based on an absent hash.
-- Four metadata inventories, three comparison reports, 28 synthetic tests, a Windows/Linux CI definition, and a VS Code workspace.
-- An `AGENTS.md` work contract and a bounded next coding assignment.
+![Development: pre-alpha](https://img.shields.io/badge/development-pre--alpha-65e5f2?style=flat-square&labelColor=101b2d) [![Code license: MIT](https://img.shields.io/badge/original_code-MIT-b9a6ff?style=flat-square&labelColor=101b2d)](LICENSE) · [Windows / Linux CI](https://github.com/JasonBreen/project-swallow/actions/workflows/tests.yml)
 
-**Not implemented yet:** BPB/BPH entry extraction, ULZ decoding, XA stream decoding, model conversion, recovered gameplay execution, a native renderer, a playable mission, or the English dub. No emulator boot/playthrough testing has been performed for this package.
+[The vision](#enter-the-electrosphere) · [Current build](#development-status) · [Get started](#run-the-toolchain) · [Roadmap](docs/roadmap.md) · [Contribute](CONTRIBUTING.md)
 
-## Run without installing dependencies (Python 3.11+)
+</div>
 
-The private repository includes the two supplied English v0.9b3-labeled disc archives through Git LFS. Install Git LFS before cloning:
+## Enter the Electrosphere
+
+Project Swallow is building **Ace Combat 3: Electrosphere as a fully playable open-source game for modern PCs**, preserving the complete Japanese two-disc experience: its branching campaign, characters, missions, and original flight behavior.
+
+AC3's world of corporate power, fractured loyalties, and digital identity deserves to be experienced as a complete game. Swallow's destination is that experience on Windows and Linux, with enhanced artwork, modern presentation, and an English dub performed by the project team. Original behavior is the reference throughout development.
+
+The repository begins with the disc and archive tools needed to build that game faithfully. Those tools are the foundation of Swallow; the playable reconstruction is the project.
+
+## Development status
+
+**Pre-alpha · toolchain v0.3.0 · no playable build available yet.**
+
+The game is in development. There is currently no native renderer, playable mission, recovered gameplay runtime, or completed English dub. Windows and Linux are target game platforms; current automated coverage runs the Python tools on both.
+
+| Area | Working now | Destination |
+|---|---|---|
+| Source discs | Four fingerprinted references; complete archives stored with Git LFS in this private repository | Reproducible inputs for the complete Japanese campaign |
+| Disc access | ISO directory inspection, raw-image hashes, bounded Form 1 reads, logical-file comparison | Reliable access to game resources |
+| `ACE.BPH` | Typed index parser, explicit payload sizes, range checks, metadata reports; validated against all four references | Resource loading for the game |
+| `ACE.BPB` assets | Entry boundaries located; nested contents and compression still to be decoded | Original assets and enhanced presentation |
+| Streaming media | Form 2 detected and kept outside the Form 1 reader | Correct XA audio/video, timing, and interleave |
+| Gameplay and campaign | Original behavior established as the reference; runtime work remains ahead | Playable missions, branching routes, transitions, and saves |
+| English voices | Human-performed dub planned | A complete, credited team recording |
+
+The toolchain is written in **Python**, with standard-library runtime dependencies. The game's runtime architecture remains an open engineering decision, within the project's **no C** language constraint.
+
+## Run the toolchain
+
+Python **3.11 or newer** is required. On the owner's Windows machine, keep the checkout, extracted discs, and temporary data on **`G:`**.
+
+The repository is currently private and contains all four owner-supplied reference archives through Git LFS. A full clone downloads approximately **1.67 GB of compressed discs** in addition to the source. For a source-only checkout:
+
+```powershell
+Set-Location G:\
+$env:GIT_LFS_SKIP_SMUDGE = "1"
+git clone https://github.com/JasonBreen/project-swallow.git Project-Swallow
+Remove-Item Env:\GIT_LFS_SKIP_SMUDGE
+Set-Location G:\Project-Swallow
+```
+
+To retrieve the full archives, install Git LFS and run:
 
 ```powershell
 git lfs install
-git clone https://github.com/JasonBreen/project-swallow.git
-cd project-swallow
 git lfs pull
 ```
 
-See [reference discs](discs/README.md) for the archive inventory, hashes, extraction instructions, and a clone that downloads tooling only. The Japanese reference reports are retained from the earlier analysis; the owner's Japanese archives will be added when supplied.
+See the [reference-disc inventory](discs/README.md) for archive hashes and extraction commands. The tools read extracted raw MODE2/2352 BIN images. Original archives and images remain unchanged.
 
-PowerShell, from the extracted `project-swallow` directory:
+From the checkout, inspect a Japanese disc and decode its BPH index:
 
 ```powershell
 $env:PYTHONPATH = "src"
-python -m swallow_tools "D:\AC3\disc2.bin" --hash --file-hashes --json
-python -m swallow_tools.compare "D:\AC3\jp-disc2.bin" "D:\AC3\english-disc2.bin" --json
+$env:TEMP = "G:\ProjectSwallow-data\tmp"
+$env:TMP = $env:TEMP
+New-Item -ItemType Directory -Force $env:TEMP | Out-Null
+
+$disc = "G:\ProjectSwallow-data\japanese-disc1\Ace Combat 3 - Electrosphere (Japan) (Disc 1).bin"
+python -m swallow_tools $disc --hash --file-hashes --json
+python -m swallow_tools.bph $disc --json
 python -m unittest discover -s tests -v
 ```
 
-Linux/macOS:
+On Linux:
 
 ```bash
-PYTHONPATH=src python -m swallow_tools /path/to/disc2.bin --hash --file-hashes --json
-PYTHONPATH=src python -m swallow_tools.compare /path/to/jp-disc2.bin /path/to/english-disc2.bin --json
+PYTHONPATH=src python -m swallow_tools /path/to/disc.bin --hash --file-hashes --json
+PYTHONPATH=src python -m swallow_tools.bph /path/to/disc.bin --json
+PYTHONPATH=src python -m swallow_tools.compare /path/to/japanese.bin /path/to/english.bin --json
 PYTHONPATH=src python -m unittest discover -s tests -v
 ```
 
-Optional editable install in your own virtual environment: `python -m pip install -e .`. This exposes `swallow-disc` and `swallow-compare`; runtime dependencies are standard-library only. Packaging uses setuptools.
+An optional editable install, `python -m pip install -e .`, exposes `swallow-disc`, `swallow-bph`, and `swallow-compare`. Use a virtual environment on your project drive. Tests use synthetic data and require no discs, network, emulator, paid model, or GPU.
 
-Add `--cue /path/to/game.cue --strict-cue` to the inspector to fail on missing/empty FILE references. Exit 0 means the requested operation completed, 2 means an input/format error, and 3 means strict CUE-reference validation failed. CUE checks do **not** validate multi-track timing or the BIN's association with every CUE track. Comparison exit 0 means a completed comparison, not identical discs.
+The BPH report contains metadata and validates normal entry ranges against the ISO-recorded BPB size. It does not extract assets or execute the game. Uninterpreted special records remain explicit. Read the [format contract](docs/bph-format.md) and [validation results](docs/bph-validation.md) for the exact guarantees.
 
-The tool reads extracted BINs; it does not directly open 7z/tar archives. File-hash reports explicitly distinguish checked and unsupported content.
+For disc inspection, `--cue /path/to/game.cue --strict-cue` checks that referenced filenames exist; it does not validate track timing. Exit codes are `0` for a completed operation, `2` for input/format errors, and `3` for failed strict CUE-reference checks. A completed comparison can report different files.
 
-## Open in VS Code
+## From archives to a playable game
 
-Open `project-swallow.code-workspace`, select your Python interpreter, and run **Swallow: unit tests** from the task list. Recommended Python/Pylance extensions are included. For the Python Test Explorer, copy `.env.example` to `.env` so it can import the `src` layout. No paid AI service or agent plugin is required to run the tools or tests.
+1. **Disc baseline — complete.** Identify the four supplied images, preserve originals, and compare supported logical contents.
+2. **BPH index — implemented.** Decode and validate the archive's entry ranges; preserve uncertain fields and publish reproducible metadata.
+3. **Resources and original behavior — next.** Decode nested BPB containers and compression; develop a separate XA-aware media reader; establish executable/data behavior with reference captures.
+4. **One complete mission.** Aircraft, level, original flight behavior, controls, weapons, objectives, dialogue, and results working together.
+5. **The full Electrosphere.** Branching campaign, disc-specific content, saves, enhanced presentation, human English dialogue, and platform validation.
 
-## Sources and baseline
+The [roadmap](docs/roadmap.md) tracks these stages. Passing parser tests establishes tool behavior; a playable mission and campaign require their own runtime evidence.
 
-All four uploads have local inventories. Japanese Disc 1 and Disc 2 match the Load Word Team's Revision 1 MD5 fingerprints. The English v0.9b3 label is recorded as upload metadata, not independent release certification.
+## Evidence, people, and provenance
 
-Read the [measured baseline](docs/disc-inventory.md), [validation record](docs/validation.md), and [machine-readable reports](docs/reports/). Both Japanese source CUEs have a filename mismatch; corrected descriptors are supplied separately without modifying any BIN.
+The [four-image baseline](docs/disc-inventory.md), [BPH validation](docs/bph-validation.md), and [machine-readable reports](docs/reports/) record what has actually been measured. The Japanese BINs supplied for this repository match the earlier reference hashes. The English **v0.9b3** names are recorded as upload labels rather than independent release certification.
 
-## Next development task
+Swallow builds on years of community preservation and translation research, acknowledged in [CREDITS.md](CREDITS.md). The banner is original project artwork inspired by AC3's futuristic interface language; it contains no extracted game artwork.
 
-[Decode and validate the BPH index before choosing a rendering stack](docs/first-agent-task.md). Investigate the matching Japanese BPB/BPH pair once, while keeping disc-specific streaming data distinct. See the [roadmap](docs/roadmap.md).
+Code, verified format findings, original artwork, and human-performed dialogue are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) and the [local development contract](AGENTS.md). Open `project-swallow.code-workspace` for the supplied VS Code tasks and Python settings.
 
-## License and contributions
+## License
 
-This repository's original source code, tests, and documentation are MIT-licensed. The owner-supplied reference disc archives are included through Git LFS in this private repository. Their game data and other third-party work retain their own rights and are excluded from the MIT license. The tools consume locally extracted input images. Project Swallow is independent of Bandai Namco.
-
-See [CONTRIBUTING.md](CONTRIBUTING.md), [AGENTS.md](AGENTS.md), and [CREDITS.md](CREDITS.md).
+Project Swallow's original source code, tests, documentation, and banner are **MIT-licensed**. Third-party game data and the owner-supplied disc archives retain their existing rights and are excluded from that license. Project Swallow is independent of Bandai Namco.

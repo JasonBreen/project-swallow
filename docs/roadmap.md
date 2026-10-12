@@ -4,9 +4,11 @@
 
 Inventory four local images; verify the Japanese pair against published fingerprints; retain separate English-labeled references; compare supported file contents; preserve original inputs; run synthetic tests. Exact results and limits are in `disc-inventory.md` and `validation.md`.
 
-## 1. Archive investigation — next
+## 1. Resource toolchain — in progress
 
-Implement a validated reader for `ACE.BPH` and its associated `ACE.BPB`. Document field widths, byte order, units, entry counts, special values, and bounds based on evidence. Identify compression instead of assuming every entry is a known format. Use local-only extraction outputs and reproducible metadata manifests.
+The read-only `ACE.BPH` index parser is implemented in tooling v0.3.0 and validated against all four references. It resolves entry ranges within `ACE.BPB`, preserves uncertain fields, and rejects malformed normal layouts. See [the format contract](bph-format.md) and [validation results](bph-validation.md).
+
+Next, decode nested BPB containers and identify compression from measured examples. Implement a bounded resource interface for understood formats. Use local-only extraction outputs and reproducible metadata manifests. The project goal is a fully playable open-source AC3 reconstruction, and these tools build its resource foundation.
 
 Separately investigate `ACE.SPH` plus the Form 2 media in `ACE.SPB`. Preserve file/channel identifiers, timing, interleave, and payload boundaries. Do not route streaming data through the Form 1-only file helper.
 

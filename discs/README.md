@@ -17,7 +17,7 @@ discs outside Git.
 
 `manifest.json` records SHA256 for each complete archive and the sizes and
 hashes of its BIN/CUE members. Each archived BIN was streamed and checked
-against the corresponding existing `docs/reports/en1.json` or `en2.json`
+against the corresponding existing `docs/reports/{jp1,jp2,en1,en2}.json`
 baseline before upload. The compressed originals are preserved byte for byte.
 The v0.9b3 description remains a source label, not independently verified
 translation authorship or release identity.
