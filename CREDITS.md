@@ -2,43 +2,47 @@
 
 Project Swallow is inspired by the long history of Ace Combat preservation and fan translation work. This file records potential relevant research; it does **not** imply endorsement, partnership, or incorporation of any third-party code.
 
-## Thank you, Project Nemo
+## Thank you, Team NEMO (Project NEMO)
 
-[Project Nemo](https://projectnemo.net/wiki/index.php/ProjectNemo/Home) is the
-unofficial, non-profit, all-volunteer fan project that has been translating
-*Ace Combat 3: Electrosphere* since 2009. Its own [About page](https://projectnemo.net/wiki/index.php/ProjectNemo/About)
-records:
+[Team NEMO](https://www.romhacking.net/community/1189/) is the group behind
+Project NEMO, a fan translation of *ACE COMBAT 3 electrosphere* (1999). Its
+Romhacking.net page describes it as "mainly a US/UK joint effort" with
+contributions from around the world. Their English fan translation is listed
+on Romhacking.net as [Ace Combat 3: Electrosphere (EN)](https://www.romhacking.net/translations/2307/),
+"Fully Playable", updated 03 Mar 2026. They also released the
+[M27 BGM fix](https://www.romhacking.net/hacks/8281/) (07 Dec 2023).
 
-- years of game-data digging and hacking (2010–2012);
-- the International Edition (2016), with English subtitles for all 52 missions on both discs;
-- a talk at OggCamp 2017;
-- the v0.9b Fan Translation (2023).
+For well over a decade, their work has let English-speaking players experience
+the complete Japanese Electrosphere. Project Swallow's goal of an English
+Electrosphere follows the path they opened. Thank you to the crew, credited
+here exactly as on Romhacking.net:
 
-Their work kept the complete Japanese Electrosphere playable and understood by
-English-speaking players for over a decade, and Project Swallow's goal of an
-English Electrosphere follows the path they opened. Thank you to the crew as
-listed by the project:
+| Contributor | Credited role |
+|---|---|
+| **DragonSpikeXIII** | Project Manager / Lead Translator |
+| **iceman-uk** | Support / Webmaster |
+| **BRPXQZME** | Translator, Mission and Archive Drafts (2009-10) |
+| **pmt7ar** | Translator, Epilogue Draft (2009-10) |
+| **Gipphe** | Hacker, Data Mining (2011) |
+| **esperknight** | Hacker, AC3 Toolkit, Decompression (2014-16) |
+| **Dashman** | Hacker, Tooling, Original Typesetter (2014-16) |
+| **Greenrose** | Translator, Retranslations for v2.0 (2016) |
+| **weissvulf** | Hacker/QA/Tooling/Typesetter (2018) |
 
-- **DragonSpikeXIII**: co-founder, project manager, blogger
-- **Imran Chaudhry / Iceman-UK**: co-founder, webmaster, sysadmin
-- **BRPXQZME**: translator
-- **pmt7ar**: translator
-- **Greenrose**: translator, quality assurance
-- **esperknight**: game data mining
-- **Dashman**: game tools engineer
-- **Gipphe**: coder
+esperknight's decompression work and the team's AC3 toolkit are prior art for
+the archive and Ulz work in this repository. Project Swallow's decoder was
+written independently from public format documentation (psx-spx) and measured
+bytes. No Team NEMO code, tools, or translated text have been incorporated. Any
+future use of their translation or tooling will be discussed with the team
+first.
 
 The English-labeled reference discs in this repository carry a "v0.9b3"
-upload label, consistent with Project Nemo's v0.9b fan-translation naming.
-The project has **not independently verified** who produced those images, so
-measurements of them are not presented as statements about Project Nemo's
-release. No Project Nemo code, tools, or translated text have been
-incorporated into Project Swallow. Any future use of their translation or
-tools will be discussed with the team first.
-
-Support them: [download](https://projectnemo.net/wiki/index.php/ProjectNemo/Download) ·
-[donate](https://projectnemo.net/wiki/index.php/ProjectNemo/Donate) ·
-[contact](https://projectnemo.net/wiki/index.php/ProjectNemo/Contact).
+upload label. According to Romhacking.net search listings, Team NEMO's current
+translation release is version 0.9b3 ("Warchild"), distributed as xdelta
+patches for the original SKU. The direct Romhacking.net page was behind a bot
+check and could not be read for this update. The project has therefore **not
+verified** that these images were produced with Team NEMO's patch, and
+measurements of them are not presented as statements about Team NEMO's release.
 
 ## Other research and references
 
