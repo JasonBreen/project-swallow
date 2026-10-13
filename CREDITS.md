@@ -11,6 +11,7 @@ Any imported code or assets require separate license/provenance review and any n
 
 - psx-spx / PlayStation Specifications — CD sector layout and XA documentation: https://psx-spx.consoledev.net/cdromformat/
 - psx-spx / PlayStation Specifications — AC3 BPH/SPH archive facts checked against the supplied images: https://psx-spx.consoledev.net/cdromfileformats/
+- psx-spx / PlayStation Specifications — Namco "Ulz" compression layout and decoding steps, and the DOT1 offset-table description, both checked against every measured AC3 BPB block (same page: "CDROM File Compression Ulz/ULZ (Namco)" and "CDROM File Archives with Offset"). The decoder is original project code.
 - GitHub Actions official documentation — current action usage referenced by the workflow: https://github.com/actions/checkout and https://github.com/actions/setup-python
 
 English-labeled v0.9b3 source uploads are recorded as local evidence; this package does not establish their translation authorship or conflate them with other patch releases. No third-party implementation code was imported into this update.

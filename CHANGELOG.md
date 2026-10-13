@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.4.0 — 2026-10-13
+
+- Added a read-only Namco "Ulz" decoder (`swallow_tools.ulz`) for versions 0 and 2. It enforces strict per-stream bounds and reports where each stream stopped.
+- Added a structural BPB walker and the `swallow-bpb` CLI. The walker accepts DOT1 offset tables only when they pass exact checks, decodes Ulz blocks recursively, and leaves everything else explicitly `unclassified`. Reports contain metadata and hashes only.
+- Validated against all four references: every Ulz block decodes to its declared size and consumes its streams up to alignment padding. The two Japanese discs produce identical trees for all 574 entries. Agreement with the game's own decompression routine is not yet proven.
+- Expanded synthetic tests from 53 to 76, using hand-built Ulz vectors and the measured counterexample shapes.
+- Recorded encoder differences on the English-labeled references: v0 flags left over after the declared size are counted as `unused_reference_flags` and not executed; what the game does with them is unverified.
+- Owner direction: the C language is permitted and the engine is C; Python is for offline tooling. The `C:` drive must not be used; all work and data stay on `G:`. AGENTS.md and the README were updated, replacing the earlier "no C" wording.
+- Planned the executable assembly track ([next task](docs/next-task-executable.md)): recover flight and gameplay behavior 1:1 from the original code.
+
 ## 0.3.0 — 2026-10-12
 
 - Added a typed, read-only `ACE.BPH` index parser and `swallow-bph` CLI, using ISO-discovered extents and explicit payload sizes.
