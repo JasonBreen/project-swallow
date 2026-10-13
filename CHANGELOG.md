@@ -8,6 +8,7 @@
 - Expanded synthetic tests from 53 to 76, using hand-built Ulz vectors and the measured counterexample shapes.
 - Recorded encoder differences on the English-labeled references: v0 flags left over after the declared size are counted as `unused_reference_flags` and not executed; what the game does with them is unverified.
 - Owner direction: the C language is permitted and the engine is C; Python is for offline tooling. The `C:` drive must not be used; all work and data stay on `G:`. AGENTS.md and the README were updated, replacing the earlier "no C" wording.
+- Expanded the Project Nemo acknowledgment in CREDITS.md and the README: project history, crew as listed by the team, and support links. The provenance of the English-labeled discs is still unverified.
 - Planned the executable assembly track ([next task](docs/next-task-executable.md)): recover flight and gameplay behavior 1:1 from the original code.
 
 ## 0.3.0 — 2026-10-12

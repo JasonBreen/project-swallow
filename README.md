@@ -93,7 +93,7 @@ The [roadmap](docs/roadmap.md) tracks these stages. Passing tests establishes to
 
 The [four-image baseline](docs/disc-inventory.md), [BPH validation](docs/bph-validation.md), [BPB validation](docs/bpb-validation.md), and [machine-readable reports](docs/reports/) record what has been measured. The supplied Japanese BINs match the earlier reference hashes. The English **v0.9b3** names are upload labels, not an independent release certification.
 
-Swallow builds on years of community preservation, translation, and format research, acknowledged in [CREDITS.md](CREDITS.md). The banner is original project artwork inspired by AC3's interface language and contains no extracted game artwork.
+Swallow builds on years of community preservation, translation, and format research. Special thanks go to **[Project Nemo](https://projectnemo.net/wiki/index.php/ProjectNemo/Home)**, the volunteer team that has been translating Ace Combat 3: Electrosphere since 2009 and kept the full Japanese game accessible to English-speaking players. Their crew and history are acknowledged in [CREDITS.md](CREDITS.md), along with everyone else whose work this project relies on. The banner is original project artwork inspired by AC3's interface language and contains no extracted game artwork.
 
 Code, verified format findings, original artwork, and human-performed dialogue are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) and the [local development contract](AGENTS.md). Open `project-swallow.code-workspace` for the supplied VS Code tasks and Python settings.
 
