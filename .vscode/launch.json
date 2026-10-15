@@ -1,0 +1,128 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Swallow: inspect disc image",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "swallow_tools",
+      "args": [
+        "${input:discImage}",
+        "--hash",
+        "--file-hashes"
+      ],
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}/src"
+      },
+      "console": "integratedTerminal",
+      "justMyCode": true
+    },
+    {
+      "name": "Swallow: decode BPH index",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "swallow_tools.bph",
+      "args": [
+        "${input:discImage}"
+      ],
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}/src"
+      },
+      "console": "integratedTerminal",
+      "justMyCode": true
+    },
+    {
+      "name": "Swallow: compare two disc images",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "swallow_tools.compare",
+      "args": [
+        "${input:discImage}",
+        "${input:comparisonImage}"
+      ],
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}/src"
+      },
+      "console": "integratedTerminal",
+      "justMyCode": true
+    },
+    {
+      "name": "Swallow: validate BPH reference disc",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/scripts/validate_bph_references.py",
+      "args": [
+        "--output-dir",
+        "local-reports",
+        "--reference",
+        "${input:referenceKey}",
+        "${input:discImage}"
+      ],
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}/src"
+      },
+      "console": "integratedTerminal",
+      "justMyCode": true
+    },
+    {
+      "name": "Swallow: unit tests",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "unittest",
+      "args": [
+        "discover",
+        "-s",
+        "tests",
+        "-v"
+      ],
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}/src"
+      },
+      "console": "integratedTerminal",
+      "justMyCode": false
+    },
+    {
+      "name": "Python: current file",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${file}",
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}/src"
+      },
+      "console": "integratedTerminal",
+      "justMyCode": true
+    }
+  ],
+  "inputs": [
+    {
+      "id": "discImage",
+      "type": "promptString",
+      "description": "Extracted raw MODE2/2352 BIN image (never the archive under discs/)",
+      "default": "G:\\ProjectSwallow-data\\japanese-disc1\\Ace Combat 3 - Electrosphere (Japan) (Disc 1).bin"
+    },
+    {
+      "id": "comparisonImage",
+      "type": "promptString",
+      "description": "Second extracted BIN image to compare against",
+      "default": "G:\\ProjectSwallow-data\\english-disc1\\Ace Combat 3 Electrosphere (English v0.9b3)[Disc 1].bin"
+    },
+    {
+      "id": "referenceKey",
+      "type": "pickString",
+      "description": "Baseline the image must match (docs/reports/<key>.json); identity is checked by hash",
+      "options": [
+        "jp1",
+        "jp2",
+        "en1",
+        "en2"
+      ],
+      "default": "jp1"
+    }
+  ]
+}

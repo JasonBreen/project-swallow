@@ -106,7 +106,7 @@ The [four-image baseline](docs/disc-inventory.md), [BPH validation](docs/bph-val
 
 Swallow builds on years of community preservation and translation research, acknowledged in [CREDITS.md](CREDITS.md). The banner is original project artwork inspired by AC3's futuristic interface language; it contains no extracted game artwork.
 
-Code, verified format findings, original artwork, and human-performed dialogue are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) and the [local development contract](AGENTS.md). Open `project-swallow.code-workspace` for the supplied VS Code tasks and Python settings.
+Code, verified format findings, original artwork, and human-performed dialogue are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) and the [local development contract](AGENTS.md). Open the checkout in VS Code or Antigravity for the supplied tests, debug configurations, and Python settings; see the [editor setup](docs/editor-setup.md).
 
 ## License
 

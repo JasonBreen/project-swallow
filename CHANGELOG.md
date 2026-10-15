@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Added a VS Code and Antigravity editor setup: debug configurations for the disc, BPH, compare, and validation tools; a committed test env file so Test Explorer works on a fresh clone; a shared `[tool.pyright]` configuration for Pylance and basedpyright; LF and final-newline file settings. See `docs/editor-setup.md`.
+
 ## 0.3.0 — 2026-10-12
 
 - Added a typed, read-only `ACE.BPH` index parser and `swallow-bph` CLI, using ISO-discovered extents and explicit payload sizes.
