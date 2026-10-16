@@ -22,8 +22,8 @@ AC3's world of corporate power, fractured loyalties, and digital identity deserv
 
 ## How it is built
 
-- **Engine: C.** The game engine is written in C.
-- **Reverse engineering: MIPS assembly.** The original PlayStation executable and overlays are disassembled and documented. The recovered routines are the ground truth for the engine.
+- **Engine: C.** The game engine will be written in C. No engine code exists yet.
+- **Reverse engineering: MIPS assembly (planned).** The original PlayStation executable and overlays will be disassembled and documented, and the recovered routines will be the ground truth for the engine. This work has not started; see the [executable track](docs/next-task-executable.md).
 - **Tooling: Python, kept minimal.** Disc, archive, and validation tools are standard-library Python. Python is not used for the engine itself.
 - **Evidence first.** No format field or behavior is marked as decoded until bytes, code, or emulator captures confirm it. Hypotheses and counterexamples are written down.
 
