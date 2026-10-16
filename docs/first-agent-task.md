@@ -5,8 +5,9 @@
 documented in [bph-format.md](bph-format.md) and [bph-validation.md](bph-validation.md).
 The original assignment below is retained as the acceptance record. Its known
 evidence describes the pre-implementation state. The nested BPB containers and
-Ulz compression followed in v0.4.0 ([bpb-format.md](bpb-format.md)). Next:
-classify the opaque leaves the walker exposes.
+Ulz compression followed in v0.4.0 ([bpb-format.md](bpb-format.md)) and TIM
+image leaf validation in v0.5.0 ([tim-format.md](tim-format.md)). Next:
+classify the remaining opaque leaves the walker exposes.
 
 Read `AGENTS.md`, `docs/disc-inventory.md`, and the reports before changing code.
 

@@ -2,8 +2,9 @@
 
 Each BPH entry's payload is classified as an offset-table container (the
 psx-spx "DOT1" shape: count, then count offsets whose first value is
-4 + 4 * count), a ``Ulz`` compressed leaf, or an opaque leaf that this tool
-does not interpret. Format evidence and limits: docs/bpb-format.md.
+4 + 4 * count), a ``Ulz`` compressed leaf, a validated PlayStation ``tim``
+image leaf (metadata only), or an opaque leaf that this tool does not
+interpret. Format evidence and limits: docs/bpb-format.md, docs/tim-format.md.
 """
 from __future__ import annotations
 
@@ -17,6 +18,7 @@ import sys
 
 from .bph import BphFormatError, SECTOR_BYTES, locate_archive_files, parse_bph
 from .disc import DiscFormatError, PlayStationDisc
+from .tim import TimFormatError, is_tim_candidate, parse_tim
 from .ulz import UlzFormatError, decompress_ulz, is_ulz, parse_ulz_header
 
 MAX_DEPTH = 8
@@ -50,6 +52,7 @@ class Node:
     origin: str = 'stored'
     children: tuple['Node', ...] = ()
     ulz: dict | None = None
+    tim: dict | None = None
     decoded: 'Node | None' = None
     error: str | None = None
 
@@ -67,6 +70,8 @@ class Node:
             report['children'] = [child.to_report() for child in self.children]
         if self.ulz is not None:
             report['ulz'] = self.ulz
+        if self.tim is not None:
+            report['tim'] = self.tim
         if self.decoded is not None:
             report['decoded'] = self.decoded.to_report()
         if self.error is not None:
@@ -146,8 +151,13 @@ def walk_payload(data: bytes, *, decode: bool = False, path: tuple[int, ...] = (
 
 
 def _walk(data: bytes, decode: bool, path: tuple[int, ...], offset: int, depth: int,
-          origin: str, max_depth: int, budget: _Budget) -> Node:
-    """Build one node that the caller has already charged to the budget."""
+          origin: str, max_depth: int, budget: _Budget, *, aligned_item: bool = False) -> Node:
+    """Build one node that the caller has already charged to the budget.
+
+    ``aligned_item`` is true only for a container item that is not the last
+    one: its end is the next table offset, so the container proves that any
+    bytes between the item's own data and that offset are alignment padding.
+    """
     signature = data[:4].hex()
     if is_ulz(data):
         return _ulz_node(data, decode, path, offset, depth, origin, max_depth, budget)
@@ -156,19 +166,46 @@ def _walk(data: bytes, decode: bool, path: tuple[int, ...], offset: int, depth: 
     except ContainerLimitError:
         raise
     except ContainerFormatError:
-        return Node(path, offset, len(data), 'opaque', signature, origin)
+        return _leaf_node(data, path, offset, origin, aligned_item=aligned_item)
     if depth >= max_depth:
         raise ContainerFormatError(f'Container nesting exceeds depth {max_depth}')
     budget.reserve(table.count)
     children = []
+    last = len(table.items) - 1
     for index, (start, end) in enumerate(table.items):
         if end > start:
             children.append(_walk(data[start:end], decode, path + (index,), start,
-                                  depth + 1, origin, max_depth, budget))
+                                  depth + 1, origin, max_depth, budget,
+                                  aligned_item=index < last))
         else:
             children.append(Node(path + (index,), start, 0, 'empty', '', origin))
     children = tuple(children)
     return Node(path, offset, len(data), 'container', signature, origin, children)
+
+
+def _leaf_node(data: bytes, path: tuple[int, ...], offset: int, origin: str, *,
+               aligned_item: bool = False) -> Node:
+    """Classify a non-container, non-Ulz range: a validated TIM or an opaque leaf.
+
+    A range that starts with the TIM id word but fails validation stays
+    opaque and records the rejection reason, so candidate mismatches can be
+    counted without claiming the format. Trailing zero bytes are accepted
+    only where the container proves they are alignment padding: in a
+    non-final item whose range is a whole number of four-byte units, and
+    then only fewer than four of them, so they are exactly the bytes up to
+    the next aligned offset. They are reported as ``trailing_bytes``. A
+    final item, a decoded payload, or a top-level entry gets the strict rule.
+    """
+    signature = data[:4].hex()
+    if not is_tim_candidate(data):
+        return Node(path, offset, len(data), 'opaque', signature, origin)
+    padding_proven = aligned_item and len(data) % TABLE_ALIGNMENT == 0
+    try:
+        info = parse_tim(data, max_trailing_bytes=TABLE_ALIGNMENT - 1 if padding_proven else 0)
+    except TimFormatError as exc:
+        return Node(path, offset, len(data), 'opaque', signature, origin,
+                    error=f'TIM candidate rejected: {exc}')
+    return Node(path, offset, len(data), 'tim', signature, origin, tim=info.to_report())
 
 
 def _ulz_node(data: bytes, decode: bool, path: tuple[int, ...], offset: int, depth: int,
@@ -213,6 +250,8 @@ def summarize_nodes(roots: list[Node]) -> dict:
         'flag_words_unused': {}, 'unused_flag_words_nonzero': 0,
         'v0_final_word_zero_padding_blobs': 0,
         'literal_bytes_unused': {}, 'pair_bytes_unused': {},
+        'tim_modes': {}, 'tim_with_clut': 0, 'tim_bytes': 0,
+        'tim_candidates_rejected': 0,
     }
 
     def bump(table: dict, key) -> None:
@@ -241,6 +280,13 @@ def summarize_nodes(roots: list[Node]) -> dict:
                     bump(summary['pair_bytes_unused'], node.ulz['pair_bytes_unused'])
                     if not node.ulz['unused_flag_words_zero']:
                         summary['unused_flag_words_nonzero'] += 1
+        if node.kind == 'tim' and node.tim:
+            bump(summary['tim_modes'], node.tim['mode'])
+            summary['tim_bytes'] += node.size
+            if 'clut' in node.tim:
+                summary['tim_with_clut'] += 1
+        if node.kind == 'opaque' and node.error:
+            summary['tim_candidates_rejected'] += 1
         for child in node.children:
             visit(child, depth + 1)
         if node.decoded is not None:
@@ -277,7 +323,7 @@ def inspect_bpb(path: Path, *, entries: list[int] | None = None,
                         'sha256': hashlib.sha256(data).hexdigest(),
                         'tree': node.to_report()})
     return {
-        'schema_version': 1,
+        'schema_version': 2,
         'source_image': disc.path.name,
         'volume_id': inventory['volume_id'],
         'bph': {'lba': bph.lba, 'size_bytes': bph.size},
@@ -297,6 +343,11 @@ def _print_tree(node: dict, indent: int) -> None:
         header = node['ulz']['header']
         label += (f" v{header['version']} -> {header['decompressed_size']} B,"
                   f" {header['offset_bits']}-bit offsets")
+    elif node['kind'] == 'tim':
+        tim = node['tim']
+        label += f" {tim['mode']} {tim['pixel_width']}x{tim['pixel_height']}"
+        if 'clut' in tim:
+            label += f" clut={tim['clut_entries']}"
     elif node['kind'] == 'opaque':
         label += f" signature {node['signature']}"
     if node.get('error'):
@@ -332,6 +383,8 @@ def main(argv: list[str] | None = None) -> int:
           f"{summary['stored_nodes']} stored nodes, {summary['decoded_nodes']} decoded nodes")
     print(f"Kinds: {summary['kinds']}; Ulz versions: {summary['ulz_versions']}; "
           f"Ulz errors: {summary['ulz_errors']}")
+    print(f"TIM modes: {summary['tim_modes']}; with CLUT: {summary['tim_with_clut']}; "
+          f"candidates rejected: {summary['tim_candidates_rejected']}")
     for entry in report['entries']:
         tree = entry['tree']
         if args.tree:
