@@ -1,5 +1,5 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "baseline_report": "docs/reports/jp2.json",
   "source_image": "Ace Combat 3 - Electrosphere (Japan) (Disc 2).bin",
   "whole_image_hashes_match_baseline": true,
@@ -21,13 +21,15 @@
     "max_depth": 5,
     "kinds": {
       "container": 1336,
-      "opaque": 1948,
+      "tim": 138,
+      "opaque": 1810,
       "ulz": 2256
     },
     "decoded_kinds": {
-      "opaque": 41801,
+      "opaque": 23675,
       "container": 1077,
-      "empty": 7511
+      "empty": 7511,
+      "tim": 18126
     },
     "ulz_versions": {
       "2": 1089,
@@ -57,24 +59,497 @@
     "pair_bytes_unused": {
       "0": 1035,
       "2": 1221
-    }
+    },
+    "tim_modes": {
+      "4bpp": 17953,
+      "8bpp": 303,
+      "24bpp": 8
+    },
+    "tim_with_clut": 18234,
+    "tim_bytes": 44103602,
+    "tim_candidates_rejected": 18
   },
   "decoded_payload_kinds": {
-    "opaque": 1187,
-    "container": 1069
+    "opaque": 401,
+    "container": 1069,
+    "tim": 786
   },
   "max_decompressed_bytes": 408528,
   "literal_count": 17578292,
   "match_count": 7197959,
   "ulz_error_paths": [],
+  "tim": {
+    "count": 18264,
+    "stored": 138,
+    "decoded": 18126,
+    "modes": {
+      "4bpp": 17953,
+      "8bpp": 303,
+      "24bpp": 8
+    },
+    "flags": {
+      "8": 17931,
+      "9": 303,
+      "0": 22,
+      "3": 8
+    },
+    "bytes": 44103602,
+    "trailing_padded": 128,
+    "clut_x_not_16_aligned": 14,
+    "pixel_dims_top20": [
+      [
+        "64x64",
+        4681
+      ],
+      [
+        "64x32",
+        699
+      ],
+      [
+        "32x32",
+        667
+      ],
+      [
+        "64x16",
+        649
+      ],
+      [
+        "32x16",
+        607
+      ],
+      [
+        "16x16",
+        566
+      ],
+      [
+        "32x8",
+        554
+      ],
+      [
+        "128x128",
+        477
+      ],
+      [
+        "24x16",
+        434
+      ],
+      [
+        "256x256",
+        429
+      ],
+      [
+        "48x16",
+        314
+      ],
+      [
+        "48x24",
+        304
+      ],
+      [
+        "8x8",
+        288
+      ],
+      [
+        "16x32",
+        278
+      ],
+      [
+        "24x24",
+        266
+      ],
+      [
+        "64x8",
+        258
+      ],
+      [
+        "32x24",
+        247
+      ],
+      [
+        "16x8",
+        237
+      ],
+      [
+        "56x84",
+        226
+      ],
+      [
+        "16x64",
+        223
+      ]
+    ],
+    "clut_dims": [
+      [
+        "16x1",
+        16951
+      ],
+      [
+        "16x2",
+        513
+      ],
+      [
+        "256x1",
+        303
+      ],
+      [
+        "16x6",
+        142
+      ],
+      [
+        "16x7",
+        92
+      ],
+      [
+        "16x4",
+        84
+      ],
+      [
+        "16x8",
+        60
+      ],
+      [
+        "16x5",
+        56
+      ],
+      [
+        "16x3",
+        26
+      ],
+      [
+        "16x16",
+        2
+      ],
+      [
+        "16x12",
+        1
+      ],
+      [
+        "64x1",
+        1
+      ],
+      [
+        "48x1",
+        1
+      ],
+      [
+        "64x4",
+        1
+      ],
+      [
+        "32x1",
+        1
+      ]
+    ],
+    "candidates_rejected": 18,
+    "candidates_rejected_stored": 0,
+    "candidates_rejected_decoded": 18,
+    "rejection_reasons": {
+      "TIM candidate rejected: TIM blocks end at # but the data holds # bytes": 3,
+      "TIM candidate rejected: pixel block length # does not equal # + # * # * # = #": 11,
+      "TIM candidate rejected: pixel block has zero width or height (#x#)": 2,
+      "TIM candidate rejected: CLUT block #,# #x# exceeds #x# halfword VRAM": 2
+    },
+    "rejected_examples": [
+      {
+        "path": "11.11.86",
+        "origin": "decoded",
+        "size": 68,
+        "error": "TIM candidate rejected: TIM blocks end at 66 but the data holds 68 bytes"
+      },
+      {
+        "path": "13.11.271",
+        "origin": "decoded",
+        "size": 192,
+        "error": "TIM candidate rejected: pixel block length 136 does not equal 12 + 2 * 8 * 8 = 140"
+      },
+      {
+        "path": "26.11.121",
+        "origin": "decoded",
+        "size": 576,
+        "error": "TIM candidate rejected: pixel block length 516 does not equal 12 + 2 * 16 * 16 = 524"
+      },
+      {
+        "path": "37.11.361",
+        "origin": "decoded",
+        "size": 192,
+        "error": "TIM candidate rejected: pixel block length 132 does not equal 12 + 2 * 4 * 16 = 140"
+      },
+      {
+        "path": "41.11.123",
+        "origin": "decoded",
+        "size": 576,
+        "error": "TIM candidate rejected: pixel block length 516 does not equal 12 + 2 * 16 * 16 = 524"
+      },
+      {
+        "path": "51.11.121",
+        "origin": "decoded",
+        "size": 576,
+        "error": "TIM candidate rejected: pixel block length 516 does not equal 12 + 2 * 16 * 16 = 524"
+      },
+      {
+        "path": "52.11.361",
+        "origin": "decoded",
+        "size": 192,
+        "error": "TIM candidate rejected: pixel block length 132 does not equal 12 + 2 * 4 * 16 = 140"
+      },
+      {
+        "path": "54.11.12",
+        "origin": "decoded",
+        "size": 2080,
+        "error": "TIM candidate rejected: pixel block has zero width or height (0x0)"
+      },
+      {
+        "path": "56.11.121",
+        "origin": "decoded",
+        "size": 576,
+        "error": "TIM candidate rejected: pixel block length 516 does not equal 12 + 2 * 16 * 16 = 524"
+      },
+      {
+        "path": "58.11.361",
+        "origin": "decoded",
+        "size": 192,
+        "error": "TIM candidate rejected: pixel block length 132 does not equal 12 + 2 * 4 * 16 = 140"
+      },
+      {
+        "path": "62.11.121",
+        "origin": "decoded",
+        "size": 576,
+        "error": "TIM candidate rejected: pixel block length 516 does not equal 12 + 2 * 16 * 16 = 524"
+      },
+      {
+        "path": "65.11.10",
+        "origin": "decoded",
+        "size": 2080,
+        "error": "TIM candidate rejected: pixel block has zero width or height (0x0)"
+      },
+      {
+        "path": "112.7.10",
+        "origin": "decoded",
+        "size": 440,
+        "error": "TIM candidate rejected: TIM blocks end at 438 but the data holds 440 bytes"
+      },
+      {
+        "path": "113.0.10",
+        "origin": "decoded",
+        "size": 440,
+        "error": "TIM candidate rejected: TIM blocks end at 438 but the data holds 440 bytes"
+      },
+      {
+        "path": "114.5.67",
+        "origin": "decoded",
+        "size": 372,
+        "error": "TIM candidate rejected: pixel block length 314 does not equal 12 + 2 * 14 * 11 = 320"
+      },
+      {
+        "path": "114.7.114",
+        "origin": "decoded",
+        "size": 372,
+        "error": "TIM candidate rejected: pixel block length 314 does not equal 12 + 2 * 14 * 11 = 320"
+      },
+      {
+        "path": "123.1.38",
+        "origin": "decoded",
+        "size": 5248,
+        "error": "TIM candidate rejected: CLUT block 960,256 256x1 exceeds 1024x512 halfword VRAM"
+      },
+      {
+        "path": "123.1.44",
+        "origin": "decoded",
+        "size": 5248,
+        "error": "TIM candidate rejected: CLUT block 960,256 256x1 exceeds 1024x512 halfword VRAM"
+      }
+    ]
+  },
+  "signature_00002311": {
+    "count": 19814,
+    "origins": {
+      "decoded": 19814
+    },
+    "size_min": 124,
+    "size_max": 2524,
+    "sizes_top20": [
+      [
+        124,
+        2327
+      ],
+      [
+        336,
+        1779
+      ],
+      [
+        288,
+        768
+      ],
+      [
+        172,
+        620
+      ],
+      [
+        324,
+        478
+      ],
+      [
+        136,
+        432
+      ],
+      [
+        356,
+        364
+      ],
+      [
+        312,
+        347
+      ],
+      [
+        220,
+        264
+      ],
+      [
+        300,
+        259
+      ],
+      [
+        196,
+        255
+      ],
+      [
+        1016,
+        243
+      ],
+      [
+        368,
+        238
+      ],
+      [
+        876,
+        238
+      ],
+      [
+        184,
+        222
+      ],
+      [
+        232,
+        213
+      ],
+      [
+        552,
+        204
+      ],
+      [
+        568,
+        191
+      ],
+      [
+        380,
+        189
+      ],
+      [
+        404,
+        182
+      ]
+    ],
+    "parent_containers": 57,
+    "header_checks": {
+      "word1_is_24": 19814,
+      "word2_is_0": 19814,
+      "word3_is_68_plus_20n": 19814,
+      "word3_lt_word4": 19814,
+      "word4_lt_size": 19814,
+      "word4_aligned_4": 19814,
+      "size_minus_word4_is_4_plus_60n": 19814,
+      "size_aligned_4": 19814,
+      "last_word_is_0": 19814
+    },
+    "word3_stride_counts_top10": [
+      [
+        0,
+        4607
+      ],
+      [
+        1,
+        4150
+      ],
+      [
+        4,
+        2163
+      ],
+      [
+        2,
+        2044
+      ],
+      [
+        5,
+        1785
+      ],
+      [
+        3,
+        1655
+      ],
+      [
+        8,
+        1102
+      ],
+      [
+        6,
+        1046
+      ],
+      [
+        9,
+        666
+      ],
+      [
+        7,
+        596
+      ]
+    ],
+    "tail_stride_counts_top10": [
+      [
+        0,
+        5545
+      ],
+      [
+        4,
+        2819
+      ],
+      [
+        1,
+        1863
+      ],
+      [
+        2,
+        1481
+      ],
+      [
+        3,
+        1141
+      ],
+      [
+        5,
+        859
+      ],
+      [
+        8,
+        846
+      ],
+      [
+        12,
+        712
+      ],
+      [
+        6,
+        678
+      ],
+      [
+        11,
+        589
+      ]
+    ]
+  },
   "opaque_signatures_stored_top20": [
     [
       "00000000",
       799
-    ],
-    [
-      "10000000",
-      138
     ],
     [
       "01000000",
@@ -147,16 +622,16 @@
     [
       "14040000",
       4
+    ],
+    [
+      "14120000",
+      4
     ]
   ],
   "opaque_signatures_decoded_top20": [
     [
       "00002311",
       19814
-    ],
-    [
-      "10000000",
-      18144
     ],
     [
       "00000109",
@@ -229,6 +704,10 @@
     [
       "00001401",
       46
+    ],
+    [
+      "0000e500",
+      45
     ]
   ],
   "entries": [

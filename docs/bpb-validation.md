@@ -1,13 +1,17 @@
-# BPB container and Ulz validation — 2026-10-15
+# BPB container, Ulz, and TIM validation — 2026-10-15 / 2026-10-16
 
-Local host: Windows, Python 3.12. Checkout and all input, temporary, and
+Local host: Windows, Python 3.12, both dates. Checkout and all input, temporary, and
 verification data are on `G:`. Original images were read without modification.
 No decoded payload was written to disk; the checked-in reports hold metadata.
 
 ## Synthetic tests
 
-The complete suite passes **96 tests**, including 43 new container and Ulz
-tests. They cover hand-built flag/literal/pair vectors for both Ulz versions,
+The complete suite passes **112 tests**: 95 from v0.4.0, one special-record
+report test added during review, and 16 TIM
+validator and walker tests added in v0.5.0 (header, flag, CLUT, pixel-block,
+VRAM, length, and trailing-byte rules; walker classification of valid,
+rejected, padded, and decoded TIM leaves; summary and CLI output). The
+v0.4.0 tests cover hand-built flag/literal/pair vectors for both Ulz versions,
 the version 0 sentinel positions, zero-word error, required terminator,
 sentinel-only word rejection, and final-word leftover flags, round trips through a
 local greedy test encoder for both versions and 10–13 offset bits, every
@@ -71,6 +75,52 @@ Measured on all four images:
   are identical. The English references change a small number of Ulz blobs
   and leaf sizes while keeping the same container structure and entry count.
 
+## TIM leaf validation — 2026-10-16
+
+Tooling v0.5.0 re-ran the full walk with the TIM validator on all four
+images. Whole-image and BPH/BPB hashes matched the baselines, every Ulz blob
+decoded with zero errors, and the container and Ulz counts above were
+unchanged. Rules and field distributions are in the
+[TIM contract](tim-format.md).
+
+| Reference | TIM candidates | Validated `tim` leaves | Stored / decoded | Padded | Rejected | TIM bytes |
+|---|---:|---:|---:|---:|---:|---:|
+| Japanese Disc 1 | 18,282 | 18,264 | 138 / 18,126 | 128 | 18 | 44,103,602 |
+| Japanese Disc 2 | 18,282 | 18,264 | 138 / 18,126 | 128 | 18 | 44,103,602 |
+| English-labeled Disc 1 | 18,280 | 18,262 | 144 / 18,118 | 128 | 18 | 44,093,106 |
+| English-labeled Disc 2 | 18,280 | 18,262 | 138 / 18,124 | 128 | 18 | 44,093,106 |
+
+- Modes per Japanese image: 17,953 4bpp, 303 8bpp, 8 24bpp; the English
+  references have 301 8bpp images and are otherwise identical in every
+  distribution. No 16bpp or mixed-mode image exists.
+- The 18 rejected candidates per image are the same on every image: 11
+  pixel-block length words short of `12 + 2wh`, 2 pixel blocks with zero
+  width and height after a 1,024-entry CLUT, 2 CLUT blocks at `x = 960`
+  that would extend past the 1,024-halfword VRAM width, and 3 complete
+  images followed by two zero bytes as the final item of a decoded
+  container, where no following table offset proves the bytes are padding.
+  All are decoded leaves; no stored candidate is rejected.
+- The 128 padded images are non-final container items followed by exactly
+  two zero bytes up to the next aligned offset on every image. 14 CLUT blocks per image sit at `x = 511`.
+- With TIM classified, the remaining opaque leaves per Japanese image are
+  1,810 stored and 23,675 decoded. The most frequent decoded signatures are
+  now `00002311` (19,814), `00000109` (700), and `00000000` (167); the most
+  frequent stored signatures are `00000000` (799) and `01000000` (101).
+
+## The `00002311` leaves — measured hypothesis
+
+The validation script makes a second in-memory pass over every leaf whose
+first four bytes are `00 00 23 11` and tests the header-word rules recorded
+in the [TIM contract's unknowns](tim-format.md#the-00002311-leaves-open-hypothesis).
+On all four images every one of the 19,814 leaves satisfies every rule:
+word 1 is 24, word 2 is 0, word 3 is `68 + 20n`, word 3 is below word 4,
+word 4 is a multiple of 4 below the leaf size, the size minus word 4 is
+`4 + 60m`, the size is a multiple of 4, and the last word is zero. Sizes run
+from 124 to 2,524 bytes; `n` is 0 in 4,607 leaves and `m` is 0 in 5,545
+leaves. All 19,814 leaves are decoded, spread over 57 containers that hold
+nothing else. No semantics are claimed; the counts are in the
+`signature_00002311` block of each summary report.
+
 ## Reproduce with local images
 
 Metadata for one entry, decoded in memory:
@@ -92,14 +142,17 @@ python scripts/validate_bpb_references.py --output-dir local-reports --summary-d
 ```
 
 Add `--reference en1 ...` and `--reference en2 ...` for the English pair. The
-full-tree outputs are about 12 MB per image and stay in `local-reports/`.
+full-tree outputs are about 24 MB per image with TIM metadata and stay in
+`local-reports/`.
 
 ## Practical limits
 
-This establishes the nested container structure and a validated decoder for
-the two Ulz versions present. Opaque leaves, the four text-like top-level
-entries, TIM candidates, and every decoded container's contents remain
-uninterpreted. SPH/SPB and XA media are separate work. No emulator boot,
-playable mission, flight behavior, renderer, campaign transition, or English
-dub has been validated by this change. See the
+This establishes the nested container structure, a validated decoder for
+the two Ulz versions present, and metadata-only validation of TIM image
+leaves. The `00002311` leaves, the other opaque leaves, the four text-like
+top-level entries, and the 18 rejected TIM candidates per image remain
+uninterpreted; no pixel is decoded or exported. SPH/SPB and XA media are
+separate work. No emulator boot, playable mission, flight behavior,
+renderer, campaign transition, or English dub has been validated by this
+change. See the
 [container contract](bpb-format.md) for the exact rules and unknowns.

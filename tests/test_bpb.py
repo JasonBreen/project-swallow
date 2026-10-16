@@ -15,6 +15,7 @@ from swallow_tools.bpb import (
 from swallow_tools.bph import BphFormatError
 from test_bph import make_index
 from test_disc import iso_record, raw_sector
+from test_tim import block as tim_block, tim as tim_image
 from test_ulz import encode_ulz
 
 
@@ -29,6 +30,14 @@ def container(*items):
 
 def padded(data):
     return data + b'\0' * (-len(data) % 4)
+
+
+def sample_tim(width=16, height=64):
+    """4bpp TIM with a 16-entry CLUT; width/height are pixel-block halfwords."""
+    return tim_image(0x8, tim_block(320, 256, 16, 1), tim_block(640, 0, width, height))
+
+
+TIM_STUB = b'\x10\x00\x00\x00' + b'\0' * 12      # candidate signature, invalid image
 
 
 class OffsetTableTests(unittest.TestCase):
@@ -172,11 +181,100 @@ class WalkTests(unittest.TestCase):
         summary = summarize_nodes([root])
         self.assertEqual(summary['kinds'], {'container': 1, 'ulz': 2, 'opaque': 1})
         self.assertEqual(summary['decoded_kinds'], {'container': 1, 'opaque': 2})
+        self.assertEqual(summary['tim_modes'], {})
+        self.assertEqual(summary['tim_candidates_rejected'], 0)
         self.assertEqual(summary['ulz_versions'], {'0': 1, '2': 1})
         self.assertEqual(summary['ulz_decoded'], 2)
         self.assertEqual(summary['ulz_errors'], 0)
         self.assertEqual(summary['ulz_decompressed_bytes'], 12 + 40)
         self.assertEqual(summary['max_depth'], 3)
+
+    def test_tim_leaf_is_classified_with_metadata(self):
+        image = sample_tim()
+        root = walk_payload(container(image, padded(b'raw')), path=(9,))
+        node = root.children[0]
+        self.assertEqual(node.kind, 'tim')
+        self.assertEqual(node.signature, '10000000')
+        self.assertEqual(node.size, len(image))
+        self.assertEqual(node.tim['mode'], '4bpp')
+        self.assertEqual((node.tim['pixel_width'], node.tim['pixel_height']), (64, 64))
+        self.assertEqual(node.tim['clut_entries'], 16)
+        self.assertEqual(node.tim['trailing_bytes'], 0)
+        self.assertIsNone(node.error)
+        report = node.to_report()
+        self.assertEqual(report['kind'], 'tim')
+        self.assertEqual(report['tim']['pixels']['x'], 640)
+        self.assertNotIn('children', report)
+        self.assertEqual(root.children[1].kind, 'opaque')
+
+    def test_tim_candidate_that_fails_validation_stays_opaque(self):
+        bad = tim_image(0x8, tim_block(0, 0, 16, 1), tim_block(0, 0, 16, 16, length=516))
+        root = walk_payload(container(bad, TIM_STUB))
+        for node in root.children:
+            self.assertEqual(node.kind, 'opaque')
+            self.assertEqual(node.signature, '10000000')
+            self.assertIsNone(node.tim)
+            self.assertTrue(node.error.startswith('TIM candidate rejected: '))
+        self.assertIn('516', root.children[0].error)
+        self.assertNotIn('tim', root.children[1].to_report())
+        self.assertIn('error', root.children[1].to_report())
+
+    def test_tim_accepts_container_alignment_padding_only(self):
+        short = tim_image(0x8, tim_block(0, 0, 16, 1), tim_block(0, 0, 1, 1))
+        self.assertEqual(len(short) % 4, 2)
+        root = walk_payload(container(padded(short), padded(b'next')))
+        self.assertEqual(root.children[0].kind, 'tim')
+        self.assertEqual(root.children[0].size, len(short) + 2)
+        self.assertEqual(root.children[0].tim['trailing_bytes'], 2)
+        root = walk_payload(container(short))         # last item: no padding needed
+        self.assertEqual(root.children[0].tim['trailing_bytes'], 0)
+        root = walk_payload(container(short + b'\0\x01', padded(b'next')))
+        self.assertEqual(root.children[0].kind, 'opaque')
+        self.assertIn('not zero', root.children[0].error)
+        root = walk_payload(container(short + b'\0' * 6, padded(b'next')))
+        self.assertEqual(root.children[0].kind, 'opaque')
+        self.assertIn('blocks end', root.children[0].error)
+
+    def test_tim_padding_needs_a_following_aligned_offset(self):
+        tiny = tim_image(0x0, tim_block(0, 0, 1, 7))      # 8 + 12 + 14 = 34 bytes
+        self.assertEqual(len(tiny), 34)
+        exact = tim_image(0x0, tim_block(0, 0, 1, 1))     # 22 bytes
+        # Review counterexample: a 22-byte TIM plus one zero byte as the only
+        # (final) item of a 31-byte container must not count as padded.
+        payload = container(exact + b'\0')
+        self.assertEqual(len(payload), 31)
+        node = walk_payload(payload).children[0]
+        self.assertEqual(node.kind, 'opaque')
+        self.assertIn('blocks end at 22', node.error)
+        # A final item padded to four bytes still has no following offset.
+        node = walk_payload(container(padded(tiny))).children[0]
+        self.assertEqual(node.kind, 'opaque')
+        # Decoded payloads and top-level ranges have no table offset either.
+        root = walk_payload(container(encode_ulz(padded(tiny)), TIM_STUB), decode=True)
+        self.assertEqual(root.children[0].decoded.kind, 'opaque')
+        self.assertEqual(walk_payload(padded(tiny)).kind, 'opaque')
+        # A non-final item whose end is the next aligned offset is padded.
+        node = walk_payload(container(padded(tiny), TIM_STUB)).children[0]
+        self.assertEqual((node.kind, node.tim['trailing_bytes']), ('tim', 2))
+        # An empty item after it keeps the following offset aligned.
+        node = walk_payload(container(padded(tiny), b'', TIM_STUB)).children[0]
+        self.assertEqual(node.kind, 'tim')
+
+    def test_decoded_tim_and_summary(self):
+        image = sample_tim(4, 4)
+        payload = container(encode_ulz(image), sample_tim(), TIM_STUB)
+        root = walk_payload(payload, decode=True)
+        decoded = root.children[0].decoded
+        self.assertEqual((decoded.kind, decoded.origin), ('tim', 'decoded'))
+        self.assertEqual(decoded.tim['pixel_width'], 16)
+        summary = summarize_nodes([root])
+        self.assertEqual(summary['kinds'], {'container': 1, 'ulz': 1, 'tim': 1, 'opaque': 1})
+        self.assertEqual(summary['decoded_kinds'], {'tim': 1})
+        self.assertEqual(summary['tim_modes'], {'4bpp': 2})
+        self.assertEqual(summary['tim_with_clut'], 2)
+        self.assertEqual(summary['tim_bytes'], len(image) + len(sample_tim()))
+        self.assertEqual(summary['tim_candidates_rejected'], 1)
+        self.assertEqual(summary['ulz_errors'], 0)
 
     def test_report_tree_shape(self):
         report = walk_payload(container(padded(b'ab')), path=(3,)).to_report()
@@ -234,6 +332,7 @@ class InspectAndCliTests(unittest.TestCase):
             container(encode_ulz(b'mission' * 30), padded(b'raw')),
             padded(b'opaque top-level record'),
             container(container(padded(b'a'), padded(b'b'))),
+            container(sample_tim(8, 8), TIM_STUB),
         ]
         self.image = make_image(root, self.payloads)
 
@@ -242,9 +341,15 @@ class InspectAndCliTests(unittest.TestCase):
 
     def test_inspect_walks_every_entry_with_iso_discovery(self):
         report = inspect_bpb(self.image)
-        self.assertEqual(report['entry_count'], 3)
+        self.assertEqual(report['entry_count'], 4)
+        self.assertEqual(report['schema_version'], 2)
         kinds = [entry['tree']['kind'] for entry in report['entries']]
-        self.assertEqual(kinds, ['container', 'opaque', 'container'])
+        self.assertEqual(kinds, ['container', 'opaque', 'container', 'container'])
+        tim_entry = report['entries'][3]['tree']['children']
+        self.assertEqual([child['kind'] for child in tim_entry], ['tim', 'opaque'])
+        self.assertEqual(tim_entry[0]['tim']['pixel_height'], 8)
+        self.assertEqual(report['summary']['tim_modes'], {'4bpp': 1})
+        self.assertEqual(report['summary']['tim_candidates_rejected'], 1)
         self.assertEqual(report['entries'][0]['sha256'],
                          hashlib.sha256(self.payloads[0]).hexdigest())
         self.assertEqual(report['entries'][2]['tree']['children'][0]['child_count'], 2)
@@ -274,7 +379,15 @@ class InspectAndCliTests(unittest.TestCase):
         out = StringIO()
         with redirect_stdout(out):
             self.assertEqual(main([str(self.image)]), 0)
-        self.assertIn('3 entries walked', out.getvalue())
+        self.assertIn('4 entries walked', out.getvalue())
+        self.assertIn("TIM modes: {'4bpp': 1}; with CLUT: 1; candidates rejected: 1",
+                      out.getvalue())
+        out = StringIO()
+        with redirect_stdout(out):
+            self.assertEqual(main([str(self.image), '--tree', '--entry', '3']), 0)
+        self.assertIn('[3.0] tim', out.getvalue())
+        self.assertIn('4bpp 32x8 clut=16', out.getvalue())
+        self.assertIn('ERROR: TIM candidate rejected', out.getvalue())
         out = StringIO()
         with redirect_stdout(out):
             self.assertEqual(main([str(self.image), '--tree', '--entry', '2']), 0)

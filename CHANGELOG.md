@@ -5,8 +5,16 @@
 - Owner direction (recorded 2026-10-13): the C language is permitted and the game engine is C; Python stays limited to offline tooling. The `C:` drive must not be used; all work and data stay on `G:`. AGENTS.md and the README replace the earlier "no C" wording, which had been misread as a language ban.
 - Expanded the Team NEMO (Project NEMO) acknowledgment in CREDITS.md and the README, sourced from Romhacking.net: the full crew with credited roles, and esperknight's decompression work noted as prior art. The provenance of the English-labeled discs is still unverified.
 - Planned the executable assembly track ([next task](docs/next-task-executable.md)): recover flight and gameplay behavior 1:1 from the original code, starting by matching the game's own Ulz routine.
-- The Ulz decoder now rejects offset bit counts outside the measured 10–13, and BPB reports list bit-31-clear BPH records with their raw words instead of omitting them. All 9,018 reference blobs still decode; synthetic tests grow from 95 to 96.
+- The Ulz decoder now rejects offset bit counts outside the measured 10–13, and BPB reports list bit-31-clear BPH records with their raw words instead of omitting them. All 9,018 reference blobs still decode; synthetic tests grow from 111 to 112.
 - Recorded two leads for that track in `docs/bpb-format.md`: entries 1–4 hold hundreds of words in the PlayStation RAM range and may be overlays, and four opaque leaves contain an embedded Ulz signature. Both are unverified hypotheses.
+
+## 0.5.0 — 2026-10-16
+
+- Added a read-only PlayStation TIM validator (`swallow_tools.tim`) that checks the id word, flags, CLUT block, pixel block, block lengths, and VRAM placement of one byte range and returns metadata only; pixels are never copied or written.
+- The BPB walker now reports an opaque leaf that validates as TIM with kind `tim` and its metadata. Candidates that start with the TIM id word but fail validation stay `opaque` with the recorded rejection reason. Up to three zero bytes after the pixel block are accepted, and reported, only in a non-final container item whose next aligned offset proves they are padding. The full `swallow-bpb` report is now schema version 2.
+- Measured on all four references with matching baseline hashes: 18,264 validated TIM leaves per Japanese image and 18,262 per English-labeled image (4bpp, 8bpp, and eight 24bpp images; 128 with two bytes of alignment padding), 18 rejected candidates per image recorded as counterexamples, and zero Ulz errors.
+- `scripts/validate_bpb_references.py` reports TIM counts, modes, rejection reasons, and a measured header-word profile of the still-unexplained `00002311` leaves; summary schema version 2.
+- Expanded synthetic tests from 95 to 111; documented the TIM contract, counterexamples, and the open `00002311` hypothesis in `docs/tim-format.md`.
 
 ## 0.4.0 — 2026-10-15
 

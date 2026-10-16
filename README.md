@@ -29,7 +29,7 @@ AC3's world of corporate power, fractured loyalties, and digital identity deserv
 
 ## Development status
 
-**Pre-alpha · toolchain v0.4.0 · no playable build yet.**
+**Pre-alpha · toolchain v0.5.0 · no playable build yet.**
 
 There is currently no engine, renderer, playable mission, or recovered gameplay code. The work so far builds reliable access to the game's data, so the reverse engineering can begin from solid ground.
 
@@ -38,7 +38,7 @@ There is currently no engine, renderer, playable mission, or recovered gameplay 
 | Source discs | Four fingerprinted references; complete archives stored with Git LFS in this private repository | Reproducible inputs for the complete Japanese campaign |
 | Disc access | ISO directory inspection, raw-image hashes, bounded Form 1 reads, logical-file comparison | Reliable access to game resources |
 | `ACE.BPH` index | Typed parser with explicit payload sizes and range checks; validated on all four references | Resource loading for the engine |
-| `ACE.BPB` contents | Nested DOT1 offset tables walked and Namco **Ulz** (v0/v2) decoded in memory with exact stream accounting on all four references; leaf formats still uninterpreted | Decoded models, textures, and data for the engine |
+| `ACE.BPB` contents | Nested DOT1 offset tables walked, Namco **Ulz** (v0/v2) decoded in memory with exact stream accounting, and PlayStation TIM image leaves validated to metadata on all four references; other leaf formats still uninterpreted | Decoded models, textures, and data for the engine |
 | Executable | PS-X EXE and `ACE3.BIN` identified; assembly track [planned](docs/next-task-executable.md) | Annotated original routines: Ulz, loaders, flight model, missions |
 | Streaming media | Form 2 detected and kept outside the Form 1 reader | Correct XA audio/video, timing, and interleave |
 | Gameplay and campaign | Not started; to be recovered from the original code | Playable missions, branching routes, transitions, and saves |
@@ -84,7 +84,7 @@ All reports contain metadata and hashes only; no tool writes extracted assets. E
 ## From archives to a playable game
 
 1. **Disc baseline: complete.** Identify the four supplied images, preserve the originals, and compare their contents.
-2. **Archive access: in progress.** The BPH index and BPB structure with Ulz decompression are done. Next are the leaf formats and the separate XA streaming reader.
+2. **Archive access: in progress.** The BPH index, the BPB structure with Ulz decompression, and TIM image validation are done. Next are the remaining leaf formats, including the `00002311` leaves, and the separate XA streaming reader.
 3. **Executable reverse engineering: next.** Disassemble the boot EXE and `ACE3.BIN` and separate out PsyQ library code. Document game routines in annotated assembly, starting with the Ulz decompressor and the BPB loader, then work toward the flight model.
 4. **One complete mission in the C engine.** Aircraft, level, the recovered flight model, controls, weapons, objectives, dialogue, and results working together, checked against emulator captures.
 5. **The full Electrosphere.** The branching campaign, disc-specific content, saves, enhanced presentation, human English dialogue, and platform validation.

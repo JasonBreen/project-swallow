@@ -10,7 +10,9 @@ The read-only `ACE.BPH` index parser is implemented in tooling v0.3.0 and valida
 
 Tooling v0.4.0 adds the read-only nested BPB container walker and a validated Namco Ulz (versions 0 and 2) decompressor, measured against every entry of all four references. See [the container contract](bpb-format.md) and [validation results](bpb-validation.md).
 
-Next, classify the opaque leaves that the walker exposes (TIM image candidates, the four top-level entries that may be overlays, and the decoded containers) from measured examples, and implement a bounded resource interface for understood formats. Use local-only extraction outputs and reproducible metadata manifests. The project goal is a fully playable open-source AC3 reconstruction, and these tools build its resource foundation. The game's own Ulz routine has not yet been matched; that is the first goal of the executable track below.
+Tooling v0.5.0 validates PlayStation TIM image leaves to metadata on all four references and records the `00002311` leaves as a measured hypothesis. See [the TIM contract](tim-format.md).
+
+Next, classify the remaining opaque leaves that the walker exposes (the `00002311` leaves, the four top-level entries that may be overlays, and the other decoded leaf signatures) from measured examples, and implement a bounded resource interface for understood formats. Use local-only extraction outputs and reproducible metadata manifests. The project goal is a fully playable open-source AC3 reconstruction, and these tools build its resource foundation. The game's own Ulz routine has not yet been matched; that is the first goal of the executable track below.
 
 Separately investigate `ACE.SPH` plus the Form 2 media in `ACE.SPB`. Preserve file/channel identifiers, timing, interleave, and payload boundaries. Do not route streaming data through the Form 1-only file helper.
 
