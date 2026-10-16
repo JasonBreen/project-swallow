@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Added a VS Code and Antigravity editor setup: debug configurations for the disc, BPH, BPB, compare, and validation tools; a committed test env file so Test Explorer works on a fresh clone; a shared `[tool.pyright]` configuration for Pylance and basedpyright; LF and final-newline file settings; `TEMP`/`TMP` on `G:` for debug, test, and Windows terminal runs; and a `tests/__init__.py` so root-level (`-t .`) discovery works. See `docs/editor-setup.md`.
 - Owner direction (recorded 2026-10-13): the C language is permitted and the game engine is C; Python stays limited to offline tooling. The `C:` drive must not be used; all work and data stay on `G:`. AGENTS.md and the README replace the earlier "no C" wording, which had been misread as a language ban.
 - Expanded the Team NEMO (Project NEMO) acknowledgment in CREDITS.md and the README, sourced from Romhacking.net: the full crew with credited roles, and esperknight's decompression work noted as prior art. The provenance of the English-labeled discs is still unverified.
 - Planned the executable assembly track ([next task](docs/next-task-executable.md)): recover flight and gameplay behavior 1:1 from the original code, starting by matching the game's own Ulz routine.

@@ -97,7 +97,7 @@ The [four-image baseline](docs/disc-inventory.md), [BPH validation](docs/bph-val
 
 Swallow builds on years of community preservation, translation, and format research. Special thanks go to **[Team NEMO (Project NEMO)](https://www.romhacking.net/community/1189/)**, whose English fan translation and AC3 hacking work, including esperknight's decompression research, have made the full Japanese game accessible to English-speaking players. Their full crew is credited in [CREDITS.md](CREDITS.md), along with everyone else whose work this project relies on. The banner is original project artwork inspired by AC3's interface language and contains no extracted game artwork.
 
-Code, verified format findings, original artwork, and human-performed dialogue are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) and the [local development contract](AGENTS.md). Open `project-swallow.code-workspace` for the supplied VS Code tasks and Python settings.
+Code, verified format findings, original artwork, and human-performed dialogue are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) and the [local development contract](AGENTS.md). Open the checkout in VS Code or Antigravity for the supplied tests, debug configurations, and Python settings; see the [editor setup](docs/editor-setup.md).
 
 ## License
 

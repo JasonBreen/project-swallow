@@ -20,3 +20,11 @@ swallow-bpb = "swallow_tools.bpb:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[tool.pyright]
+# Shared by Pylance (VS Code) and basedpyright (Antigravity/Open VSX), so both
+# editors report the same diagnostics. src/ imports resolve automatically.
+# "off" matches Pylance's default; see docs/editor-setup.md before raising it.
+include = ["src", "tests", "scripts"]
+pythonVersion = "3.11"
+typeCheckingMode = "off"
