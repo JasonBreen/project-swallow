@@ -22,7 +22,7 @@ The repository begins with the disc and archive tools needed to build that game 
 
 ## Development status
 
-**Pre-alpha · toolchain v0.4.0 · no playable build available yet.**
+**Pre-alpha · toolchain v0.5.0 · no playable build available yet.**
 
 The game is in development. There is currently no native renderer, playable mission, recovered gameplay runtime, or completed English dub. Windows and Linux are target game platforms; current automated coverage runs the Python tools on both.
 
@@ -31,7 +31,7 @@ The game is in development. There is currently no native renderer, playable miss
 | Source discs | Four fingerprinted references; complete archives stored with Git LFS in this private repository | Reproducible inputs for the complete Japanese campaign |
 | Disc access | ISO directory inspection, raw-image hashes, bounded Form 1 reads, logical-file comparison | Reliable access to game resources |
 | `ACE.BPH` | Typed index parser, explicit payload sizes, range checks, metadata reports; validated against all four references | Resource loading for the game |
-| `ACE.BPB` assets | Nested offset-table containers walked and Namco Ulz (v0/v2) decoded in memory with exact stream accounting; leaf formats still uninterpreted | Original assets and enhanced presentation |
+| `ACE.BPB` assets | Nested offset-table containers walked, Namco Ulz (v0/v2) decoded in memory with exact stream accounting, and PlayStation TIM image leaves validated to metadata; other leaf formats still uninterpreted | Original assets and enhanced presentation |
 | Streaming media | Form 2 detected and kept outside the Form 1 reader | Correct XA audio/video, timing, and interleave |
 | Gameplay and campaign | Original behavior established as the reference; runtime work remains ahead | Playable missions, branching routes, transitions, and saves |
 | English voices | Human-performed dub planned | A complete, credited team recording |
@@ -90,7 +90,7 @@ An optional editable install, `python -m pip install -e .`, exposes `swallow-dis
 
 The BPH report contains metadata and validates normal entry ranges against the ISO-recorded BPB size. It does not extract assets or execute the game. Uninterpreted special records remain explicit. Read the [format contract](docs/bph-format.md) and [validation results](docs/bph-validation.md) for the exact guarantees.
 
-The BPB report classifies each entry as a nested offset-table container, a Ulz compressed leaf, or an opaque leaf, and with `--decode` decompresses Ulz data in memory, reporting sizes, hashes, and exact stream consumption. It never writes game bytes. See the [container contract](docs/bpb-format.md) and [validation results](docs/bpb-validation.md).
+The BPB report classifies each entry as a nested offset-table container, a Ulz compressed leaf, a validated TIM image leaf, or an opaque leaf, and with `--decode` decompresses Ulz data in memory, reporting sizes, hashes, and exact stream consumption. TIM leaves are reported as mode, dimensions, CLUT size, and VRAM placement; no pixels are converted or written. It never writes game bytes. See the [container contract](docs/bpb-format.md), the [TIM contract](docs/tim-format.md), and [validation results](docs/bpb-validation.md).
 
 For disc inspection, `--cue /path/to/game.cue --strict-cue` checks that referenced filenames exist; it does not validate track timing. Exit codes are `0` for a completed operation, `2` for input/format errors, and `3` for failed strict CUE-reference checks. A completed comparison can report different files.
 
@@ -99,9 +99,10 @@ For disc inspection, `--cue /path/to/game.cue --strict-cue` checks that referenc
 1. **Disc baseline — complete.** Identify the four supplied images, preserve originals, and compare supported logical contents.
 2. **BPH index — implemented.** Decode and validate the archive's entry ranges; preserve uncertain fields and publish reproducible metadata.
 3. **BPB containers and compression — implemented.** Walk nested offset tables and decode Ulz versions 0 and 2 with validated stream accounting on all four references.
-4. **Resources and original behavior — next.** Classify the exposed leaf formats; develop a separate XA-aware media reader; establish executable/data behavior with reference captures.
-5. **One complete mission.** Aircraft, level, original flight behavior, controls, weapons, objectives, dialogue, and results working together.
-6. **The full Electrosphere.** Branching campaign, disc-specific content, saves, enhanced presentation, human English dialogue, and platform validation.
+4. **Leaf classification — in progress.** TIM image leaves are validated to metadata on all four references; the `00002311` leaves and the four text-like top-level entries remain measured hypotheses.
+5. **Resources and original behavior — next.** Classify the remaining leaf formats; develop a separate XA-aware media reader; establish executable/data behavior with reference captures.
+6. **One complete mission.** Aircraft, level, original flight behavior, controls, weapons, objectives, dialogue, and results working together.
+7. **The full Electrosphere.** Branching campaign, disc-specific content, saves, enhanced presentation, human English dialogue, and platform validation.
 
 The [roadmap](docs/roadmap.md) tracks these stages. Passing parser tests establishes tool behavior; a playable mission and campaign require their own runtime evidence.
 
