@@ -6,7 +6,7 @@ No decoded payload was written to disk; the checked-in reports hold metadata.
 
 ## Synthetic tests
 
-The complete suite passes **110 tests**: 95 from v0.4.0 plus 15 TIM
+The complete suite passes **111 tests**: 95 from v0.4.0 plus 16 TIM
 validator and walker tests added in v0.5.0 (header, flag, CLUT, pixel-block,
 VRAM, length, and trailing-byte rules; walker classification of valid,
 rejected, padded, and decoded TIM leaves; summary and CLI output). The
@@ -84,23 +84,25 @@ unchanged. Rules and field distributions are in the
 
 | Reference | TIM candidates | Validated `tim` leaves | Stored / decoded | Padded | Rejected | TIM bytes |
 |---|---:|---:|---:|---:|---:|---:|
-| Japanese Disc 1 | 18,282 | 18,267 | 138 / 18,129 | 131 | 15 | 44,104,550 |
-| Japanese Disc 2 | 18,282 | 18,267 | 138 / 18,129 | 131 | 15 | 44,104,550 |
-| English-labeled Disc 1 | 18,280 | 18,265 | 144 / 18,121 | 131 | 15 | 44,094,054 |
-| English-labeled Disc 2 | 18,280 | 18,265 | 138 / 18,127 | 131 | 15 | 44,094,054 |
+| Japanese Disc 1 | 18,282 | 18,264 | 138 / 18,126 | 128 | 18 | 44,103,602 |
+| Japanese Disc 2 | 18,282 | 18,264 | 138 / 18,126 | 128 | 18 | 44,103,602 |
+| English-labeled Disc 1 | 18,280 | 18,262 | 144 / 18,118 | 128 | 18 | 44,093,106 |
+| English-labeled Disc 2 | 18,280 | 18,262 | 138 / 18,124 | 128 | 18 | 44,093,106 |
 
-- Modes per Japanese image: 17,956 4bpp, 303 8bpp, 8 24bpp; the English
+- Modes per Japanese image: 17,953 4bpp, 303 8bpp, 8 24bpp; the English
   references have 301 8bpp images and are otherwise identical in every
   distribution. No 16bpp or mixed-mode image exists.
-- The 15 rejected candidates per image are the same on every image: 11
+- The 18 rejected candidates per image are the same on every image: 11
   pixel-block length words short of `12 + 2wh`, 2 pixel blocks with zero
-  width and height after a 1,024-entry CLUT, and 2 CLUT blocks at `x = 960`
-  that would extend past the 1,024-halfword VRAM width. All are decoded
-  leaves; no stored candidate is rejected.
-- The 131 padded images are followed by exactly two zero bytes on every
-  image. 14 CLUT blocks per image sit at `x = 511`.
+  width and height after a 1,024-entry CLUT, 2 CLUT blocks at `x = 960`
+  that would extend past the 1,024-halfword VRAM width, and 3 complete
+  images followed by two zero bytes as the final item of a decoded
+  container, where no following table offset proves the bytes are padding.
+  All are decoded leaves; no stored candidate is rejected.
+- The 128 padded images are non-final container items followed by exactly
+  two zero bytes up to the next aligned offset on every image. 14 CLUT blocks per image sit at `x = 511`.
 - With TIM classified, the remaining opaque leaves per Japanese image are
-  1,810 stored and 23,672 decoded. The most frequent decoded signatures are
+  1,810 stored and 23,675 decoded. The most frequent decoded signatures are
   now `00002311` (19,814), `00000109` (700), and `00000000` (167); the most
   frequent stored signatures are `00000000` (799) and `01000000` (101).
 
@@ -147,7 +149,7 @@ full-tree outputs are about 24 MB per image with TIM metadata and stay in
 This establishes the nested container structure, a validated decoder for
 the two Ulz versions present, and metadata-only validation of TIM image
 leaves. The `00002311` leaves, the other opaque leaves, the four text-like
-top-level entries, and the 15 rejected TIM candidates per image remain
+top-level entries, and the 18 rejected TIM candidates per image remain
 uninterpreted; no pixel is decoded or exported. SPH/SPB and XA media are
 separate work. No emulator boot, playable mission, flight behavior,
 renderer, campaign transition, or English dub has been validated by this

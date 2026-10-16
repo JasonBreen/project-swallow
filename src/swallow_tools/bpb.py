@@ -151,8 +151,13 @@ def walk_payload(data: bytes, *, decode: bool = False, path: tuple[int, ...] = (
 
 
 def _walk(data: bytes, decode: bool, path: tuple[int, ...], offset: int, depth: int,
-          origin: str, max_depth: int, budget: _Budget) -> Node:
-    """Build one node that the caller has already charged to the budget."""
+          origin: str, max_depth: int, budget: _Budget, *, aligned_item: bool = False) -> Node:
+    """Build one node that the caller has already charged to the budget.
+
+    ``aligned_item`` is true only for a container item that is not the last
+    one: its end is the next table offset, so the container proves that any
+    bytes between the item's own data and that offset are alignment padding.
+    """
     signature = data[:4].hex()
     if is_ulz(data):
         return _ulz_node(data, decode, path, offset, depth, origin, max_depth, budget)
@@ -161,35 +166,42 @@ def _walk(data: bytes, decode: bool, path: tuple[int, ...], offset: int, depth: 
     except ContainerLimitError:
         raise
     except ContainerFormatError:
-        return _leaf_node(data, path, offset, origin)
+        return _leaf_node(data, path, offset, origin, aligned_item=aligned_item)
     if depth >= max_depth:
         raise ContainerFormatError(f'Container nesting exceeds depth {max_depth}')
     budget.reserve(table.count)
     children = []
+    last = len(table.items) - 1
     for index, (start, end) in enumerate(table.items):
         if end > start:
             children.append(_walk(data[start:end], decode, path + (index,), start,
-                                  depth + 1, origin, max_depth, budget))
+                                  depth + 1, origin, max_depth, budget,
+                                  aligned_item=index < last))
         else:
             children.append(Node(path + (index,), start, 0, 'empty', '', origin))
     children = tuple(children)
     return Node(path, offset, len(data), 'container', signature, origin, children)
 
 
-def _leaf_node(data: bytes, path: tuple[int, ...], offset: int, origin: str) -> Node:
+def _leaf_node(data: bytes, path: tuple[int, ...], offset: int, origin: str, *,
+               aligned_item: bool = False) -> Node:
     """Classify a non-container, non-Ulz range: a validated TIM or an opaque leaf.
 
     A range that starts with the TIM id word but fails validation stays
     opaque and records the rejection reason, so candidate mismatches can be
-    counted without claiming the format. Containers align items to four
-    bytes, so up to three zero bytes after the pixel block are accepted and
-    reported as ``trailing_bytes``.
+    counted without claiming the format. Trailing zero bytes are accepted
+    only where the container proves they are alignment padding: in a
+    non-final item whose range is a whole number of four-byte units, and
+    then only fewer than four of them, so they are exactly the bytes up to
+    the next aligned offset. They are reported as ``trailing_bytes``. A
+    final item, a decoded payload, or a top-level entry gets the strict rule.
     """
     signature = data[:4].hex()
     if not is_tim_candidate(data):
         return Node(path, offset, len(data), 'opaque', signature, origin)
+    padding_proven = aligned_item and len(data) % TABLE_ALIGNMENT == 0
     try:
-        info = parse_tim(data, max_trailing_bytes=TABLE_ALIGNMENT - 1)
+        info = parse_tim(data, max_trailing_bytes=TABLE_ALIGNMENT - 1 if padding_proven else 0)
     except TimFormatError as exc:
         return Node(path, offset, len(data), 'opaque', signature, origin,
                     error=f'TIM candidate rejected: {exc}')
@@ -311,7 +323,7 @@ def inspect_bpb(path: Path, *, entries: list[int] | None = None,
                         'sha256': hashlib.sha256(data).hexdigest(),
                         'tree': node.to_report()})
     return {
-        'schema_version': 1,
+        'schema_version': 2,
         'source_image': disc.path.name,
         'volume_id': inventory['volume_id'],
         'bph': {'lba': bph.lba, 'size_bytes': bph.size},

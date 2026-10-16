@@ -47,11 +47,15 @@ pixel block `w` counts 16-bit VRAM halfwords, so the reported pixel width is
 `4w` for 4bpp, `2w` for 8bpp, `w` for 16bpp, and `2w / 3` for 24bpp (`2w`
 must then be divisible by 3).
 
-The blocks must end exactly at the end of the range. The walker alone passes
-`max_trailing_bytes=3`: BPB containers align every item except the last to
-four bytes, so an image whose size is 2 mod 4 is followed by two zero bytes
-inside its range. Those bytes must be zero and are reported as
-`trailing_bytes`. Every other caller gets the strict rule.
+The blocks must end exactly at the end of the range. The walker relaxes
+this only where the container structure proves the extra bytes are padding:
+for an item that is not the last one in its offset table, whose range ends
+at the next four-byte-aligned offset and is therefore a whole number of
+four-byte units. Only then does it pass `max_trailing_bytes=3`, so the
+accepted bytes are exactly those between the image's end and the next
+aligned offset. They must be zero and are reported as `trailing_bytes`. A
+final item, a decoded payload, and a top-level entry have no following
+offset and get the strict rule, as does every other caller.
 
 ## Report fields
 
@@ -67,32 +71,32 @@ Candidate means a leaf that starts with the id word. Counts are per image.
 
 | Reference | Candidates | Validated `tim` | Of which padded | Rejected |
 |---|---:|---:|---:|---:|
-| Japanese Disc 1 | 18,282 | 18,267 (138 stored, 18,129 decoded) | 131 | 15 |
-| Japanese Disc 2 | 18,282 | 18,267 (138 stored, 18,129 decoded) | 131 | 15 |
-| English-labeled Disc 1 | 18,280 | 18,265 (144 stored, 18,121 decoded) | 131 | 15 |
-| English-labeled Disc 2 | 18,280 | 18,265 (138 stored, 18,127 decoded) | 131 | 15 |
+| Japanese Disc 1 | 18,282 | 18,264 (138 stored, 18,126 decoded) | 128 | 18 |
+| Japanese Disc 2 | 18,282 | 18,264 (138 stored, 18,126 decoded) | 128 | 18 |
+| English-labeled Disc 1 | 18,280 | 18,262 (144 stored, 18,118 decoded) | 128 | 18 |
+| English-labeled Disc 2 | 18,280 | 18,262 (138 stored, 18,124 decoded) | 128 | 18 |
 
 Field distributions, identical in shape on all four images (Japanese counts;
 the English references differ by two 8bpp images):
 
-- Flags are `8` (4bpp with CLUT, 17,934 including the 131 padded images),
+- Flags are `8` (4bpp with CLUT, 17,931 including the 128 padded images),
   `9` (8bpp with CLUT, 303), `0` (4bpp without CLUT, 22), and `3` (24bpp
   direct, 8). No other flag value occurs, so bits above bit 3 are never set
-  and no image uses `pmode` 2 or 4. Validated TIM data totals 44,104,550
+  and no image uses `pmode` 2 or 4. Validated TIM data totals 44,103,602
   bytes per Japanese image.
-- CLUT blocks are `16x1` in 16,954 images, with multi-row 16-wide palettes
+- CLUT blocks are `16x1` in 16,951 images, with multi-row 16-wide palettes
   (`16x2` … `16x16`), `256x1` for every 8bpp image, and five other shapes
   (`32x1`, `48x1`, `64x1`, `64x4`, `16x12`), one image each.
 - 14 CLUT blocks sit at VRAM `x = 511`, which is not a multiple of 16. The
   Sony convention places palettes on 16-halfword boundaries; the validator
   does not enforce it and reports the count as `clut_x_not_16_aligned`.
-- Pixel blocks are placed across the full 1024x512 halfword VRAM: 13,414
-  start at `x >= 640` and 3,321 at `y >= 256` (Japanese; 13,412 and 3,319
+- Pixel blocks are placed across the full 1024x512 halfword VRAM: 13,412
+  start at `x >= 640` and 3,319 at `y >= 256` (Japanese; 13,410 and 3,317
   on the English references).
 - The eight 24bpp images are 256 pixels wide (384 halfwords) at `x = 576`,
   `y = 0`, 60 to 400 lines tall (46,100 to 307,220 bytes), and are stored
   (uncompressed) first items of eight different top-level containers.
-- The 131 padded images are 4bpp with a 16-entry CLUT and a pixel block
+- The 128 padded images are 4bpp with a 16-entry CLUT and a pixel block
   whose halfword count `w * h` is odd (for example 3x17 or 1x5), so the
   image ends 2 mod 4 and the container follows it with two zero bytes.
 - Stored (uncompressed) TIM leaves sit at depth 1 or 2; all other images
@@ -100,7 +104,7 @@ the English references differ by two 8bpp images):
 
 ## Rejected candidates (counterexamples)
 
-Fifteen candidates per image fail validation. They stay `opaque` with the
+Eighteen candidates per image fail validation. They stay `opaque` with the
 reason recorded on the node, and nothing is claimed about them:
 
 | Count | Shape | What fails |
@@ -108,11 +112,14 @@ reason recorded on the node, and nothing is claimed about them:
 | 11 | 4bpp, 16-entry CLUT; leaf sizes 192, 372, 576 | The pixel block length word is 4, 6, or 8 bytes short of `12 + 2wh` while the leaf size still equals `8 + 44 + 12 + 2wh` |
 | 2 | 4bpp, 2,080 bytes | A `16x64` CLUT (1,024 entries) followed by a pixel block header with `w = h = 0` and length 12 |
 | 2 | 8bpp, 5,248 bytes | A `256x1` CLUT at `x = 960`, which would extend to halfword 1216, past the 1024-halfword VRAM width |
+| 3 | 4bpp, 16-entry CLUT; leaf sizes 68 and 440 | A complete image that ends 2 bytes before its range, followed by two zero bytes, as the final item of a decoded container whose total size is a multiple of 4 |
 
 Hypotheses, not decoded: the first group may be hand-edited length words the
 game ignores in favour of `w * h`; the second may be palette-only images;
-the third may rely on GPU coordinate wrapping. Each would need a runtime
-observation before the validator accepts it.
+the third may rely on GPU coordinate wrapping; the fourth may be padding
+of the decoded payload as a whole, which no table offset proves. Each would
+need a runtime observation or a structural rule before the validator
+accepts it.
 
 ## The `00002311` leaves (open hypothesis)
 

@@ -235,6 +235,31 @@ class WalkTests(unittest.TestCase):
         self.assertEqual(root.children[0].kind, 'opaque')
         self.assertIn('blocks end', root.children[0].error)
 
+    def test_tim_padding_needs_a_following_aligned_offset(self):
+        tiny = tim_image(0x0, tim_block(0, 0, 1, 7))      # 8 + 12 + 14 = 34 bytes
+        self.assertEqual(len(tiny), 34)
+        exact = tim_image(0x0, tim_block(0, 0, 1, 1))     # 22 bytes
+        # Review counterexample: a 22-byte TIM plus one zero byte as the only
+        # (final) item of a 31-byte container must not count as padded.
+        payload = container(exact + b'\0')
+        self.assertEqual(len(payload), 31)
+        node = walk_payload(payload).children[0]
+        self.assertEqual(node.kind, 'opaque')
+        self.assertIn('blocks end at 22', node.error)
+        # A final item padded to four bytes still has no following offset.
+        node = walk_payload(container(padded(tiny))).children[0]
+        self.assertEqual(node.kind, 'opaque')
+        # Decoded payloads and top-level ranges have no table offset either.
+        root = walk_payload(container(encode_ulz(padded(tiny)), TIM_STUB), decode=True)
+        self.assertEqual(root.children[0].decoded.kind, 'opaque')
+        self.assertEqual(walk_payload(padded(tiny)).kind, 'opaque')
+        # A non-final item whose end is the next aligned offset is padded.
+        node = walk_payload(container(padded(tiny), TIM_STUB)).children[0]
+        self.assertEqual((node.kind, node.tim['trailing_bytes']), ('tim', 2))
+        # An empty item after it keeps the following offset aligned.
+        node = walk_payload(container(padded(tiny), b'', TIM_STUB)).children[0]
+        self.assertEqual(node.kind, 'tim')
+
     def test_decoded_tim_and_summary(self):
         image = sample_tim(4, 4)
         payload = container(encode_ulz(image), sample_tim(), TIM_STUB)
@@ -313,6 +338,7 @@ class InspectAndCliTests(unittest.TestCase):
     def test_inspect_walks_every_entry_with_iso_discovery(self):
         report = inspect_bpb(self.image)
         self.assertEqual(report['entry_count'], 4)
+        self.assertEqual(report['schema_version'], 2)
         kinds = [entry['tree']['kind'] for entry in report['entries']]
         self.assertEqual(kinds, ['container', 'opaque', 'container', 'container'])
         tim_entry = report['entries'][3]['tree']['children']

@@ -18,8 +18,9 @@ The walker classifies a byte range by structure, in this order:
    section. This is the shape psx-spx calls `DOT1` (four-byte aligned, no end
    entry). Its items are classified recursively.
 3. **TIM image leaf** — the range starts with the TIM id word `0x00000010`
-   and passes every rule in the [TIM contract](tim-format.md), allowing up to
-   three zero bytes of container alignment padding after the pixel block.
+   and passes every rule in the [TIM contract](tim-format.md). Up to three
+   zero bytes after the pixel block are accepted only in a non-final item,
+   whose next aligned table offset proves they are padding.
    The report carries mode, dimensions, CLUT size, and VRAM placement only.
    A range that starts with the id word but fails validation stays opaque
    and records the rejection reason.

@@ -26,10 +26,10 @@
       "ulz": 2256
     },
     "decoded_kinds": {
-      "opaque": 23672,
+      "opaque": 23675,
       "container": 1077,
       "empty": 7511,
-      "tim": 18127
+      "tim": 18124
     },
     "ulz_versions": {
       "2": 1090,
@@ -62,13 +62,13 @@
       "2": 1228
     },
     "tim_modes": {
-      "4bpp": 17956,
+      "4bpp": 17953,
       "8bpp": 301,
       "24bpp": 8
     },
-    "tim_with_clut": 18235,
-    "tim_bytes": 44094054,
-    "tim_candidates_rejected": 15
+    "tim_with_clut": 18232,
+    "tim_bytes": 44093106,
+    "tim_candidates_rejected": 18
   },
   "decoded_payload_kinds": {
     "opaque": 401,
@@ -80,22 +80,22 @@
   "match_count": 7055566,
   "ulz_error_paths": [],
   "tim": {
-    "count": 18265,
+    "count": 18262,
     "stored": 138,
-    "decoded": 18127,
+    "decoded": 18124,
     "modes": {
-      "4bpp": 17956,
+      "4bpp": 17953,
       "8bpp": 301,
       "24bpp": 8
     },
     "flags": {
-      "8": 17934,
+      "8": 17931,
       "9": 301,
       "0": 22,
       "3": 8
     },
-    "bytes": 44094054,
-    "trailing_padded": 131,
+    "bytes": 44093106,
+    "trailing_padded": 128,
     "clut_x_not_16_aligned": 14,
     "pixel_dims_top20": [
       [
@@ -182,7 +182,7 @@
     "clut_dims": [
       [
         "16x1",
-        16954
+        16951
       ],
       [
         "16x2",
@@ -241,15 +241,22 @@
         1
       ]
     ],
-    "candidates_rejected": 15,
+    "candidates_rejected": 18,
     "candidates_rejected_stored": 0,
-    "candidates_rejected_decoded": 15,
+    "candidates_rejected_decoded": 18,
     "rejection_reasons": {
+      "TIM candidate rejected: TIM blocks end at # but the data holds # bytes": 3,
       "TIM candidate rejected: pixel block length # does not equal # + # * # * # = #": 11,
       "TIM candidate rejected: pixel block has zero width or height (#x#)": 2,
       "TIM candidate rejected: CLUT block #,# #x# exceeds #x# halfword VRAM": 2
     },
     "rejected_examples": [
+      {
+        "path": "11.11.86",
+        "origin": "decoded",
+        "size": 68,
+        "error": "TIM candidate rejected: TIM blocks end at 66 but the data holds 68 bytes"
+      },
       {
         "path": "13.11.271",
         "origin": "decoded",
@@ -315,6 +322,18 @@
         "origin": "decoded",
         "size": 2080,
         "error": "TIM candidate rejected: pixel block has zero width or height (0x0)"
+      },
+      {
+        "path": "112.7.10",
+        "origin": "decoded",
+        "size": 440,
+        "error": "TIM candidate rejected: TIM blocks end at 438 but the data holds 440 bytes"
+      },
+      {
+        "path": "113.0.10",
+        "origin": "decoded",
+        "size": 440,
+        "error": "TIM candidate rejected: TIM blocks end at 438 but the data holds 440 bytes"
       },
       {
         "path": "114.5.67",

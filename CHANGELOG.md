@@ -3,10 +3,10 @@
 ## 0.5.0 — 2026-10-16
 
 - Added a read-only PlayStation TIM validator (`swallow_tools.tim`) that checks the id word, flags, CLUT block, pixel block, block lengths, and VRAM placement of one byte range and returns metadata only; pixels are never copied or written.
-- The BPB walker now reports an opaque leaf that validates as TIM with kind `tim` and its metadata. Candidates that start with the TIM id word but fail validation stay `opaque` with the recorded rejection reason. Up to three zero bytes of container alignment padding after the pixel block are accepted and reported.
-- Measured on all four references with matching baseline hashes: 18,267 validated TIM leaves per Japanese image and 18,265 per English-labeled image (4bpp, 8bpp, and eight 24bpp images; 131 with two bytes of alignment padding), 15 rejected candidates per image recorded as counterexamples, and zero Ulz errors.
+- The BPB walker now reports an opaque leaf that validates as TIM with kind `tim` and its metadata. Candidates that start with the TIM id word but fail validation stay `opaque` with the recorded rejection reason. Up to three zero bytes after the pixel block are accepted, and reported, only in a non-final container item whose next aligned offset proves they are padding. The full `swallow-bpb` report is now schema version 2.
+- Measured on all four references with matching baseline hashes: 18,264 validated TIM leaves per Japanese image and 18,262 per English-labeled image (4bpp, 8bpp, and eight 24bpp images; 128 with two bytes of alignment padding), 18 rejected candidates per image recorded as counterexamples, and zero Ulz errors.
 - `scripts/validate_bpb_references.py` reports TIM counts, modes, rejection reasons, and a measured header-word profile of the still-unexplained `00002311` leaves; summary schema version 2.
-- Expanded synthetic tests from 95 to 110; documented the TIM contract, counterexamples, and the open `00002311` hypothesis in `docs/tim-format.md`.
+- Expanded synthetic tests from 95 to 111; documented the TIM contract, counterexamples, and the open `00002311` hypothesis in `docs/tim-format.md`.
 
 ## 0.4.0 — 2026-10-15
 
