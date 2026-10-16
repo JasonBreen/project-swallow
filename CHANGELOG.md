@@ -1,15 +1,19 @@
 # Changelog
 
-## 0.4.0 — 2026-10-13
+## Unreleased
 
-- Added a read-only Namco "Ulz" decoder (`swallow_tools.ulz`) for versions 0 and 2. It enforces strict per-stream bounds and reports where each stream stopped.
-- Added a structural BPB walker and the `swallow-bpb` CLI. The walker accepts DOT1 offset tables only when they pass exact checks, decodes Ulz blocks recursively, and leaves everything else explicitly `unclassified`. Reports contain metadata and hashes only.
-- Validated against all four references: every Ulz block decodes to its declared size and consumes its streams up to alignment padding. The two Japanese discs produce identical trees for all 574 entries. Agreement with the game's own decompression routine is not yet proven.
-- Expanded synthetic tests from 53 to 76, using hand-built Ulz vectors and the measured counterexample shapes.
-- Recorded encoder differences on the English-labeled references: v0 flags left over after the declared size are counted as `unused_reference_flags` and not executed; what the game does with them is unverified.
-- Owner direction: the C language is permitted and the engine is C; Python is for offline tooling. The `C:` drive must not be used; all work and data stay on `G:`. AGENTS.md and the README were updated, replacing the earlier "no C" wording.
+- Owner direction (recorded 2026-10-13): the C language is permitted and the game engine is C; Python stays limited to offline tooling. The `C:` drive must not be used; all work and data stay on `G:`. AGENTS.md and the README replace the earlier "no C" wording, which had been misread as a language ban.
 - Expanded the Team NEMO (Project NEMO) acknowledgment in CREDITS.md and the README, sourced from Romhacking.net: the full crew with credited roles, and esperknight's decompression work noted as prior art. The provenance of the English-labeled discs is still unverified.
-- Planned the executable assembly track ([next task](docs/next-task-executable.md)): recover flight and gameplay behavior 1:1 from the original code.
+- Planned the executable assembly track ([next task](docs/next-task-executable.md)): recover flight and gameplay behavior 1:1 from the original code, starting by matching the game's own Ulz routine.
+- Recorded two leads for that track in `docs/bpb-format.md`: entries 1–4 hold hundreds of words in the PlayStation RAM range and may be overlays, and four opaque leaves contain an embedded Ulz signature. Both are unverified hypotheses.
+
+## 0.4.0 — 2026-10-15
+
+- Added a read-only nested `ACE.BPB` container walker and `swallow-bpb` CLI that classifies each BPH entry payload as an offset-table container, a Ulz leaf, or an opaque leaf, recursively, with depth/node/size limits; every node, empty items included, is reserved before it is built, so nested tables cannot exceed the cap. BPH and the walker share one archive lookup that rejects overlapping BPH/BPB extents.
+- Added a validated Namco Ulz decompressor for versions 0 and 2 with exact flag, literal, and pair stream accounting; every exhausted stream, early back-reference, overrun, missing version 0 terminator, unvalidated sentinel-only word, or nonzero leftover final-word flag is an error.
+- Walked all 574 entries on each of four references with decoding: 570 containers and 4 opaque entries per image, 9,018 Ulz blobs decoded with zero errors, and compact summaries recorded under `docs/reports/`.
+- Added `scripts/validate_bpb_references.py` for the hash-checked full walk; it verifies whole-image identity and fails on any Ulz decode error. Expanded synthetic tests from 53 to 95.
+- Documented the container and Ulz contracts, the measured unknowns, and the next classification targets.
 
 ## 0.3.0 — 2026-10-12
 

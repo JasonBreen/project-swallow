@@ -1,23 +1,22 @@
-# BPB / Ulz validation — 2026-10-13
+# BPB container and Ulz validation — 2026-10-15
 
-Local host: Windows, Python 3.12. The checkout, the extracted references, and
-all temporary and report data are on `G:`. Original images were read without
-modification.
+Local host: Windows, Python 3.12. Checkout and all input, temporary, and
+verification data are on `G:`. Original images were read without modification.
+No decoded payload was written to disk; the checked-in reports hold metadata.
 
 ## Synthetic tests
 
-The complete suite passes **76 tests**, 23 more than before. The new Ulz tests
-use hand-built blocks with known expected output, with no test-side encoder:
-
-- **Decoding:** literals, overlapping and non-overlapping references, and the version 0 stop bit / zero-word end.
-- **Version 0 trailing reference flags:** counted, not executed.
-- **Flag-word boundaries:** each measured displacement width (10–13).
-- **Rejections:** 15 malformed variants, plus the output limit.
-
-The new BPB tests cover:
-
-- **DOT1 checks:** exact acceptance, and rejection of the measured counterexample shapes and malformed tables.
-- **Walking:** nested tables, empty slots, Ulz children, compressed tables walked after decoding, reported nonzero padding, the nesting limit, and the CLI's success and error paths on a synthetic disc.
+The complete suite passes **95 tests**, including 42 new container and Ulz
+tests. They cover hand-built flag/literal/pair vectors for both Ulz versions,
+the version 0 sentinel positions, zero-word error, required terminator,
+sentinel-only word rejection, and final-word leftover flags, round trips through a
+local greedy test encoder for both versions and 10–13 offset bits, every
+header rejection, each stream-exhaustion case, early back-references, match
+overrun, the size limit, offset-table rules and rejections, nested and decoded
+classification, recorded (not raised) decode errors, depth and node limits,
+summary counts, empty items charged to the node limit, rejection of
+overlapping BPH/BPB extents, synthetic BPH/BPB image discovery, entry filtering, and CLI
+success/error paths.
 
 ```powershell
 $env:PYTHONPATH = "src"
@@ -26,70 +25,81 @@ $env:TMP = $env:TEMP
 python -m unittest discover -s tests -v
 ```
 
-This is a local result. GitHub Actions results are separate evidence.
+A local result is not a hosted CI result; the GitHub Actions matrix reports
+separately for the commit that introduces this change.
 
 ## Four-disc validation
 
-`scripts/validate_bpb_references.py` checks each reference image as follows:
+For every reference the whole-image MD5/SHA1/SHA256 and the logical SHA256 of
+`ACE.BPH` and `ACE.BPB` matched the [baseline](disc-inventory.md) before
+walking, every normal BPH entry was
+walked with decoding, and no Ulz blob produced an error.
 
-1. Recomputes the whole-image MD5/SHA1/SHA256 and matches the [baseline](disc-inventory.md).
-2. Walks all 574 BPH entries in process and through the CLI (`--no-trees`), and checks that every per-entry tree digest agrees.
-3. Requires every Ulz block to consume all three streams up to alignment padding only: a flag pad of 0 or 4 bytes, and literal and reference pads of at most 3.
-4. Requires every Ulz block that appears on more than one reference to decode to the same bytes everywhere.
+| Reference | Top-level containers | Opaque top-level | Stored nodes | Ulz blobs (v0 / v2) | Compressed bytes | Decompressed bytes | Report |
+|---|---:|---:|---:|---:|---:|---:|---|
+| Japanese Disc 1 | 570 | 4 | 5,540 | 2,256 (1,167 / 1,089) | 35,147,148 | 72,108,154 | [JSON](reports/bpb-jp1.json) |
+| Japanese Disc 2 | 570 | 4 | 5,540 | 2,256 (1,167 / 1,089) | 35,147,148 | 72,108,154 | [JSON](reports/bpb-jp2.json) |
+| English-labeled Disc 1 | 570 | 4 | 5,540 | 2,250 (1,155 / 1,095) | 34,021,844 | 71,900,466 | [JSON](reports/bpb-en1.json) |
+| English-labeled Disc 2 | 570 | 4 | 5,540 | 2,256 (1,166 / 1,090) | 34,370,088 | 72,097,650 | [JSON](reports/bpb-en2.json) |
 
-| Reference | Ulz blocks (v0 / v2) | Decoded bytes | DOT1 tables | Empty slots | Unclassified leaves | Report |
-|---|---:|---:|---:|---:|---:|---|
-| Japanese Disc 1 | 2,256 (1,167 / 1,089) | 72,108,154 | 2,413 | 7,511 | 43,749 | [JSON](reports/bpb-jp1.json) |
-| Japanese Disc 2 | 2,256 (1,167 / 1,089) | 72,108,154 | 2,413 | 7,511 | 43,749 | [JSON](reports/bpb-jp2.json) |
-| English-labeled Disc 1 | 2,250 (1,155 / 1,095) | 71,900,466 | 2,413 | 7,511 | 43,747 | [JSON](reports/bpb-en1.json) |
-| English-labeled Disc 2 | 2,256 (1,166 / 1,090) | 72,097,650 | 2,413 | 7,511 | 43,747 | [JSON](reports/bpb-en2.json) |
+Measured on all four images:
 
-All four references pass every check. The maximum nesting depth is 5.
+- The four opaque top-level entries are indices 1–4 on every image. Every
+  other entry is an offset-table container; all table offsets are four-byte
+  aligned and ordered. Stored nesting reaches depth 3; with decoded payloads
+  the deepest node is at depth 5.
+- Offset bit counts are 10, 11, 12, or 13 only. Lengths therefore use 6, 5, 4,
+  or 3 bits, giving maximum copy lengths of 66, 34, 18, and 10 bytes.
+- Every blob reached its declared size exactly; no stream was exhausted and no
+  copy overran. Across the Japanese pair the decoder processed 17,578,292
+  literals and 7,197,959 matches per disc.
+- No version 0 blob contains a sentinel-only `0x80000000` flag word. Final
+  words leave unused zero flag bits in 0 Japanese, 423 English Disc 1, and 361
+  English Disc 2 version 0 blobs; none leaves a nonzero bit.
+- Unused flag words: exactly one zero word follows the used flags in every
+  Japanese blob and in every version 0 blob on all four images, which the
+  decoder now requires. On the English references 40 (Disc 1) and 28 (Disc 2)
+  version 2 blobs have no trailing word; every unused word that exists is zero.
+- Unused literal bytes are 0–3 (padding to four bytes) and unused pair bytes
+  are 0 or 2 in every blob. Literal padding is not always zero-valued.
+- Of the decoded payloads, 1,069 per image are themselves offset-table
+  containers and the rest are opaque. The most frequent opaque signatures in
+  decoded data are `00002311` (19,814 leaves) and the PlayStation TIM header
+  word `10000000` (about 18,140 leaves). These are candidates for the next
+  classification step, not decoded formats.
+- The Japanese discs produce byte-identical reports, as their BPB contents
+  are identical. The English references change a small number of Ulz blobs
+  and leaf sizes while keeping the same container structure and entry count.
 
-- **Content comparison:** the Japanese Disc 1 and Disc 2 walks are identical for all 574 entries. Japanese vs English: Disc 1 matches on 334/574 entry trees and Disc 2 on 391/574. English Disc 1 vs English Disc 2: 325/574.
-- **Decode consistency:** 2,329 distinct Ulz blocks occur across the four references. Each decodes identically wherever it appears.
+## Reproduce with local images
 
-## Encoder differences on the English-labeled references
-
-The English images contain Ulz blocks that were clearly produced by a different encoder:
-
-| Observation | JP1 / JP2 | EN1 | EN2 |
-|---|---:|---:|---:|
-| v0 blocks with clear flags left over after the declared size is reached | 0 | 423 | 361 |
-| Total unused reference flags | 0 | 6,328 | 5,285 |
-| v2 blocks without the trailing all-zero flag word | 0 | 40 | 28 |
-
-The leftover v0 flags have no matching reference words; the literal and
-reference streams are fully consumed. Following psx-spx's version 0 description
-literally, a decoder would read past the reference stream and past the output
-size, as happened in the first English run of this validation. The project
-decoder counts these flags (`unused_reference_flags`) and does not execute them.
-**Whether the game's routine stops at the declared size, or tolerates a
-harmless overrun, is unverified.** It is an explicit check for the
-[executable track](next-task-executable.md).
-
-## Reproduce
-
-Extract the four archives into separate directories on `G:` (see [discs/README.md](../discs/README.md); with GNU tar, pass `--force-local` or POSIX `/g/...` paths so `G:` is not read as a remote host). Then run:
+Metadata for one entry, decoded in memory:
 
 ```powershell
 $env:PYTHONPATH = "src"
-$env:TEMP = "G:\ProjectSwallow-data\tmp"
-$env:TMP = $env:TEMP
-$d = "G:\ProjectSwallow-data"
-python scripts/validate_bpb_references.py --output-dir local-reports `
-  --reference jp1 "$d\japanese-disc1\Ace Combat 3 - Electrosphere (Japan) (Disc 1).bin" `
-  --reference jp2 "$d\japanese-disc2\Ace Combat 3 - Electrosphere (Japan) (Disc 2).bin" `
-  --reference en1 "$d\english-disc1\Ace Combat 3 Electrosphere (English v0.9b3)[Disc 1].bin" `
-  --reference en2 "$d\english-disc2\Ace Combat 3 Electrosphere (English v0.9b3)[Disc 2].bin"
+python -m swallow_tools.bpb "G:\ProjectSwallow-data\japanese-disc1\Ace Combat 3 - Electrosphere (Japan) (Disc 1).bin" --entry 5 --decode --tree
 ```
 
-A run takes under a minute per disc, including whole-image hashing. The output is metadata only.
+The stronger full-walk check verifies whole-image and BPH/BPB hashes against
+the baselines, so a disc supplied under the wrong key is rejected, walks every
+entry with decoding, fails if any Ulz blob is rejected, writes complete trees to an ignored local
+directory, and refreshes the compact summaries:
+
+```powershell
+python scripts/validate_bpb_references.py --output-dir local-reports --summary-dir docs/reports `
+  --reference jp1 "G:\ProjectSwallow-data\japanese-disc1\Ace Combat 3 - Electrosphere (Japan) (Disc 1).bin" `
+  --reference jp2 "G:\ProjectSwallow-data\japanese-disc2\Ace Combat 3 - Electrosphere (Japan) (Disc 2).bin"
+```
+
+Add `--reference en1 ...` and `--reference en2 ...` for the English pair. The
+full-tree outputs are about 12 MB per image and stay in `local-reports/`.
 
 ## Practical limits
 
-These checks prove internal consistency and complete stream accounting, not
-agreement with the game's own decompression routine. DOT1 acceptance is
-structural. Leaf formats, possible overlays, the four embedded Ulz blocks in
-unknown containers, SPH/SPB/XA media, and every gameplay behavior remain
-undecoded. No emulator boot was performed.
+This establishes the nested container structure and a validated decoder for
+the two Ulz versions present. Opaque leaves, the four text-like top-level
+entries, TIM candidates, and every decoded container's contents remain
+uninterpreted. SPH/SPB and XA media are separate work. No emulator boot,
+playable mission, flight behavior, renderer, campaign transition, or English
+dub has been validated by this change. See the
+[container contract](bpb-format.md) for the exact rules and unknowns.

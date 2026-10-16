@@ -1,13 +1,13 @@
-"""Read-only structural walk of AC3 BPB entries: DOT1 tables and Ulz blocks.
+"""Read-only walker for nested AC3 BPB entry containers; no asset export.
 
-Format evidence and limits: docs/bpb-format.md. Reports metadata and hashes
-only; no asset bytes are written. Node kinds are structural classifications,
-not decoded asset semantics.
+Each BPH entry's payload is classified as an offset-table container (the
+psx-spx "DOT1" shape: count, then count offsets whose first value is
+4 + 4 * count), a ``Ulz`` compressed leaf, or an opaque leaf that this tool
+does not interpret. Format evidence and limits: docs/bpb-format.md.
 """
 from __future__ import annotations
 
 import argparse
-from collections import Counter
 from dataclasses import dataclass
 import hashlib
 import json
@@ -15,229 +15,330 @@ from pathlib import Path
 import struct
 import sys
 
-from .bph import BphFormatError, parse_bph
-from .disc import DiscFormatError, FileEntry, PlayStationDisc
-from .ulz import MAGIC as ULZ_MAGIC, UlzFormatError, decompress_ulz
+from .bph import BphFormatError, SECTOR_BYTES, locate_archive_files, parse_bph
+from .disc import DiscFormatError, PlayStationDisc
+from .ulz import UlzFormatError, decompress_ulz, is_ulz, parse_ulz_header
 
-MAX_DEPTH = 12
-MAX_TABLE_ENTRIES = 65536
-MAX_ENTRY_OUTPUT = 64 * 1024 * 1024
+MAX_DEPTH = 8
+MAX_NODES = 100_000
+MAX_ENTRY_BYTES = 16 * 1024 * 1024
+TABLE_ALIGNMENT = 4
 
 
-class BpbFormatError(ValueError):
-    """A BPB entry violates a structure this walker accepted, or a safety limit."""
+class ContainerFormatError(ValueError):
+    """Data is not an offset-table container this walker validates."""
+
+
+class ContainerLimitError(ContainerFormatError):
+    """A walker resource limit was reached; the walk stops instead of classifying."""
 
 
 @dataclass(frozen=True)
-class BpbNode:
-    """One byte range. Offsets are relative to the parent's (decoded) bytes.
+class OffsetTable:
+    count: int
+    offsets: tuple[int, ...]
+    items: tuple[tuple[int, int], ...]
 
-    kind is 'dot1' (offset table passed every structural check), 'ulz'
-    (block decoded with full stream accounting; its single child is the
-    decoded payload at offset 0), 'empty' (zero-length table slot), or
-    'unclassified' (no rule matched; meaning unknown).
-    """
-    kind: str
+
+@dataclass(frozen=True)
+class Node:
+    path: tuple[int, ...]
     offset: int
     size: int
-    sha256: str
-    children: tuple['BpbNode', ...] = ()
+    kind: str
+    signature: str
+    origin: str = 'stored'
+    children: tuple['Node', ...] = ()
     ulz: dict | None = None
-    signature_hint: str | None = None
+    decoded: 'Node | None' = None
+    error: str | None = None
 
     def to_report(self) -> dict:
-        report = {'kind': self.kind, 'offset': self.offset, 'size': self.size,
-                  'sha256': self.sha256}
+        report = {
+            'path': '.'.join(str(part) for part in self.path),
+            'origin': self.origin,
+            'offset': self.offset,
+            'size': self.size,
+            'kind': self.kind,
+            'signature': self.signature,
+        }
+        if self.kind == 'container':
+            report['child_count'] = len(self.children)
+            report['children'] = [child.to_report() for child in self.children]
         if self.ulz is not None:
             report['ulz'] = self.ulz
-        if self.signature_hint is not None:
-            report['signature_hint'] = self.signature_hint
-        if self.children:
-            report['children'] = [child.to_report() for child in self.children]
+        if self.decoded is not None:
+            report['decoded'] = self.decoded.to_report()
+        if self.error is not None:
+            report['error'] = self.error
         return report
 
 
-def parse_dot1(data: bytes) -> tuple[int, ...] | None:
-    """Return child boundaries if data passes every DOT1 table check, else None.
+def parse_offset_table(data: bytes, *, max_count: int | None = None) -> OffsetTable:
+    """Validate a count-prefixed offset table; offsets are relative to data[0].
 
-    Accepted only if: 1 <= count <= limit; the table fits; the first offset is
-    exactly 4 + 4*count (no size word, no padding); offsets are 4-byte aligned,
-    nondecreasing, and within data. The returned tuple has count + 1 values;
-    the last child ends at the end of data. Equal offsets mean empty slots.
+    Rules measured on all four references: count >= 1, first offset equals
+    4 + 4 * count, offsets are four-byte aligned, nondecreasing, and end
+    within the data. The final item extends to the end of the data. A leaf
+    whose first words happen to satisfy these rules is indistinguishable
+    from a container; callers must treat the classification as structural.
+
+    With ``max_count``, a table that passes the cheap header checks but
+    declares more items raises ContainerLimitError before any offsets are
+    unpacked, so a huge declared count cannot force a large allocation.
     """
     if len(data) < 8:
-        return None
-    count = struct.unpack_from('<I', data)[0]
-    if not 1 <= count <= MAX_TABLE_ENTRIES or 4 + 4 * count > len(data):
-        return None
+        raise ContainerFormatError('Fewer than 8 bytes cannot hold a count and offset')
+    count, first = struct.unpack_from('<II', data)
+    if count == 0:
+        raise ContainerFormatError('Offset table count is zero')
+    header_size = 4 + 4 * count
+    if header_size > len(data):
+        raise ContainerFormatError(f'Offset table count {count} exceeds {len(data)} bytes')
+    if first != header_size:
+        raise ContainerFormatError(
+            f'First offset {first} does not equal header size {header_size}')
+    if max_count is not None and count > max_count:
+        raise ContainerLimitError(
+            f'Offset table declares {count} items, exceeding the remaining node budget '
+            f'of {max_count}')
     offsets = struct.unpack_from(f'<{count}I', data, 4)
-    if offsets[0] != 4 + 4 * count:
-        return None
-    if any(offset % 4 or offset > len(data) for offset in offsets):
-        return None
-    if any(left > right for left, right in zip(offsets, offsets[1:])):
-        return None
-    return offsets + (len(data),)
+    previous = 0
+    for position, offset in enumerate(offsets):
+        if offset % TABLE_ALIGNMENT:
+            raise ContainerFormatError(f'Offset {position} ({offset}) is not four-byte aligned')
+        if offset < previous:
+            raise ContainerFormatError(f'Offset {position} ({offset}) precedes offset {previous}')
+        previous = offset
+    if offsets[-1] > len(data):
+        raise ContainerFormatError(f'Last offset {offsets[-1]} exceeds {len(data)} bytes')
+    ends = tuple(offsets[1:]) + (len(data),)
+    return OffsetTable(count, tuple(offsets), tuple(zip(offsets, ends)))
 
 
-def signature_hint(data: bytes) -> str | None:
-    """Unvalidated leaf hints; never treated as decoded formats."""
-    if len(data) >= 8:
-        first, second = struct.unpack_from('<II', data)
-        if first == 0x10 and not second & ~0xB:
-            return 'tim_header_candidate'
-        if first == 0x41:
-            return 'tmd_header_candidate'
-    return None
+class _Budget:
+    def __init__(self, max_nodes: int):
+        self.limit = max_nodes
+        self.remaining = max_nodes
+
+    def reserve(self, count: int = 1) -> None:
+        if count > self.remaining:
+            raise ContainerLimitError(f'Node count exceeds the {self.limit} limit')
+        self.remaining -= count
 
 
-def _sha256(data: bytes) -> str:
-    return hashlib.sha256(data).hexdigest()
+def walk_payload(data: bytes, *, decode: bool = False, path: tuple[int, ...] = (),
+                 max_depth: int = MAX_DEPTH, max_nodes: int = MAX_NODES) -> Node:
+    """Classify one entry payload recursively without exporting any bytes.
+
+    With ``decode`` the walker decompresses each Ulz leaf, records its stream
+    accounting and payload SHA256, and classifies the decoded bytes with the
+    same rules. Decoding failures are recorded on the node rather than raised
+    so a report can still describe the rest of the entry.
+
+    Every node is charged to the budget before it is built: a container
+    reserves all of its declared children before descending into any of them,
+    so nested tables cannot together exceed ``max_nodes``.
+    """
+    budget = _Budget(max_nodes)
+    budget.reserve()
+    return _walk(data, decode, path, 0, 0, 'stored', max_depth, budget)
 
 
-def walk_entry(data: bytes, *, offset: int = 0, depth: int = 0,
-               budget: list[int] | None = None) -> BpbNode:
-    """Classify data recursively: Ulz block, DOT1 table, or unclassified leaf."""
-    if depth > MAX_DEPTH:
-        raise BpbFormatError(f'BPB nesting exceeds the {MAX_DEPTH}-level safety limit')
-    budget = [MAX_ENTRY_OUTPUT] if budget is None else budget
-    digest = _sha256(data)
-    if not data:
-        return BpbNode('empty', offset, 0, digest)
-    if data[:4] == ULZ_MAGIC:
-        try:
-            result = decompress_ulz(data)
-        except UlzFormatError as exc:
-            raise BpbFormatError(f'Ulz block at offset {offset}: {exc}') from exc
-        budget[0] -= len(result.data)
-        if budget[0] < 0:
-            raise BpbFormatError('Decoded output for one BPB entry exceeds the safety limit')
-        header = result.header
-        info = {
-            'version': header.version,
-            'decompressed_size': header.decompressed_size,
-            'disp_bits': header.disp_bits,
-            'literal_offset': header.literal_offset,
-            'reference_offset': header.reference_offset,
-            'flag_words': result.flag_words,
-            'unused_reference_flags': result.unused_reference_flags,
-            'flag_pad_bytes': header.literal_offset - result.flag_end,
-            'literal_pad_bytes': header.reference_offset - result.literal_end,
-            'reference_pad_bytes': len(data) - result.reference_end,
-            'nonzero_pad_bytes': sum(
-                byte != 0 for byte in (data[result.flag_end:header.literal_offset]
-                                       + data[result.literal_end:header.reference_offset]
-                                       + data[result.reference_end:])),
-        }
-        child = walk_entry(result.data, depth=depth + 1, budget=budget)
-        return BpbNode('ulz', offset, len(data), digest, (child,), info)
-    bounds = parse_dot1(data)
-    if bounds is None:
-        return BpbNode('unclassified', offset, len(data), digest,
-                       signature_hint=signature_hint(data))
-    children = tuple(
-        walk_entry(data[start:end], offset=start, depth=depth + 1, budget=budget)
-        for start, end in zip(bounds, bounds[1:]))
-    return BpbNode('dot1', offset, len(data), digest, children)
+def _walk(data: bytes, decode: bool, path: tuple[int, ...], offset: int, depth: int,
+          origin: str, max_depth: int, budget: _Budget) -> Node:
+    """Build one node that the caller has already charged to the budget."""
+    signature = data[:4].hex()
+    if is_ulz(data):
+        return _ulz_node(data, decode, path, offset, depth, origin, max_depth, budget)
+    try:
+        table = parse_offset_table(data, max_count=budget.remaining)
+    except ContainerLimitError:
+        raise
+    except ContainerFormatError:
+        return Node(path, offset, len(data), 'opaque', signature, origin)
+    if depth >= max_depth:
+        raise ContainerFormatError(f'Container nesting exceeds depth {max_depth}')
+    budget.reserve(table.count)
+    children = []
+    for index, (start, end) in enumerate(table.items):
+        if end > start:
+            children.append(_walk(data[start:end], decode, path + (index,), start,
+                                  depth + 1, origin, max_depth, budget))
+        else:
+            children.append(Node(path + (index,), start, 0, 'empty', '', origin))
+    children = tuple(children)
+    return Node(path, offset, len(data), 'container', signature, origin, children)
 
 
-def count_kinds(node: BpbNode, counts: Counter | None = None) -> Counter:
-    counts = Counter() if counts is None else counts
-    counts[node.kind] += 1
-    if node.kind == 'ulz':
-        counts[f'ulz_v{node.ulz["version"]}'] += 1
-        counts['ulz_decoded_bytes'] += node.ulz['decompressed_size']
-        counts['ulz_nonzero_pad_blocks'] += bool(node.ulz['nonzero_pad_bytes'])
-        counts['ulz_unused_reference_flag_blocks'] += bool(node.ulz['unused_reference_flags'])
-    elif node.kind == 'unclassified':
-        counts['unclassified_bytes'] += node.size
-        if node.signature_hint:
-            counts[node.signature_hint] += 1
-    for child in node.children:
-        count_kinds(child, counts)
-    return counts
+def _ulz_node(data: bytes, decode: bool, path: tuple[int, ...], offset: int, depth: int,
+              origin: str, max_depth: int, budget: _Budget) -> Node:
+    signature = data[:4].hex()
+    try:
+        header = parse_ulz_header(data)
+    except UlzFormatError as exc:
+        return Node(path, offset, len(data), 'ulz', signature, origin, error=str(exc))
+    info = {'header': {'decompressed_size': header.decompressed_size,
+                       'version': header.version,
+                       'literal_offset': header.literal_offset,
+                       'offset_bits': header.offset_bits,
+                       'length_bits': header.length_bits,
+                       'pair_offset': header.pair_offset},
+            'decoded': False}
+    if not decode:
+        return Node(path, offset, len(data), 'ulz', signature, origin, ulz=info)
+    try:
+        result = decompress_ulz(data)
+    except UlzFormatError as exc:
+        return Node(path, offset, len(data), 'ulz', signature, origin, ulz=info,
+                    error=str(exc))
+    info = result.to_report()
+    info['decoded'] = True
+    info['payload_sha256'] = hashlib.sha256(result.payload).hexdigest()
+    if depth >= max_depth:
+        raise ContainerFormatError(f'Decoded nesting exceeds depth {max_depth}')
+    budget.reserve()
+    decoded = _walk(result.payload, decode, path, 0, depth + 1, 'decoded', max_depth, budget)
+    return Node(path, offset, len(data), 'ulz', signature, origin, ulz=info, decoded=decoded)
 
 
-def tree_sha256(node: BpbNode) -> str:
-    """Digest of the canonical JSON tree, for comparing walks across discs."""
-    canonical = json.dumps(node.to_report(), sort_keys=True, separators=(',', ':'))
-    return _sha256(canonical.encode('ascii'))
+def summarize_nodes(roots: list[Node]) -> dict:
+    """Aggregate counts over node trees; metadata only."""
+    summary = {
+        'stored_nodes': 0, 'decoded_nodes': 0, 'max_depth': 0,
+        'kinds': {}, 'decoded_kinds': {},
+        'ulz_versions': {}, 'ulz_offset_bits': {},
+        'ulz_decoded': 0, 'ulz_errors': 0,
+        'ulz_compressed_bytes': 0, 'ulz_decompressed_bytes': 0,
+        'flag_words_unused': {}, 'unused_flag_words_nonzero': 0,
+        'v0_final_word_zero_padding_blobs': 0,
+        'literal_bytes_unused': {}, 'pair_bytes_unused': {},
+    }
+
+    def bump(table: dict, key) -> None:
+        table[str(key)] = table.get(str(key), 0) + 1
+
+    def visit(node: Node, depth: int) -> None:
+        stored = node.origin == 'stored'
+        summary['stored_nodes' if stored else 'decoded_nodes'] += 1
+        summary['max_depth'] = max(summary['max_depth'], depth)
+        bump(summary['kinds'] if stored else summary['decoded_kinds'], node.kind)
+        if node.kind == 'ulz':
+            if node.error:
+                summary['ulz_errors'] += 1
+            if node.ulz:
+                bump(summary['ulz_versions'], node.ulz['header']['version'])
+                bump(summary['ulz_offset_bits'], node.ulz['header']['offset_bits'])
+                summary['ulz_compressed_bytes'] += node.size
+                if node.ulz.get('decoded'):
+                    summary['ulz_decoded'] += 1
+                    summary['ulz_decompressed_bytes'] += node.ulz['header']['decompressed_size']
+                    bump(summary['flag_words_unused'], node.ulz['flag_words_unused'])
+                    if (node.ulz['header']['version'] == 0
+                            and node.ulz['final_word_unused_flag_bits']):
+                        summary['v0_final_word_zero_padding_blobs'] += 1
+                    bump(summary['literal_bytes_unused'], node.ulz['literal_bytes_unused'])
+                    bump(summary['pair_bytes_unused'], node.ulz['pair_bytes_unused'])
+                    if not node.ulz['unused_flag_words_zero']:
+                        summary['unused_flag_words_nonzero'] += 1
+        for child in node.children:
+            visit(child, depth + 1)
+        if node.decoded is not None:
+            visit(node.decoded, depth + 1)
+
+    for root in roots:
+        visit(root, 0)
+    return summary
 
 
-def inspect_bpb(path: Path, *, include_trees: bool = True) -> dict:
-    """Walk every normal BPH entry's BPB range; metadata and hashes only."""
+def inspect_bpb(path: Path, *, entries: list[int] | None = None,
+                decode: bool = False) -> dict:
+    """Walk BPB entries discovered through the ISO directory and BPH index."""
     disc = PlayStationDisc(path)
     inventory = disc.inspect()
-
-    def find_file(name: str) -> FileEntry:
-        candidates = [entry for entry in inventory['files'] if entry['path'] == name]
-        if len(candidates) != 1:
-            raise BpbFormatError(f'Expected exactly one root {name}; found {len(candidates)}')
-        entry = FileEntry(**candidates[0])
-        disc.validate_file_extent(entry)
-        return entry
-
-    bph, bpb = find_file('ACE.BPH'), find_file('ACE.BPB')
+    bph, bpb = locate_archive_files(disc, inventory)
     index = parse_bph(disc.read_file(bph), bpb.size)
-    totals: Counter = Counter()
-    entries = []
-    for entry in index.entries:
-        if entry.kind != 'normal':
-            entries.append({'index': entry.index, 'kind': entry.kind})
-            totals['special_uninterpreted'] += 1
-            continue
+    wanted = None if entries is None else set(entries)
+    selected = [entry for entry in index.entries if entry.kind == 'normal'
+                and (wanted is None or entry.index in wanted)]
+    if wanted is not None and len(selected) != len(wanted):
+        raise BphFormatError('Requested entry indices are not all normal BPH records')
+    roots: list[Node] = []
+    reports = []
+    for entry in selected:
+        if entry.size_bytes > MAX_ENTRY_BYTES:
+            raise ContainerFormatError(
+                f'Entry {entry.index} exceeds the {MAX_ENTRY_BYTES} byte walker limit')
         data = disc.read_file(bpb, offset=entry.offset_bytes, length=entry.size_bytes)
-        try:
-            node = walk_entry(data)
-        except BpbFormatError as exc:
-            raise BpbFormatError(f'BPH entry {entry.index}: {exc}') from exc
-        counts = count_kinds(node)
-        totals.update(counts)
-        record = {'index': entry.index, 'offset_bytes': entry.offset_bytes,
-                  'size_bytes': entry.size_bytes, 'root_kind': node.kind,
-                  'sha256': node.sha256, 'tree_sha256': tree_sha256(node),
-                  'counts': dict(sorted(counts.items()))}
-        if include_trees:
-            record['tree'] = node.to_report()
-        entries.append(record)
+        node = walk_payload(data, decode=decode, path=(entry.index,))
+        roots.append(node)
+        reports.append({'index': entry.index, 'bpb_offset': entry.offset_bytes,
+                        'size': entry.size_bytes,
+                        'sha256': hashlib.sha256(data).hexdigest(),
+                        'tree': node.to_report()})
     return {
         'schema_version': 1,
         'source_image': disc.path.name,
         'volume_id': inventory['volume_id'],
-        'bpb': {'path': bpb.path, 'size_bytes': bpb.size},
-        'entry_count': len(entries),
-        'totals': dict(sorted(totals.items())),
-        'entries': entries,
+        'bph': {'lba': bph.lba, 'size_bytes': bph.size},
+        'bpb': {'lba': bpb.lba, 'size_bytes': bpb.size, 'sector_bytes': SECTOR_BYTES},
+        'decode': decode,
+        'entry_count': len(reports),
+        'summary': summarize_nodes(roots),
+        'entries': reports,
     }
+
+
+def _print_tree(node: dict, indent: int) -> None:
+    label = f"{'  ' * indent}[{node['path']}] {node['kind']} {node['size']} B"
+    if node['origin'] == 'decoded':
+        label += ' (decoded)'
+    if node['kind'] == 'ulz' and node.get('ulz'):
+        header = node['ulz']['header']
+        label += (f" v{header['version']} -> {header['decompressed_size']} B,"
+                  f" {header['offset_bits']}-bit offsets")
+    elif node['kind'] == 'opaque':
+        label += f" signature {node['signature']}"
+    if node.get('error'):
+        label += f" ERROR: {node['error']}"
+    print(label)
+    for child in node.get('children', []):
+        _print_tree(child, indent + 1)
+    if node.get('decoded'):
+        _print_tree(node['decoded'], indent + 1)
 
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
-        description='Read-only AC3 ACE.BPB structure report (DOT1 tables, Ulz blocks)')
+        description='Read-only AC3 ACE.BPB nested container report (metadata only)')
     parser.add_argument('bin', type=Path, help='Local raw MODE2/2352 disc image')
-    parser.add_argument('--json', action='store_true', help='Metadata-only JSON report')
-    parser.add_argument('--no-trees', action='store_true',
-                        help='Omit per-node trees; keep per-entry digests and counts')
+    parser.add_argument('--entry', type=int, action='append',
+                        help='BPH entry index to walk; repeatable (default: all)')
+    parser.add_argument('--decode', action='store_true',
+                        help='Decompress Ulz leaves in memory and classify their payloads')
+    parser.add_argument('--json', action='store_true', help='Full metadata-only report')
+    parser.add_argument('--tree', action='store_true', help='Print every node (text mode)')
     args = parser.parse_args(argv)
     try:
-        report = inspect_bpb(args.bin, include_trees=not args.no_trees)
-    except (OSError, DiscFormatError, BphFormatError, BpbFormatError) as exc:
+        report = inspect_bpb(args.bin, entries=args.entry, decode=args.decode)
+    except (OSError, DiscFormatError, BphFormatError, ContainerFormatError) as exc:
         print(f'ERROR: {exc}', file=sys.stderr)
         return 2
     if args.json:
         print(json.dumps(report, indent=2))
         return 0
-    print(f"{report['source_image']}: {report['entry_count']} BPB entries walked")
-    for key, value in report['totals'].items():
-        print(f'{key:>28}: {value}')
-    print('   INDEX  ROOT KIND            SIZE  NODES')
+    summary = report['summary']
+    print(f"{report['source_image']}: {report['entry_count']} entries walked; "
+          f"{summary['stored_nodes']} stored nodes, {summary['decoded_nodes']} decoded nodes")
+    print(f"Kinds: {summary['kinds']}; Ulz versions: {summary['ulz_versions']}; "
+          f"Ulz errors: {summary['ulz_errors']}")
     for entry in report['entries']:
-        if 'root_kind' not in entry:
-            print(f"{entry['index']:8d}  {entry['kind']}")
-            continue
-        nodes = sum(entry['counts'].get(kind, 0)
-                    for kind in ('dot1', 'ulz', 'empty', 'unclassified'))
-        print(f"{entry['index']:8d}  {entry['root_kind']:<12} {entry['size_bytes']:12d} {nodes:6d}")
+        tree = entry['tree']
+        if args.tree:
+            _print_tree(tree, 0)
+        else:
+            print(f"{entry['index']:5d} {entry['size']:9d} B {tree['kind']:9s} "
+                  f"children={tree.get('child_count', 0)}")
     return 0
 
 

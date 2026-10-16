@@ -1,126 +1,251 @@
-"""Ulz decoder contracts using hand-built blocks with known expected output.
-
-Flag words, literals, and references below are written by hand; there is no
-test-side encoder that could share a misunderstanding with the decoder.
-"""
+"""Ulz decoder contracts exercised with synthetic blobs and a local test encoder."""
+import random
 import struct
 import unittest
 
-from swallow_tools.ulz import UlzFormatError, decompress_ulz, parse_ulz_header
+from swallow_tools.ulz import (
+    MAGIC, UlzFormatError, decompress_ulz, is_ulz, parse_ulz_header,
+)
 
 
-def block(version, size, disp_bits, flags, literals=b'', references=(),
-          *, literal_offset=None, reference_offset=None, truncate=None,
-          magic=b'Ulz\x1a'):
-    """Lay out header + streams with 4-byte alignment like measured AC3 blocks."""
-    flag_bytes = b''.join(struct.pack('<I', word) for word in flags)
-    literal_offset = 16 + len(flag_bytes) if literal_offset is None else literal_offset
-    padded = literals + b'\x00' * (-len(literals) % 4)
-    reference_offset = (16 + len(flag_bytes) + len(padded)
-                        if reference_offset is None else reference_offset)
-    data = struct.pack('<4sIII', magic, size | version << 24,
-                       literal_offset | disp_bits << 24, reference_offset)
-    data += flag_bytes + padded + b''.join(struct.pack('<H', ref) for ref in references)
-    return data if truncate is None else data[:truncate]
+def pack_flags(bits, version):
+    """Pack flag bits into little-endian words the way the decoder expects."""
+    words = []
+    if version == 2:
+        for start in range(0, len(bits), 32):
+            chunk = bits[start:start + 32]
+            word = 0
+            for bit in chunk:
+                word = (word << 1) | bit
+            words.append(word << (32 - len(chunk)))
+    else:
+        for start in range(0, len(bits), 31):
+            chunk = bits[start:start + 31]
+            word = 0
+            for bit in chunk:
+                word = (word << 1) | bit
+            word = (word << 1) | 1            # sentinel directly below the last flag
+            words.append(word << (31 - len(chunk)))
+    words.append(0)                           # observed trailing zero terminator
+    return b''.join(word.to_bytes(4, 'little') for word in words)
 
 
-def ref(length, distance, disp_bits=10):
-    return (length - 3) << disp_bits | (distance - 1)
+def build_ulz(payload_size, version, offset_bits, flags, literals, pairs,
+              *, literal_pad=None, pair_pad=None, terminator=True):
+    flag_bytes = pack_flags(flags, version)
+    if not terminator:
+        flag_bytes = flag_bytes[:-4]
+    literal_bytes = bytes(literals)
+    literal_bytes += b'\0' * (-len(literal_bytes) % 4 if literal_pad is None else literal_pad)
+    pair_bytes = b''.join(struct.pack('<H', value) for value in pairs)
+    pair_bytes += b'\0' * (-len(pair_bytes) % 4 if pair_pad is None else pair_pad)
+    literal_offset = 16 + len(flag_bytes)
+    pair_offset = literal_offset + len(literal_bytes)
+    header = MAGIC + struct.pack('<III', payload_size | (version << 24),
+                                 literal_offset | (offset_bits << 24), pair_offset)
+    return header + flag_bytes + literal_bytes + pair_bytes
 
 
-# Version 2: four literals, then the zero flag word every measured v2 block ends with.
-V2_LITERALS = block(2, 4, 10, [0xF0000000, 0], b'ABCD')
-# Version 2: 'A', 'B', then a length-5 distance-2 overlapping reference.
-V2_OVERLAP = block(2, 7, 10, [0xC0000000, 0], b'AB', [ref(5, 2)])
-# Version 0: literal 'A', reference (3, 1), then the stop bit; a zero word ends it.
-V0_RUN = block(0, 4, 10, [0xA0000000, 0], b'A', [ref(3, 1)])
+def encode_ulz(payload, version=2, offset_bits=10):
+    """Greedy reference encoder used only to produce round-trip fixtures."""
+    max_distance = 1 << offset_bits
+    max_length = (1 << (16 - offset_bits)) + 2
+    flags, literals, pairs = [], bytearray(), []
+    position = 0
+    while position < len(payload):
+        best_length = best_distance = 0
+        for candidate in range(max(0, position - max_distance), position):
+            length = 0
+            while (length < max_length and position + length < len(payload)
+                   and payload[candidate + length] == payload[position + length]):
+                length += 1
+            if length > best_length:
+                best_length, best_distance = length, position - candidate
+        if best_length >= 3:
+            flags.append(0)
+            pairs.append((best_distance - 1) | ((best_length - 3) << offset_bits))
+            position += best_length
+        else:
+            flags.append(1)
+            literals.append(payload[position])
+            position += 1
+    return build_ulz(len(payload), version, offset_bits, flags, literals, pairs)
 
 
-class UlzDecoderTests(unittest.TestCase):
-    def test_header_fields(self):
-        header = parse_ulz_header(V2_OVERLAP)
-        self.assertEqual((header.decompressed_size, header.version, header.literal_offset,
-                          header.disp_bits, header.reference_offset), (7, 2, 24, 10, 28))
+class UlzHandVectorTests(unittest.TestCase):
+    def test_version2_literal_then_overlapping_match(self):
+        # One literal zero, then distance 1 / length 39 copies it 39 more times.
+        blob = build_ulz(40, 2, 10, [1, 0], [0], [(0) | (36 << 10)])
+        result = decompress_ulz(blob)
+        self.assertEqual(result.payload, bytes(40))
+        self.assertEqual((result.literal_count, result.match_count), (1, 1))
+        self.assertEqual((result.flag_words_used, result.flag_words_unused), (1, 1))
+        self.assertTrue(result.unused_flag_words_zero)
+        self.assertEqual((result.literal_bytes_used, result.literal_bytes_unused), (1, 3))
+        self.assertEqual((result.pair_bytes_used, result.pair_bytes_unused), (2, 2))
 
-    def test_version2_literals_and_stream_accounting(self):
-        result = decompress_ulz(V2_LITERALS)
-        self.assertEqual(result.data, b'ABCD')
-        self.assertEqual((result.flag_end, result.literal_end, result.reference_end,
-                          result.flag_words), (20, 28, 28, 1))
+    def test_flag_bits_are_consumed_from_bit31_of_little_endian_words(self):
+        blob = build_ulz(4, 2, 10, [1, 1, 1, 1], b'abcd', [])
+        self.assertEqual(blob[16:20], b'\x00\x00\x00\xf0')
+        self.assertEqual(decompress_ulz(blob).payload, b'abcd')
 
-    def test_overlapping_reference_repeats_output(self):
-        result = decompress_ulz(V2_OVERLAP)
-        self.assertEqual(result.data, b'ABABABA')
-        self.assertEqual((result.flag_end, result.literal_end, result.reference_end),
-                         (20, 26, 30))
+    def test_offset_bits_split_distance_and_length(self):
+        # 12 offset bits: distance field 2 -> distance 3, length field 1 -> length 4.
+        blob = build_ulz(7, 2, 12, [1, 1, 1, 0], b'xyz', [2 | (1 << 12)])
+        self.assertEqual(decompress_ulz(blob).payload, b'xyzxyzx')
 
-    def test_nonoverlapping_reference(self):
-        data = block(2, 7, 10, [0xF0000000, 0], b'WXYZ', [ref(3, 4)])
-        self.assertEqual(decompress_ulz(data).data, b'WXYZWXY')
+    def test_version0_sentinel_marks_end_of_each_word(self):
+        payload = bytes(range(1, 41))
+        blob = build_ulz(40, 0, 10, [1] * 40, payload, [])
+        words = struct.unpack_from('<III', blob, 16)
+        self.assertEqual(words[0], 0xFFFFFFFF)          # 31 flags plus sentinel
+        self.assertEqual(words[1], 0xFFC00000)          # 9 flags, sentinel at bit 22
+        self.assertEqual(words[2], 0)
+        result = decompress_ulz(blob)
+        self.assertEqual(result.payload, payload)
+        self.assertEqual(result.flag_words_used, 2)
 
-    def test_version0_stops_at_zero_flag_word(self):
-        result = decompress_ulz(V0_RUN)
-        self.assertEqual(result.data, b'AAAA')
-        self.assertEqual((result.flag_end, result.flag_words), (24, 2))
+    def test_version0_sentinel_only_word_is_rejected_as_unvalidated(self):
+        flags = pack_flags([1, 1], 0)
+        flag_bytes = (0x80000000).to_bytes(4, 'little') + flags
+        blob = (MAGIC + struct.pack('<III', 2, (16 + len(flag_bytes)) | (10 << 24),
+                                    16 + len(flag_bytes) + 4) + flag_bytes + b'ab\0\0')
+        with self.assertRaisesRegex(UlzFormatError, 'sentinel-only flag word 0'):
+            decompress_ulz(blob)
 
-    def test_version0_literals_only(self):
-        self.assertEqual(decompress_ulz(block(0, 2, 10, [0xE0000000, 0], b'AB')).data, b'AB')
+    def _v0_blob(self, size, flag_word, literals):
+        flag_bytes = flag_word.to_bytes(4, 'little') + bytes(4)
+        literal_bytes = literals + b'\0' * (-len(literals) % 4)
+        literal_offset = 16 + len(flag_bytes)
+        return (MAGIC + struct.pack('<III', size, literal_offset | (10 << 24),
+                                    literal_offset + len(literal_bytes))
+                + flag_bytes + literal_bytes)
 
-    def test_version0_trailing_reference_flags_are_counted_not_run(self):
-        # 'A', 'B', two clear flags with no references behind them, stop bit at 27.
-        result = decompress_ulz(block(0, 2, 10, [0xC8000000, 0], b'AB'))
-        self.assertEqual(result.data, b'AB')
-        self.assertEqual(result.unused_reference_flags, 2)
-        self.assertEqual(decompress_ulz(V0_RUN).unused_reference_flags, 0)
+    def test_version0_nonzero_unused_flags_are_rejected(self):
+        # Flags 1,1 then the sentinel: only one byte is declared, so a literal
+        # flag would be left unconsumed above the sentinel.
+        with self.assertRaisesRegex(UlzFormatError, 'nonzero unused flags 0b1'):
+            decompress_ulz(self._v0_blob(1, 0xE0000000, b'ab'))
 
-    def test_each_measured_displacement_width(self):
-        for bits in (10, 11, 12, 13):
-            with self.subTest(bits=bits):
-                data = block(2, 6, bits, [0xC0000000, 0], b'PQ', [ref(4, 2, bits)])
-                self.assertEqual(decompress_ulz(data).data, b'PQPQPQ')
-        # The same reference word means something else under another width.
-        data = block(2, 6, 11, [0xC0000000, 0], b'PQ', [ref(4, 2, 10)])
-        with self.assertRaises(UlzFormatError):
-            decompress_ulz(data)
+    def test_version0_zero_unused_flags_are_accepted_and_reported(self):
+        # One literal flag, thirty zero bits, sentinel at bit 0 (English-patch layout).
+        result = decompress_ulz(self._v0_blob(1, 0x80000001, b'a'))
+        self.assertEqual(result.payload, b'a')
+        self.assertEqual(result.final_word_unused_flag_bits, 30)
+        self.assertEqual(decompress_ulz(self._v0_blob(1, 0xC0000000, b'a'))
+                         .final_word_unused_flag_bits, 0)
 
-    def test_flag_word_boundary_uses_all_32_bits_in_version2(self):
-        literals = bytes(range(33))
-        data = block(2, 33, 10, [0xFFFFFFFF, 0x80000000, 0], literals)
-        self.assertEqual(decompress_ulz(data).data, literals)
+    def test_version0_zero_word_before_completion_is_error(self):
+        blob = build_ulz(3, 0, 10, [1, 1], b'ab', [])
+        with self.assertRaisesRegex(UlzFormatError, 'zero flag word'):
+            decompress_ulz(blob)
 
-    def test_block_end_limits_reference_stream(self):
-        padded = V2_OVERLAP + b'\x00\x00'
-        self.assertEqual(decompress_ulz(padded, end=len(V2_OVERLAP)).reference_end, 30)
-        self.assertEqual(decompress_ulz(b'xx' + V2_OVERLAP, 2).data, b'ABABABA')
+    def test_version0_requires_zero_terminator_after_declared_size(self):
+        missing = build_ulz(1, 0, 10, [1], b'a', [], terminator=False)
+        with self.assertRaisesRegex(UlzFormatError, 'terminator .* is missing'):
+            decompress_ulz(missing)
+        good = build_ulz(1, 0, 10, [1], b'a', [])
+        literal_offset = struct.unpack_from('<I', good, 8)[0] & 0xFFFFFF
+        nonzero = bytearray(good)
+        nonzero[literal_offset - 4:literal_offset] = (0x80000000).to_bytes(4, 'little')
+        with self.assertRaisesRegex(UlzFormatError, 'terminator .* is 0x80000000'):
+            decompress_ulz(bytes(nonzero))
+        self.assertEqual(decompress_ulz(good).payload, b'a')
 
-    def test_rejections(self):
+    def test_version2_does_not_require_terminator(self):
+        blob = build_ulz(1, 2, 10, [1], b'a', [], terminator=False)
+        result = decompress_ulz(blob)
+        self.assertEqual(result.payload, b'a')
+        self.assertEqual(result.flag_words_unused, 0)
+
+    def test_version2_uses_all_32_bits(self):
+        payload = bytes(range(33))
+        blob = build_ulz(33, 2, 10, [1] * 33, payload, [])
+        result = decompress_ulz(blob)
+        self.assertEqual(result.payload, payload)
+        self.assertEqual(result.flag_words_used, 2)
+
+
+class UlzRoundTripTests(unittest.TestCase):
+    def test_round_trip_versions_and_offset_bits(self):
+        rng = random.Random(7)
+        words = [bytes(rng.randrange(256) for _ in range(rng.randrange(1, 6)))
+                 for _ in range(12)]
+        payload = b''.join(rng.choice(words) for _ in range(600))
+        for version in (0, 2):
+            for offset_bits in (10, 11, 12, 13):
+                with self.subTest(version=version, offset_bits=offset_bits):
+                    blob = encode_ulz(payload, version, offset_bits)
+                    result = decompress_ulz(blob)
+                    self.assertEqual(result.payload, payload)
+                    self.assertLess(len(blob), len(payload))
+                    self.assertEqual(result.header.version, version)
+                    self.assertEqual(result.header.length_bits, 16 - offset_bits)
+                    self.assertEqual(result.flag_words_unused, 1)
+                    self.assertLessEqual(result.literal_bytes_unused, 3)
+                    self.assertIn(result.pair_bytes_unused, (0, 2))
+
+    def test_round_trip_incompressible_and_empty(self):
+        rng = random.Random(3)
+        noise = bytes(rng.randrange(256) for _ in range(500))
+        self.assertEqual(decompress_ulz(encode_ulz(noise)).payload, noise)
+        self.assertEqual(decompress_ulz(encode_ulz(noise, version=0)).payload, noise)
+        empty = encode_ulz(b'')
+        self.assertEqual(decompress_ulz(empty).payload, b'')
+
+    def test_report_omits_payload(self):
+        report = decompress_ulz(encode_ulz(b'swallow' * 20)).to_report()
+        self.assertNotIn('payload', report)
+        self.assertEqual(report['header']['decompressed_size'], 140)
+        self.assertEqual(report['header']['length_bits'], 6)
+
+
+class UlzRejectionTests(unittest.TestCase):
+    def test_signature_check(self):
+        self.assertTrue(is_ulz(MAGIC + b'rest'))
+        self.assertFalse(is_ulz(b'ULZ\x1a'))
+        self.assertFalse(is_ulz(b''))
+
+    def test_header_rejections(self):
+        good = encode_ulz(b'abcabcabcabc')
         cases = {
-            'magic': block(2, 4, 10, [0xF0000000, 0], b'ABCD', magic=b'ULZ\x1a'),
-            'version': block(1, 4, 10, [0xF0000000, 0], b'ABCD'),
-            'disp_zero': block(2, 4, 0, [0xF0000000, 0], b'ABCD'),
-            'disp_wide': block(2, 4, 16, [0xF0000000, 0], b'ABCD'),
-            'literal_offset_zero': block(0, 2, 10, [0xE0000000, 0], b'AB', literal_offset=0),
-            'offsets_reversed': block(2, 4, 10, [0xF0000000, 0], b'ABCD',
-                                      literal_offset=28, reference_offset=24),
-            'reference_offset_beyond': block(2, 4, 10, [0xF0000000, 0], b'ABCD',
-                                             reference_offset=64),
-            'truncated_header': V2_LITERALS[:15],
-            'flags_exhausted': block(2, 4, 10, [], b'ABCD'),
-            'literals_exhausted': block(2, 4, 10, [0xF0000000, 0], b'ABCD',
-                                        reference_offset=26),
-            'references_exhausted': V2_OVERLAP[:-1],
-            'distance_before_start': block(2, 3, 10, [0x00000000, 0], b'', [ref(3, 1)]),
-            'overrun': block(2, 6, 10, [0xC0000000, 0], b'AB', [ref(5, 2)]),
-            'literal_overrun': block(0, 1, 10, [0xE0000000, 0], b'AB'),
-            'version0_short': block(0, 5, 10, [0xA0000000, 0], b'A', [ref(3, 1)]),
+            'truncated': good[:15],
+            'magic': b'ULZ\x1a' + good[4:],
+            'version': good[:7] + b'\x01' + good[8:],
+            'offset_bits_zero': good[:11] + b'\x00' + good[12:],
+            'offset_bits_16': good[:11] + b'\x10' + good[12:],
+            'literal_misaligned': good[:8] + struct.pack('<I', 18 | (10 << 24)) + good[12:],
+            'pair_before_literal': good[:12] + struct.pack('<I', 16) + good[16:],
+            'pair_past_end': good[:12] + struct.pack('<I', len(good) + 1) + good[16:],
         }
-        for name, data in cases.items():
+        for name, blob in cases.items():
             with self.subTest(name=name), self.assertRaises(UlzFormatError):
-                decompress_ulz(data)
+                parse_ulz_header(blob)
 
-    def test_output_limit(self):
+    def test_size_limit(self):
+        blob = build_ulz(100, 2, 10, [1], b'a', [])
+        with self.assertRaisesRegex(UlzFormatError, 'exceeds'):
+            parse_ulz_header(blob, max_output=99)
         with self.assertRaises(UlzFormatError):
-            decompress_ulz(V2_LITERALS, max_output=3)
+            decompress_ulz(blob, max_output=99)
+
+    def test_stream_exhaustion_is_error(self):
+        with self.assertRaisesRegex(UlzFormatError, 'flag stream'):
+            decompress_ulz(build_ulz(40, 2, 10, [1] * 32, b'a' * 40, [], terminator=False))
+        with self.assertRaisesRegex(UlzFormatError, 'literal stream'):
+            decompress_ulz(build_ulz(2, 2, 10, [1, 1], b'a', [], literal_pad=0))
+        with self.assertRaisesRegex(UlzFormatError, 'pair stream'):
+            decompress_ulz(build_ulz(4, 2, 10, [1, 0], b'a', []))
+
+    def test_reference_before_output_start_is_error(self):
+        with self.assertRaisesRegex(UlzFormatError, 'precedes output start'):
+            decompress_ulz(build_ulz(3, 2, 10, [0], b'', [0]))
+        with self.assertRaisesRegex(UlzFormatError, 'precedes output start'):
+            decompress_ulz(build_ulz(4, 2, 10, [1, 0], b'a', [1]))
+
+    def test_match_overrun_is_error_not_truncation(self):
+        with self.assertRaisesRegex(UlzFormatError, 'overruns'):
+            decompress_ulz(build_ulz(3, 2, 10, [1, 0], b'a', [0]))
 
 
 if __name__ == '__main__':

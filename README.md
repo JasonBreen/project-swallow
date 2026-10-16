@@ -18,7 +18,7 @@ Project Swallow is building **Ace Combat 3: Electrosphere as a fully playable op
 
 AC3's world of corporate power, fractured loyalties, and digital identity deserves to be experienced as a complete game. Swallow aims to deliver that on Windows and Linux, with enhanced artwork, modern presentation, and an English dub performed by the project team.
 
-**Original behavior is the reference, not an inspiration.** The flight model and gameplay are recovered one-to-one from AC3's own code through reverse engineering of the original executable. They are not rebuilt, approximated, or replaced with generic flight physics.
+**Original behavior is the reference, not an inspiration.** The flight model and gameplay will be recovered one-to-one from AC3's own code through reverse engineering of the original executable; that work is planned and has not started. They will not be rebuilt, approximated, or replaced with generic flight physics.
 
 ## How it is built
 
@@ -38,7 +38,7 @@ There is currently no engine, renderer, playable mission, or recovered gameplay 
 | Source discs | Four fingerprinted references; complete archives stored with Git LFS in this private repository | Reproducible inputs for the complete Japanese campaign |
 | Disc access | ISO directory inspection, raw-image hashes, bounded Form 1 reads, logical-file comparison | Reliable access to game resources |
 | `ACE.BPH` index | Typed parser with explicit payload sizes and range checks; validated on all four references | Resource loading for the engine |
-| `ACE.BPB` contents | Namco **Ulz decompression** and a structural walk of nested DOT1 tables; every Ulz block on all four references decodes with complete stream accounting | Decoded models, textures, and data for the engine |
+| `ACE.BPB` contents | Nested DOT1 offset tables walked and Namco **Ulz** (v0/v2) decoded in memory with exact stream accounting on all four references; leaf formats still uninterpreted | Decoded models, textures, and data for the engine |
 | Executable | PS-X EXE and `ACE3.BIN` identified; assembly track [planned](docs/next-task-executable.md) | Annotated original routines: Ulz, loaders, flight model, missions |
 | Streaming media | Form 2 detected and kept outside the Form 1 reader | Correct XA audio/video, timing, and interleave |
 | Gameplay and campaign | Not started; to be recovered from the original code | Playable missions, branching routes, transitions, and saves |
@@ -60,6 +60,8 @@ Set-Location G:\Project-Swallow
 
 To retrieve the archives, run `git lfs install` and then `git lfs pull`. See the [reference-disc inventory](discs/README.md) for hashes and extraction commands. The tools read extracted raw MODE2/2352 BIN images and never modify them.
 
+From the checkout, inspect a Japanese disc, decode its BPH index, and walk one BPB entry:
+
 ```powershell
 $env:PYTHONPATH = "src"
 $env:TEMP = "G:\ProjectSwallow-data\tmp"
@@ -69,7 +71,7 @@ New-Item -ItemType Directory -Force $env:TEMP | Out-Null
 $disc = "G:\ProjectSwallow-data\japanese-disc1\Ace Combat 3 - Electrosphere (Japan) (Disc 1).bin"
 python -m swallow_tools $disc --hash --file-hashes --json   # disc inventory and hashes
 python -m swallow_tools.bph $disc --json                    # ACE.BPH index
-python -m swallow_tools.bpb $disc --json --no-trees         # ACE.BPB structure, Ulz decoding
+python -m swallow_tools.bpb $disc --entry 5 --decode --tree # one ACE.BPB entry, Ulz decoded in memory
 python -m unittest discover -s tests -v
 ```
 
