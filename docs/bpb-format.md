@@ -42,8 +42,10 @@ entries therefore already carry the zero-filled alignment padding measured in
 the BPH validation; nested items do not.
 
 Stored (undecoded) nesting reaches depth 3 in these images. The walker stops
-at depth 8 and at 100,000 nodes per entry, counting empty items and rejecting
-a table whose declared count exceeds the remaining budget before unpacking it, and rejects entries over 16 MiB;
+at depth 8 and at 100,000 nodes per entry. Every node is charged before it is
+built: a table reserves all of its declared children, empty ones included,
+before descending, and a table whose count exceeds the remaining budget is
+rejected before its offsets are unpacked, and rejects entries over 16 MiB;
 these are tool limits, not format facts.
 
 ## Ulz compressed leaf
@@ -77,6 +79,19 @@ that is zero carries no flags and is an error if output is still incomplete.
 Once output reaches the declared size, version 0 also requires the next flag
 word to be zero; a missing or nonzero terminator is an error. Version 2 ends
 on size alone and may omit the trailing word.
+
+Two further version 0 rules are deliberately strict because they are
+unvalidated:
+
+- A sentinel-only word (`0x80000000`, no flags) is rejected. It occurs in none
+  of the four references, so no semantics are assigned to it.
+- Flag bits left above the sentinel in the final word after the declared size
+  must be zero. Japanese blobs never leave any. 423 (English Disc 1) and 361
+  (English Disc 2) English-patch blobs leave 1–30 bits, always zero. Their
+  spare pair bytes could not service those bits as references, so a decoder
+  that ignored the declared size would overrun; the game's actual handling is
+  unverified. Nonzero leftovers are rejected, and the zero-bit count is
+  reported per blob as `final_word_unused_flag_bits`.
 The psx-spx notes describe the same distinction as "31 flag bits with an
 implied stop bit" for version 0 and "all 32 bits with a stop bit shifted in"
 for version 2. Both readings were confirmed locally: the sentinel sits at bit 0
@@ -111,8 +126,10 @@ accounting only.
 - The psx-spx notes mention a third `ULZ` variant with an uppercase ID, a
   different header, and a `+2` length bias (Time Crisis). It does not occur in
   these images and is not implemented.
-- Whether the game treats a `0x80000000` version 0 word (sentinel only) as
-  legal is unknown; the decoder accepts it as contributing no flags.
+- Whether the game accepts a `0x80000000` version 0 word, and whether it
+  stops version 0 decoding on size or on the zero word, is unknown without
+  executable evidence; the decoder rejects the former and requires both size
+  and terminator.
 - Padding bytes in the literal stream are sometimes nonzero. Their origin is
   unknown and they are reported, not interpreted.
 

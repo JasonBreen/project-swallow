@@ -105,12 +105,35 @@ class UlzHandVectorTests(unittest.TestCase):
         self.assertEqual(result.payload, payload)
         self.assertEqual(result.flag_words_used, 2)
 
-    def test_version0_sentinel_only_word_contributes_no_flags(self):
+    def test_version0_sentinel_only_word_is_rejected_as_unvalidated(self):
         flags = pack_flags([1, 1], 0)
         flag_bytes = (0x80000000).to_bytes(4, 'little') + flags
         blob = (MAGIC + struct.pack('<III', 2, (16 + len(flag_bytes)) | (10 << 24),
                                     16 + len(flag_bytes) + 4) + flag_bytes + b'ab\0\0')
-        self.assertEqual(decompress_ulz(blob).payload, b'ab')
+        with self.assertRaisesRegex(UlzFormatError, 'sentinel-only flag word 0'):
+            decompress_ulz(blob)
+
+    def _v0_blob(self, size, flag_word, literals):
+        flag_bytes = flag_word.to_bytes(4, 'little') + bytes(4)
+        literal_bytes = literals + b'\0' * (-len(literals) % 4)
+        literal_offset = 16 + len(flag_bytes)
+        return (MAGIC + struct.pack('<III', size, literal_offset | (10 << 24),
+                                    literal_offset + len(literal_bytes))
+                + flag_bytes + literal_bytes)
+
+    def test_version0_nonzero_unused_flags_are_rejected(self):
+        # Flags 1,1 then the sentinel: only one byte is declared, so a literal
+        # flag would be left unconsumed above the sentinel.
+        with self.assertRaisesRegex(UlzFormatError, 'nonzero unused flags 0b1'):
+            decompress_ulz(self._v0_blob(1, 0xE0000000, b'ab'))
+
+    def test_version0_zero_unused_flags_are_accepted_and_reported(self):
+        # One literal flag, thirty zero bits, sentinel at bit 0 (English-patch layout).
+        result = decompress_ulz(self._v0_blob(1, 0x80000001, b'a'))
+        self.assertEqual(result.payload, b'a')
+        self.assertEqual(result.final_word_unused_flag_bits, 30)
+        self.assertEqual(decompress_ulz(self._v0_blob(1, 0xC0000000, b'a'))
+                         .final_word_unused_flag_bits, 0)
 
     def test_version0_zero_word_before_completion_is_error(self):
         blob = build_ulz(3, 0, 10, [1, 1], b'ab', [])

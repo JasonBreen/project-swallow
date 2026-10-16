@@ -121,10 +121,10 @@ class _Budget:
         self.limit = max_nodes
         self.remaining = max_nodes
 
-    def take(self) -> None:
-        if self.remaining <= 0:
+    def reserve(self, count: int = 1) -> None:
+        if count > self.remaining:
             raise ContainerLimitError(f'Node count exceeds the {self.limit} limit')
-        self.remaining -= 1
+        self.remaining -= count
 
 
 def walk_payload(data: bytes, *, decode: bool = False, path: tuple[int, ...] = (),
@@ -135,13 +135,19 @@ def walk_payload(data: bytes, *, decode: bool = False, path: tuple[int, ...] = (
     accounting and payload SHA256, and classifies the decoded bytes with the
     same rules. Decoding failures are recorded on the node rather than raised
     so a report can still describe the rest of the entry.
+
+    Every node is charged to the budget before it is built: a container
+    reserves all of its declared children before descending into any of them,
+    so nested tables cannot together exceed ``max_nodes``.
     """
-    return _walk(data, decode, path, 0, 0, 'stored', max_depth, _Budget(max_nodes))
+    budget = _Budget(max_nodes)
+    budget.reserve()
+    return _walk(data, decode, path, 0, 0, 'stored', max_depth, budget)
 
 
 def _walk(data: bytes, decode: bool, path: tuple[int, ...], offset: int, depth: int,
           origin: str, max_depth: int, budget: _Budget) -> Node:
-    budget.take()
+    """Build one node that the caller has already charged to the budget."""
     signature = data[:4].hex()
     if is_ulz(data):
         return _ulz_node(data, decode, path, offset, depth, origin, max_depth, budget)
@@ -153,13 +159,13 @@ def _walk(data: bytes, decode: bool, path: tuple[int, ...], offset: int, depth: 
         return Node(path, offset, len(data), 'opaque', signature, origin)
     if depth >= max_depth:
         raise ContainerFormatError(f'Container nesting exceeds depth {max_depth}')
+    budget.reserve(table.count)
     children = []
     for index, (start, end) in enumerate(table.items):
         if end > start:
             children.append(_walk(data[start:end], decode, path + (index,), start,
                                   depth + 1, origin, max_depth, budget))
         else:
-            budget.take()
             children.append(Node(path + (index,), start, 0, 'empty', '', origin))
     children = tuple(children)
     return Node(path, offset, len(data), 'container', signature, origin, children)
@@ -191,6 +197,7 @@ def _ulz_node(data: bytes, decode: bool, path: tuple[int, ...], offset: int, dep
     info['payload_sha256'] = hashlib.sha256(result.payload).hexdigest()
     if depth >= max_depth:
         raise ContainerFormatError(f'Decoded nesting exceeds depth {max_depth}')
+    budget.reserve()
     decoded = _walk(result.payload, decode, path, 0, depth + 1, 'decoded', max_depth, budget)
     return Node(path, offset, len(data), 'ulz', signature, origin, ulz=info, decoded=decoded)
 
@@ -204,6 +211,7 @@ def summarize_nodes(roots: list[Node]) -> dict:
         'ulz_decoded': 0, 'ulz_errors': 0,
         'ulz_compressed_bytes': 0, 'ulz_decompressed_bytes': 0,
         'flag_words_unused': {}, 'unused_flag_words_nonzero': 0,
+        'v0_final_word_zero_padding_blobs': 0,
         'literal_bytes_unused': {}, 'pair_bytes_unused': {},
     }
 
@@ -226,6 +234,9 @@ def summarize_nodes(roots: list[Node]) -> dict:
                     summary['ulz_decoded'] += 1
                     summary['ulz_decompressed_bytes'] += node.ulz['header']['decompressed_size']
                     bump(summary['flag_words_unused'], node.ulz['flag_words_unused'])
+                    if (node.ulz['header']['version'] == 0
+                            and node.ulz['final_word_unused_flag_bits']):
+                        summary['v0_final_word_zero_padding_blobs'] += 1
                     bump(summary['literal_bytes_unused'], node.ulz['literal_bytes_unused'])
                     bump(summary['pair_bytes_unused'], node.ulz['pair_bytes_unused'])
                     if not node.ulz['unused_flag_words_zero']:

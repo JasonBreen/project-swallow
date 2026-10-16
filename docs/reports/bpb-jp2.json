@@ -47,6 +47,7 @@
       "1": 2256
     },
     "unused_flag_words_nonzero": 0,
+    "v0_final_word_zero_padding_blobs": 0,
     "literal_bytes_unused": {
       "1": 496,
       "3": 590,

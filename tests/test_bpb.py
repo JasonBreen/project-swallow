@@ -149,6 +149,18 @@ class WalkTests(unittest.TestCase):
             parse_offset_table(payload)
         self.assertNotIsInstance(ctx.exception, ContainerLimitError)
 
+    def test_nested_tables_reserve_children_before_descending(self):
+        inner = container(padded(b'x'), *([b''] * 9))
+        middle = container(inner, *([b''] * 9))
+        outer = container(middle, *([b''] * 9))
+        # 1 root + 10 + 10 + 10 nodes. With 30, the innermost table must be
+        # refused when declared, not after its siblings are built.
+        with self.assertRaisesRegex(ContainerLimitError,
+                                    'declares 10 items, exceeding the remaining node budget of 9'):
+            walk_payload(outer, max_nodes=30)
+        root = walk_payload(outer, max_nodes=31)
+        self.assertEqual(root.children[0].children[0].children[0].kind, 'opaque')
+
     def test_large_count_with_wrong_first_offset_stays_opaque(self):
         payload = struct.pack('<II', 200_000, 12) + bytes(800_000)
         self.assertEqual(walk_payload(payload, max_nodes=5).kind, 'opaque')

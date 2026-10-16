@@ -40,6 +40,7 @@ class UlzResult:
     flag_words_used: int
     flag_words_unused: int
     unused_flag_words_zero: bool
+    final_word_unused_flag_bits: int
     literal_bytes_used: int
     literal_bytes_unused: int
     pair_bytes_used: int
@@ -124,7 +125,10 @@ def decompress_ulz(data: bytes, *, max_output: int = MAX_OUTPUT_BYTES) -> UlzRes
                         f'Ulz version 0 zero flag word after {len(out)} of {target} bytes')
                 bits_left = 31 - ((word & -word).bit_length() - 1)
                 if bits_left == 0:
-                    continue
+                    # 0x80000000 never occurs in the references; its meaning is unknown.
+                    raise UlzFormatError(
+                        f'Ulz version 0 sentinel-only flag word {flag_index - 1} is '
+                        f'unvalidated (after {len(out)} of {target} bytes)')
             else:
                 bits_left = 32
         bit = word >> 31
@@ -159,6 +163,12 @@ def decompress_ulz(data: bytes, *, max_output: int = MAX_OUTPUT_BYTES) -> UlzRes
             for _ in range(length):
                 out.append(out[-distance])
     if header.version == 0:
+        # Flags left above the sentinel after the declared size are accepted only
+        # when zero: every measured case (English references only) is zero.
+        if bits_left and word >> (32 - bits_left):
+            raise UlzFormatError(
+                f'Ulz version 0 final flag word has nonzero unused flags '
+                f'0b{word >> (32 - bits_left):0{bits_left}b} after the declared size')
         # Version 0 ends on a zero flag word; reaching the size alone is not enough.
         terminator = flags[flag_index * 4:flag_index * 4 + 4]
         if terminator != b'\0\0\0\0':
@@ -172,6 +182,7 @@ def decompress_ulz(data: bytes, *, max_output: int = MAX_OUTPUT_BYTES) -> UlzRes
         flag_words_used=flag_index,
         flag_words_unused=flag_word_count - flag_index,
         unused_flag_words_zero=not any(unused_flags),
+        final_word_unused_flag_bits=bits_left,
         literal_bytes_used=literal_index,
         literal_bytes_unused=len(literals) - literal_index,
         pair_bytes_used=pair_index,

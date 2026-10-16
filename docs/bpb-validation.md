@@ -6,9 +6,10 @@ No decoded payload was written to disk; the checked-in reports hold metadata.
 
 ## Synthetic tests
 
-The complete suite passes **92 tests**, including 39 new container and Ulz
+The complete suite passes **95 tests**, including 42 new container and Ulz
 tests. They cover hand-built flag/literal/pair vectors for both Ulz versions,
-the version 0 sentinel positions, zero-word error, and required terminator, round trips through a
+the version 0 sentinel positions, zero-word error, required terminator,
+sentinel-only word rejection, and final-word leftover flags, round trips through a
 local greedy test encoder for both versions and 10–13 offset bits, every
 header rejection, each stream-exhaustion case, early back-references, match
 overrun, the size limit, offset-table rules and rejections, nested and decoded
@@ -52,6 +53,9 @@ Measured on all four images:
 - Every blob reached its declared size exactly; no stream was exhausted and no
   copy overran. Across the Japanese pair the decoder processed 17,578,292
   literals and 7,197,959 matches per disc.
+- No version 0 blob contains a sentinel-only `0x80000000` flag word. Final
+  words leave unused zero flag bits in 0 Japanese, 423 English Disc 1, and 361
+  English Disc 2 version 0 blobs; none leaves a nonzero bit.
 - Unused flag words: exactly one zero word follows the used flags in every
   Japanese blob and in every version 0 blob on all four images, which the
   decoder now requires. On the English references 40 (Disc 1) and 28 (Disc 2)
