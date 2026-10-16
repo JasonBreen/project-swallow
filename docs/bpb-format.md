@@ -1,8 +1,10 @@
 # ACE.BPB nested container and Ulz contract
 
 Implemented in [`swallow_tools.bpb`](../src/swallow_tools/bpb.py) and
-[`swallow_tools.ulz`](../src/swallow_tools/ulz.py), tooling v0.4.0. Validated
-on 2026-10-15 against all four supplied images; see
+[`swallow_tools.ulz`](../src/swallow_tools/ulz.py), tooling v0.4.0, with TIM
+leaf validation ([`swallow_tools.tim`](../src/swallow_tools/tim.py),
+[contract](tim-format.md)) added in v0.5.0. Validated on 2026-10-15 and
+2026-10-16 against all four supplied images; see
 [measurements and reproduction](bpb-validation.md). This builds on the
 [BPH index contract](bph-format.md): every range below is a normal BPH entry's
 payload inside the logical Form 1 contents of `ACE.BPB`.
@@ -15,7 +17,14 @@ The walker classifies a byte range by structure, in this order:
 2. **Offset-table container** — the range satisfies every rule in the next
    section. This is the shape psx-spx calls `DOT1` (four-byte aligned, no end
    entry). Its items are classified recursively.
-3. **Opaque leaf** — anything else. The report records only its size and the
+3. **TIM image leaf** — the range starts with the TIM id word `0x00000010`
+   and passes every rule in the [TIM contract](tim-format.md). Up to three
+   zero bytes after the pixel block are accepted only in a non-final item,
+   whose next aligned table offset proves they are padding.
+   The report carries mode, dimensions, CLUT size, and VRAM placement only.
+   A range that starts with the id word but fails validation stays opaque
+   and records the rejection reason.
+4. **Opaque leaf** — anything else. The report records only its size and the
    hex of its first four bytes as a `signature`; no semantics are claimed.
 
 A zero-length item of a container is reported as `empty`. Classification is
@@ -120,9 +129,10 @@ accounting only.
 - Four top-level entries (indices 1–4 on every image) are opaque: each starts
   with a small count word followed by text-like fixed records, not an offset
   table. They are identical across all four images and remain uninterpreted.
-- Opaque leaves are not decoded. Frequent signatures (for example the
-  PlayStation TIM header word `0x00000010`) are recorded as candidates only.
-  No image, model, text, or mission format is claimed by this change.
+- Opaque leaves other than validated TIM images are not decoded. The most
+  frequent remaining signature, `00002311`, is measured as an open hypothesis
+  in the [TIM contract's unknowns](tim-format.md#the-00002311-leaves-open-hypothesis).
+  No model, text, or mission format is claimed.
 - The psx-spx notes mention a third `ULZ` variant with an uppercase ID, a
   different header, and a `+2` length bias (Time Crisis). It does not occur in
   these images and is not implemented.

@@ -5,12 +5,16 @@
     "-v",
     "-s",
     "tests",
+    "-t",
+    ".",
     "-p",
     "test_*.py"
   ],
   "python.envFile": "${workspaceFolder}/.vscode/swallow.env",
   "terminal.integrated.env.windows": {
-    "PYTHONPATH": "${workspaceFolder}\\src"
+    "PYTHONPATH": "${workspaceFolder}\\src",
+    "TEMP": "G:\\ProjectSwallow-data\\tmp",
+    "TMP": "G:\\ProjectSwallow-data\\tmp"
   },
   "terminal.integrated.env.linux": {
     "PYTHONPATH": "${workspaceFolder}/src"

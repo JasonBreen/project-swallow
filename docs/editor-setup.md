@@ -29,6 +29,11 @@ servers and duplicate every diagnostic.
 - **Testing.** Test Explorer discovers the unittest suite in `tests/`.
   `.vscode/swallow.env` supplies `PYTHONPATH=src`, so tests import
   `swallow_tools` on a fresh clone without a `.env` file or an editable install.
+  Discovery uses the repository root as the top-level directory (`-t .`).
+  Recent Python extension versions force that for project-based discovery
+  ([vscode-python#26033](https://github.com/microsoft/vscode-python/issues/26033)),
+  so `tests/` is a package whose `__init__.py` keeps the shared test helpers
+  importable. `-s tests` with and without `-t .` find the same tests.
   The **Swallow: unit tests** task is the default test task and runs the same
   command as `AGENTS.md`.
 - **Run and Debug.** Use F5 to debug or Ctrl+F5 to run without the debugger:
@@ -53,9 +58,13 @@ servers and duplicate every diagnostic.
   Ulz data in memory and prints metadata only; the BPB validation hashes the
   whole image and walks every entry, so it takes several minutes per disc.
 - **Terminal.** New integrated terminals set `PYTHONPATH` to `src`, so the
-  README commands work without setup. Temporary files are not redirected: on
-  the owner's machine, set `TEMP` and `TMP` to `G:\ProjectSwallow-data\tmp`
-  as the README shows before disc validation work.
+  README commands work without setup.
+- **Temporary files.** Every debug configuration, Test Explorer run (through
+  `swallow.env`), and new Windows terminal sets `TEMP` and `TMP` to
+  `G:\ProjectSwallow-data\tmp`, because `AGENTS.md` forbids the `C:` drive.
+  Create that directory first. Where it does not exist, Python's `tempfile`
+  skips it and falls back to the system default, which on the owner's machine
+  is on `C:`.
 - **Type analysis.** `[tool.pyright]` in `pyproject.toml` is read by both
   Pylance and basedpyright, so both editors report the same results. It
   analyses `src/`, `tests/`, and `scripts/` as Python 3.11, the oldest
@@ -84,9 +93,12 @@ workspace root. If yours does not, add it as a workspace rule.
 
 ## Checked
 
-After merging tooling v0.4.0, all 95 unit tests pass on Windows with Python
-3.12, and `launch.json` parses as JSON. The type-checker counts below predate
-the v0.4.0 modules and were not re-measured.
+After merging tooling v0.5.0, all 111 unit tests pass on Windows with Python
+3.12. `-s tests` and `-s tests -t .` discover the same 111 tests; before
+`tests/__init__.py`, the second form failed with `Start directory is not
+importable`. `launch.json` and `settings.json` parse as JSON. The editors
+themselves were not relaunched, and the type-checker counts below predate the
+v0.4.0 modules and were not re-measured.
 
 On Linux with Python 3.13, before v0.4.0: all 53 unit tests pass. With the shared
 configuration, the pyright 1.1.414 and basedpyright 1.40.2 command-line
