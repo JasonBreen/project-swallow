@@ -13,6 +13,8 @@ MAGIC = b'Ulz\x1a'
 HEADER = struct.Struct('<4sIII')
 MAX_OUTPUT_BYTES = 16 * 1024 * 1024
 SUPPORTED_VERSIONS = (0, 2)
+# Offset bit counts measured on all four references; others are unvalidated.
+SUPPORTED_OFFSET_BITS = (10, 11, 12, 13)
 WORD_MASK = 0xFFFFFFFF
 
 
@@ -72,8 +74,9 @@ def parse_ulz_header(data: bytes, *, max_output: int = MAX_OUTPUT_BYTES) -> UlzH
     literal_offset = literal_word & 0xFFFFFF
     if version not in SUPPORTED_VERSIONS:
         raise UlzFormatError(f'Unsupported Ulz version {version}; supported: 0 and 2')
-    if not 1 <= offset_bits <= 15:
-        raise UlzFormatError(f'Ulz offset bit count {offset_bits} outside 1..15')
+    if offset_bits not in SUPPORTED_OFFSET_BITS:
+        raise UlzFormatError(
+            f'Ulz offset bit count {offset_bits} is unvalidated; measured counts are 10-13')
     if decompressed_size > max_output:
         raise UlzFormatError(
             f'Ulz decompressed size {decompressed_size} exceeds the {max_output} byte limit')

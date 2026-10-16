@@ -4,7 +4,7 @@
 
 **A complete, playable, open-source reconstruction of ACE COMBAT 3: ELECTROSPHERE.**
 
-*The full Japanese campaign. The original flight experience. A new way into the Electrosphere.*
+*The full Japanese campaign. The original flight model, recovered 1:1 from the game's own code. A new way into the Electrosphere.*
 
 ![Development: pre-alpha](https://img.shields.io/badge/development-pre--alpha-65e5f2?style=flat-square&labelColor=101b2d) [![Code license: MIT](https://img.shields.io/badge/original_code-MIT-b9a6ff?style=flat-square&labelColor=101b2d)](LICENSE) · [Windows / Linux CI](https://github.com/JasonBreen/project-swallow/actions/workflows/tests.yml)
 
@@ -14,35 +14,41 @@
 
 ## Enter the Electrosphere
 
-Project Swallow is building **Ace Combat 3: Electrosphere as a fully playable open-source game for modern PCs**, preserving the complete Japanese two-disc experience: its branching campaign, characters, missions, and original flight behavior.
+Project Swallow is building **Ace Combat 3: Electrosphere as a fully playable open-source game for modern PCs**. It preserves the complete Japanese two-disc experience: the branching campaign, characters, missions, and original flight behavior.
 
-AC3's world of corporate power, fractured loyalties, and digital identity deserves to be experienced as a complete game. Swallow's destination is that experience on Windows and Linux, with enhanced artwork, modern presentation, and an English dub performed by the project team. Original behavior is the reference throughout development.
+AC3's world of corporate power, fractured loyalties, and digital identity deserves to be experienced as a complete game. Swallow aims to deliver that on Windows and Linux, with enhanced artwork, modern presentation, and an English dub performed by the project team.
 
-The repository begins with the disc and archive tools needed to build that game faithfully. Those tools are the foundation of Swallow; the playable reconstruction is the project.
+**Original behavior is the reference, not an inspiration.** The flight model and gameplay will be recovered one-to-one from AC3's own code through reverse engineering of the original executable; that work is planned and has not started. They will not be rebuilt, approximated, or replaced with generic flight physics.
+
+## How it is built
+
+- **Engine: C.** The game engine will be written in C. No engine code exists yet.
+- **Reverse engineering: MIPS assembly (planned).** The original PlayStation executable and overlays will be disassembled and documented, and the recovered routines will be the ground truth for the engine. This work has not started; see the [executable track](docs/next-task-executable.md).
+- **Tooling: Python, kept minimal.** Disc, archive, and validation tools are standard-library Python. Python is not used for the engine itself.
+- **Evidence first.** No format field or behavior is marked as decoded until bytes, code, or emulator captures confirm it. Hypotheses and counterexamples are written down.
 
 ## Development status
 
-**Pre-alpha · toolchain v0.5.0 · no playable build available yet.**
+**Pre-alpha · toolchain v0.5.0 · no playable build yet.**
 
-The game is in development. There is currently no native renderer, playable mission, recovered gameplay runtime, or completed English dub. Windows and Linux are target game platforms; current automated coverage runs the Python tools on both.
+There is currently no engine, renderer, playable mission, or recovered gameplay code. The work so far builds reliable access to the game's data, so the reverse engineering can begin from solid ground.
 
 | Area | Working now | Destination |
 |---|---|---|
 | Source discs | Four fingerprinted references; complete archives stored with Git LFS in this private repository | Reproducible inputs for the complete Japanese campaign |
 | Disc access | ISO directory inspection, raw-image hashes, bounded Form 1 reads, logical-file comparison | Reliable access to game resources |
-| `ACE.BPH` | Typed index parser, explicit payload sizes, range checks, metadata reports; validated against all four references | Resource loading for the game |
-| `ACE.BPB` assets | Nested offset-table containers walked, Namco Ulz (v0/v2) decoded in memory with exact stream accounting, and PlayStation TIM image leaves validated to metadata; other leaf formats still uninterpreted | Original assets and enhanced presentation |
+| `ACE.BPH` index | Typed parser with explicit payload sizes and range checks; validated on all four references | Resource loading for the engine |
+| `ACE.BPB` contents | Nested DOT1 offset tables walked, Namco **Ulz** (v0/v2) decoded in memory with exact stream accounting, and PlayStation TIM image leaves validated to metadata on all four references; other leaf formats still uninterpreted | Decoded models, textures, and data for the engine |
+| Executable | PS-X EXE and `ACE3.BIN` identified; assembly track [planned](docs/next-task-executable.md) | Annotated original routines: Ulz, loaders, flight model, missions |
 | Streaming media | Form 2 detected and kept outside the Form 1 reader | Correct XA audio/video, timing, and interleave |
-| Gameplay and campaign | Original behavior established as the reference; runtime work remains ahead | Playable missions, branching routes, transitions, and saves |
+| Gameplay and campaign | Not started; to be recovered from the original code | Playable missions, branching routes, transitions, and saves |
 | English voices | Human-performed dub planned | A complete, credited team recording |
-
-The toolchain is written in **Python**, with standard-library runtime dependencies. The game's runtime architecture remains an open engineering decision, within the project's **no C** language constraint.
 
 ## Run the toolchain
 
-Python **3.11 or newer** is required. On the owner's Windows machine, keep the checkout, extracted discs, and temporary data on **`G:`**.
+You need Python **3.11 or newer**. On the owner's Windows machine, **everything stays on `G:`**: the checkout, extracted discs, temporary files, and reports. Do not use the `C:` drive for this project.
 
-The repository is currently private and contains all four owner-supplied reference archives through Git LFS. A full clone downloads approximately **1.67 GB of compressed discs** in addition to the source. For a source-only checkout:
+The repository is private. It contains all four owner-supplied reference archives through Git LFS, about **1.67 GB compressed**. For a source-only checkout:
 
 ```powershell
 Set-Location G:\
@@ -52,14 +58,7 @@ Remove-Item Env:\GIT_LFS_SKIP_SMUDGE
 Set-Location G:\Project-Swallow
 ```
 
-To retrieve the full archives, install Git LFS and run:
-
-```powershell
-git lfs install
-git lfs pull
-```
-
-See the [reference-disc inventory](discs/README.md) for archive hashes and extraction commands. The tools read extracted raw MODE2/2352 BIN images. Original archives and images remain unchanged.
+To retrieve the archives, run `git lfs install` and then `git lfs pull`. See the [reference-disc inventory](discs/README.md) for hashes and extraction commands. The tools read extracted raw MODE2/2352 BIN images and never modify them.
 
 From the checkout, inspect a Japanese disc, decode its BPH index, and walk one BPB entry:
 
@@ -70,50 +69,36 @@ $env:TMP = $env:TEMP
 New-Item -ItemType Directory -Force $env:TEMP | Out-Null
 
 $disc = "G:\ProjectSwallow-data\japanese-disc1\Ace Combat 3 - Electrosphere (Japan) (Disc 1).bin"
-python -m swallow_tools $disc --hash --file-hashes --json
-python -m swallow_tools.bph $disc --json
-python -m swallow_tools.bpb $disc --entry 5 --decode --tree
+python -m swallow_tools $disc --hash --file-hashes --json   # disc inventory and hashes
+python -m swallow_tools.bph $disc --json                    # ACE.BPH index
+python -m swallow_tools.bpb $disc --entry 5 --decode --tree # one ACE.BPB entry, Ulz decoded in memory
 python -m unittest discover -s tests -v
 ```
 
-On Linux:
+On Linux, use the same modules with `PYTHONPATH=src`. `python -m swallow_tools.compare A.bin B.bin --json` compares two images file by file. An optional `python -m pip install -e .` (in a virtual environment on your project drive) installs the `swallow-disc`, `swallow-bph`, `swallow-bpb`, and `swallow-compare` commands.
 
-```bash
-PYTHONPATH=src python -m swallow_tools /path/to/disc.bin --hash --file-hashes --json
-PYTHONPATH=src python -m swallow_tools.bph /path/to/disc.bin --json
-PYTHONPATH=src python -m swallow_tools.bpb /path/to/disc.bin --decode
-PYTHONPATH=src python -m swallow_tools.compare /path/to/japanese.bin /path/to/english.bin --json
-PYTHONPATH=src python -m unittest discover -s tests -v
-```
+The tests use synthetic data only. They need no discs, network, emulator, paid model, or GPU.
 
-An optional editable install, `python -m pip install -e .`, exposes `swallow-disc`, `swallow-bph`, `swallow-bpb`, and `swallow-compare`. Use a virtual environment on your project drive. Tests use synthetic data and require no discs, network, emulator, paid model, or GPU.
-
-The BPH report contains metadata and validates normal entry ranges against the ISO-recorded BPB size. It does not extract assets or execute the game. Uninterpreted special records remain explicit. Read the [format contract](docs/bph-format.md) and [validation results](docs/bph-validation.md) for the exact guarantees.
-
-The BPB report classifies each entry as a nested offset-table container, a Ulz compressed leaf, a validated TIM image leaf, or an opaque leaf, and with `--decode` decompresses Ulz data in memory, reporting sizes, hashes, and exact stream consumption. TIM leaves are reported as mode, dimensions, CLUT size, and VRAM placement; no pixels are converted or written. It never writes game bytes. See the [container contract](docs/bpb-format.md), the [TIM contract](docs/tim-format.md), and [validation results](docs/bpb-validation.md).
-
-For disc inspection, `--cue /path/to/game.cue --strict-cue` checks that referenced filenames exist; it does not validate track timing. Exit codes are `0` for a completed operation, `2` for input/format errors, and `3` for failed strict CUE-reference checks. A completed comparison can report different files.
+All reports contain metadata and hashes only; no tool writes extracted assets. Exit codes are `0` for success, `2` for input or format errors, and `3` for failed strict CUE-reference checks. Exact guarantees are in the format contracts: [BPH](docs/bph-format.md) and [BPB/Ulz](docs/bpb-format.md).
 
 ## From archives to a playable game
 
-1. **Disc baseline — complete.** Identify the four supplied images, preserve originals, and compare supported logical contents.
-2. **BPH index — implemented.** Decode and validate the archive's entry ranges; preserve uncertain fields and publish reproducible metadata.
-3. **BPB containers and compression — implemented.** Walk nested offset tables and decode Ulz versions 0 and 2 with validated stream accounting on all four references.
-4. **Leaf classification — in progress.** TIM image leaves are validated to metadata on all four references; the `00002311` leaves and the four text-like top-level entries remain measured hypotheses.
-5. **Resources and original behavior — next.** Classify the remaining leaf formats; develop a separate XA-aware media reader; establish executable/data behavior with reference captures.
-6. **One complete mission.** Aircraft, level, original flight behavior, controls, weapons, objectives, dialogue, and results working together.
-7. **The full Electrosphere.** Branching campaign, disc-specific content, saves, enhanced presentation, human English dialogue, and platform validation.
+1. **Disc baseline: complete.** Identify the four supplied images, preserve the originals, and compare their contents.
+2. **Archive access: in progress.** The BPH index, the BPB structure with Ulz decompression, and TIM image validation are done. Next are the remaining leaf formats, including the `00002311` leaves, and the separate XA streaming reader.
+3. **Executable reverse engineering: next.** Disassemble the boot EXE and `ACE3.BIN` and separate out PsyQ library code. Document game routines in annotated assembly, starting with the Ulz decompressor and the BPB loader, then work toward the flight model.
+4. **One complete mission in the C engine.** Aircraft, level, the recovered flight model, controls, weapons, objectives, dialogue, and results working together, checked against emulator captures.
+5. **The full Electrosphere.** The branching campaign, disc-specific content, saves, enhanced presentation, human English dialogue, and platform validation.
 
-The [roadmap](docs/roadmap.md) tracks these stages. Passing parser tests establishes tool behavior; a playable mission and campaign require their own runtime evidence.
+The [roadmap](docs/roadmap.md) tracks these stages. Passing tests establishes tool behavior; a playable mission needs its own runtime evidence.
 
 ## Evidence, people, and provenance
 
-The [four-image baseline](docs/disc-inventory.md), [BPH validation](docs/bph-validation.md), [BPB/Ulz validation](docs/bpb-validation.md), and [machine-readable reports](docs/reports/) record what has actually been measured. The Japanese BINs supplied for this repository match the earlier reference hashes. The English **v0.9b3** names are recorded as upload labels rather than independent release certification.
+The [four-image baseline](docs/disc-inventory.md), [BPH validation](docs/bph-validation.md), [BPB validation](docs/bpb-validation.md), and [machine-readable reports](docs/reports/) record what has been measured. The supplied Japanese BINs match the earlier reference hashes. The English **v0.9b3** names are upload labels, not an independent release certification.
 
-Swallow builds on years of community preservation and translation research, acknowledged in [CREDITS.md](CREDITS.md). The banner is original project artwork inspired by AC3's futuristic interface language; it contains no extracted game artwork.
+Swallow builds on years of community preservation, translation, and format research. Special thanks go to **[Team NEMO (Project NEMO)](https://www.romhacking.net/community/1189/)**, whose English fan translation and AC3 hacking work, including esperknight's decompression research, have made the full Japanese game accessible to English-speaking players. Their full crew is credited in [CREDITS.md](CREDITS.md), along with everyone else whose work this project relies on. The banner is original project artwork inspired by AC3's interface language and contains no extracted game artwork.
 
 Code, verified format findings, original artwork, and human-performed dialogue are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) and the [local development contract](AGENTS.md). Open the checkout in VS Code or Antigravity for the supplied tests, debug configurations, and Python settings; see the [editor setup](docs/editor-setup.md).
 
 ## License
 
-Project Swallow's original source code, tests, documentation, and banner are **MIT-licensed**. Third-party game data and the owner-supplied disc archives retain their existing rights and are excluded from that license. Project Swallow is independent of Bandai Namco.
+Project Swallow's original source code, tests, documentation, and banner are **MIT-licensed**. Third-party game data and the owner-supplied disc archives keep their existing rights and are excluded from that license. Project Swallow is independent of Bandai Namco.
