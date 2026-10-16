@@ -39,15 +39,19 @@ servers and duplicate every diagnostic.
   | Swallow: decode BPH index | `python -m swallow_tools.bph IMAGE` |
   | Swallow: compare two disc images | `python -m swallow_tools.compare LEFT RIGHT` |
   | Swallow: validate BPH reference disc | `scripts/validate_bph_references.py --output-dir local-reports --reference KEY IMAGE` |
+  | Swallow: walk BPB containers | `python -m swallow_tools.bpb IMAGE --decode` |
+  | Swallow: validate BPB reference disc | `scripts/validate_bpb_references.py --output-dir local-reports --reference KEY IMAGE` |
   | Swallow: unit tests | `python -m unittest discover -s tests -v` |
   | Python: current file | the open file |
 
   Disc configurations prompt for an extracted BIN image. The defaults follow
   the `G:\ProjectSwallow-data` layout in [discs/README.md](../discs/README.md);
   replace them on other machines. The tools read images without modifying
-  them. The validation run writes metadata JSON only to the ignored
+  them. The validation runs write metadata JSON only to the ignored
   `local-reports/` directory, and the selected key is checked against
-  baseline hashes rather than trusted from the filename.
+  baseline hashes rather than trusted from the filename. The BPB walk decodes
+  Ulz data in memory and prints metadata only; the BPB validation hashes the
+  whole image and walks every entry, so it takes several minutes per disc.
 - **Terminal.** New integrated terminals set `PYTHONPATH` to `src`, so the
   README commands work without setup. Temporary files are not redirected: on
   the owner's machine, set `TEMP` and `TMP` to `G:\ProjectSwallow-data\tmp`
@@ -80,7 +84,11 @@ workspace root. If yours does not, add it as a workspace rule.
 
 ## Checked
 
-On Linux with Python 3.13: all 53 unit tests pass. With the shared
+After merging tooling v0.4.0, all 95 unit tests pass on Windows with Python
+3.12, and `launch.json` parses as JSON. The type-checker counts below predate
+the v0.4.0 modules and were not re-measured.
+
+On Linux with Python 3.13, before v0.4.0: all 53 unit tests pass. With the shared
 configuration, the pyright 1.1.414 and basedpyright 1.40.2 command-line
 checkers both report 0 errors and 0 warnings. Without `PYTHONPATH`, test
 discovery fails with `No module named 'swallow_tools'`; the committed env file

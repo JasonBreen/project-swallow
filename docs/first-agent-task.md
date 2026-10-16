@@ -4,8 +4,9 @@
 25 new synthetic tests, four-disc validation, and full byte accounting are
 documented in [bph-format.md](bph-format.md) and [bph-validation.md](bph-validation.md).
 The original assignment below is retained as the acceptance record. Its known
-evidence describes the pre-implementation state. Next: nested BPB containers
-and compression identification.
+evidence describes the pre-implementation state. The nested BPB containers and
+Ulz compression followed in v0.4.0 ([bpb-format.md](bpb-format.md)). Next:
+classify the opaque leaves the walker exposes.
 
 Read `AGENTS.md`, `docs/disc-inventory.md`, and the reports before changing code.
 

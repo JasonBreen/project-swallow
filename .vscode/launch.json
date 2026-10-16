@@ -69,6 +69,41 @@
       "justMyCode": true
     },
     {
+      "name": "Swallow: walk BPB containers",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "swallow_tools.bpb",
+      "args": [
+        "${input:discImage}",
+        "--decode"
+      ],
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}/src"
+      },
+      "console": "integratedTerminal",
+      "justMyCode": true
+    },
+    {
+      "name": "Swallow: validate BPB reference disc",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/scripts/validate_bpb_references.py",
+      "args": [
+        "--output-dir",
+        "local-reports",
+        "--reference",
+        "${input:referenceKey}",
+        "${input:discImage}"
+      ],
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}/src"
+      },
+      "console": "integratedTerminal",
+      "justMyCode": true
+    },
+    {
       "name": "Swallow: unit tests",
       "type": "debugpy",
       "request": "launch",
