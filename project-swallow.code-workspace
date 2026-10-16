@@ -5,8 +5,18 @@
     }
   ],
   "settings": {
-    "python.analysis.extraPaths": [
-      "./src"
-    ]
+    // Window-scoped: VS Code ignores these in .vscode/settings.json when this
+    // workspace file is opened, so they are repeated here.
+    "terminal.integrated.env.windows": {
+      "PYTHONPATH": "${workspaceFolder}\\src",
+      "TEMP": "G:\\ProjectSwallow-data\\tmp",
+      "TMP": "G:\\ProjectSwallow-data\\tmp"
+    },
+    "terminal.integrated.env.linux": {
+      "PYTHONPATH": "${workspaceFolder}/src"
+    },
+    "terminal.integrated.env.osx": {
+      "PYTHONPATH": "${workspaceFolder}/src"
+    }
   }
 }
