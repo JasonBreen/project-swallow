@@ -95,6 +95,8 @@ def decompress_ulz(data: bytes, *, max_output: int = MAX_OUTPUT_BYTES) -> UlzRes
     reserves the lowest set bit of each word as a sentinel; bits below it are
     unused and a zero word has no flags. Output must reach the declared size
     exactly; any exhausted stream, early reference, or overrun is an error.
+    Version 0 must also have a zero flag word immediately after the last word
+    used; a missing or nonzero terminator is an error.
     """
     header = parse_ulz_header(data, max_output=max_output)
     flags = data[HEADER.size:header.literal_offset]
@@ -156,6 +158,13 @@ def decompress_ulz(data: bytes, *, max_output: int = MAX_OUTPUT_BYTES) -> UlzRes
         else:
             for _ in range(length):
                 out.append(out[-distance])
+    if header.version == 0:
+        # Version 0 ends on a zero flag word; reaching the size alone is not enough.
+        terminator = flags[flag_index * 4:flag_index * 4 + 4]
+        if terminator != b'\0\0\0\0':
+            state = 'missing' if len(terminator) < 4 else f'0x{int.from_bytes(terminator, "little"):08x}'
+            raise UlzFormatError(
+                f'Ulz version 0 terminator after flag word {flag_index} is {state}, not zero')
     unused_flags = flags[flag_index * 4:]
     return UlzResult(
         header=header,

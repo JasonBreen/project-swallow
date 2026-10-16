@@ -6,9 +6,9 @@ No decoded payload was written to disk; the checked-in reports hold metadata.
 
 ## Synthetic tests
 
-The complete suite passes **88 tests**, including 35 new container and Ulz
+The complete suite passes **92 tests**, including 39 new container and Ulz
 tests. They cover hand-built flag/literal/pair vectors for both Ulz versions,
-the version 0 sentinel positions and zero-word error, round trips through a
+the version 0 sentinel positions, zero-word error, and required terminator, round trips through a
 local greedy test encoder for both versions and 10–13 offset bits, every
 header rejection, each stream-exhaustion case, early back-references, match
 overrun, the size limit, offset-table rules and rejections, nested and decoded
@@ -53,8 +53,9 @@ Measured on all four images:
   copy overran. Across the Japanese pair the decoder processed 17,578,292
   literals and 7,197,959 matches per disc.
 - Unused flag words: exactly one zero word follows the used flags in every
-  Japanese blob. On the English references 40 (Disc 1) and 28 (Disc 2) blobs
-  have no trailing word; every unused word that exists is zero.
+  Japanese blob and in every version 0 blob on all four images, which the
+  decoder now requires. On the English references 40 (Disc 1) and 28 (Disc 2)
+  version 2 blobs have no trailing word; every unused word that exists is zero.
 - Unused literal bytes are 0–3 (padding to four bytes) and unused pair bytes
   are 0 or 2 in every blob. Literal padding is not always zero-valued.
 - Of the decoded payloads, 1,069 per image are themselves offset-table

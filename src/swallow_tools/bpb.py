@@ -29,6 +29,10 @@ class ContainerFormatError(ValueError):
     """Data is not an offset-table container this walker validates."""
 
 
+class ContainerLimitError(ContainerFormatError):
+    """A walker resource limit was reached; the walk stops instead of classifying."""
+
+
 @dataclass(frozen=True)
 class OffsetTable:
     count: int
@@ -70,7 +74,7 @@ class Node:
         return report
 
 
-def parse_offset_table(data: bytes) -> OffsetTable:
+def parse_offset_table(data: bytes, *, max_count: int | None = None) -> OffsetTable:
     """Validate a count-prefixed offset table; offsets are relative to data[0].
 
     Rules measured on all four references: count >= 1, first offset equals
@@ -78,19 +82,27 @@ def parse_offset_table(data: bytes) -> OffsetTable:
     within the data. The final item extends to the end of the data. A leaf
     whose first words happen to satisfy these rules is indistinguishable
     from a container; callers must treat the classification as structural.
+
+    With ``max_count``, a table that passes the cheap header checks but
+    declares more items raises ContainerLimitError before any offsets are
+    unpacked, so a huge declared count cannot force a large allocation.
     """
     if len(data) < 8:
         raise ContainerFormatError('Fewer than 8 bytes cannot hold a count and offset')
-    count = struct.unpack_from('<I', data)[0]
+    count, first = struct.unpack_from('<II', data)
     if count == 0:
         raise ContainerFormatError('Offset table count is zero')
     header_size = 4 + 4 * count
     if header_size > len(data):
         raise ContainerFormatError(f'Offset table count {count} exceeds {len(data)} bytes')
-    offsets = struct.unpack_from(f'<{count}I', data, 4)
-    if offsets[0] != header_size:
+    if first != header_size:
         raise ContainerFormatError(
-            f'First offset {offsets[0]} does not equal header size {header_size}')
+            f'First offset {first} does not equal header size {header_size}')
+    if max_count is not None and count > max_count:
+        raise ContainerLimitError(
+            f'Offset table declares {count} items, exceeding the remaining node budget '
+            f'of {max_count}')
+    offsets = struct.unpack_from(f'<{count}I', data, 4)
     previous = 0
     for position, offset in enumerate(offsets):
         if offset % TABLE_ALIGNMENT:
@@ -111,7 +123,7 @@ class _Budget:
 
     def take(self) -> None:
         if self.remaining <= 0:
-            raise ContainerFormatError(f'Node count exceeds the {self.limit} limit')
+            raise ContainerLimitError(f'Node count exceeds the {self.limit} limit')
         self.remaining -= 1
 
 
@@ -134,7 +146,9 @@ def _walk(data: bytes, decode: bool, path: tuple[int, ...], offset: int, depth: 
     if is_ulz(data):
         return _ulz_node(data, decode, path, offset, depth, origin, max_depth, budget)
     try:
-        table = parse_offset_table(data)
+        table = parse_offset_table(data, max_count=budget.remaining)
+    except ContainerLimitError:
+        raise
     except ContainerFormatError:
         return Node(path, offset, len(data), 'opaque', signature, origin)
     if depth >= max_depth:

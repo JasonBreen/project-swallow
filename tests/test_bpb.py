@@ -9,8 +9,8 @@ import tempfile
 import unittest
 
 from swallow_tools.bpb import (
-    ContainerFormatError, inspect_bpb, main, parse_offset_table, summarize_nodes,
-    walk_payload,
+    ContainerFormatError, ContainerLimitError, inspect_bpb, main, parse_offset_table,
+    summarize_nodes, walk_payload,
 )
 from swallow_tools.bph import BphFormatError
 from test_bph import make_index
@@ -118,19 +118,40 @@ class WalkTests(unittest.TestCase):
 
     def test_node_limit_raises(self):
         payload = container(*[padded(b'x')] * 10)
-        with self.assertRaisesRegex(ContainerFormatError, 'Node count'):
+        with self.assertRaisesRegex(ContainerLimitError, 'node budget'):
             walk_payload(payload, max_nodes=10)
         self.assertEqual(len(walk_payload(payload, max_nodes=11).children), 10)
+        # A decoded payload is charged one node beyond its Ulz leaf.
+        nested = container(encode_ulz(b'z' * 40))
+        with self.assertRaisesRegex(ContainerLimitError, 'Node count'):
+            walk_payload(nested, decode=True, max_nodes=2)
+        self.assertEqual(walk_payload(nested, decode=True, max_nodes=3).kind, 'container')
 
     def test_empty_items_count_against_node_limit(self):
         # Repeated offsets yield many zero-length items; each must be charged.
         payload = container(*([b''] * 50 + [padded(b'x')]))
-        with self.assertRaisesRegex(ContainerFormatError, 'Node count'):
+        with self.assertRaisesRegex(ContainerLimitError, 'node budget'):
             walk_payload(payload, max_nodes=10)
-        with self.assertRaisesRegex(ContainerFormatError, 'Node count'):
+        with self.assertRaisesRegex(ContainerLimitError, 'node budget'):
             walk_payload(payload, max_nodes=51)
         root = walk_payload(payload, max_nodes=52)
         self.assertEqual(sum(child.kind == 'empty' for child in root.children), 50)
+
+    def test_huge_declared_count_is_rejected_before_unpacking(self):
+        count = 200_000
+        payload = struct.pack('<II', count, 4 + 4 * count) + bytes(4 * count - 4)
+        with self.assertRaisesRegex(ContainerLimitError, 'declares 200000 items'):
+            parse_offset_table(payload, max_count=99_999)
+        with self.assertRaisesRegex(ContainerLimitError, 'node budget'):
+            walk_payload(payload)
+        # Without a budget the same bytes fail ordinary validation instead.
+        with self.assertRaises(ContainerFormatError) as ctx:
+            parse_offset_table(payload)
+        self.assertNotIsInstance(ctx.exception, ContainerLimitError)
+
+    def test_large_count_with_wrong_first_offset_stays_opaque(self):
+        payload = struct.pack('<II', 200_000, 12) + bytes(800_000)
+        self.assertEqual(walk_payload(payload, max_nodes=5).kind, 'opaque')
 
     def test_summary_counts(self):
         payload = container(encode_ulz(container(padded(b'abc')), version=0),

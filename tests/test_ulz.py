@@ -117,6 +117,24 @@ class UlzHandVectorTests(unittest.TestCase):
         with self.assertRaisesRegex(UlzFormatError, 'zero flag word'):
             decompress_ulz(blob)
 
+    def test_version0_requires_zero_terminator_after_declared_size(self):
+        missing = build_ulz(1, 0, 10, [1], b'a', [], terminator=False)
+        with self.assertRaisesRegex(UlzFormatError, 'terminator .* is missing'):
+            decompress_ulz(missing)
+        good = build_ulz(1, 0, 10, [1], b'a', [])
+        literal_offset = struct.unpack_from('<I', good, 8)[0] & 0xFFFFFF
+        nonzero = bytearray(good)
+        nonzero[literal_offset - 4:literal_offset] = (0x80000000).to_bytes(4, 'little')
+        with self.assertRaisesRegex(UlzFormatError, 'terminator .* is 0x80000000'):
+            decompress_ulz(bytes(nonzero))
+        self.assertEqual(decompress_ulz(good).payload, b'a')
+
+    def test_version2_does_not_require_terminator(self):
+        blob = build_ulz(1, 2, 10, [1], b'a', [], terminator=False)
+        result = decompress_ulz(blob)
+        self.assertEqual(result.payload, b'a')
+        self.assertEqual(result.flag_words_unused, 0)
+
     def test_version2_uses_all_32_bits(self):
         payload = bytes(range(33))
         blob = build_ulz(33, 2, 10, [1] * 33, payload, [])

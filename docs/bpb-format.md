@@ -42,7 +42,8 @@ entries therefore already carry the zero-filled alignment padding measured in
 the BPH validation; nested items do not.
 
 Stored (undecoded) nesting reaches depth 3 in these images. The walker stops
-at depth 8 and at 100,000 nodes per entry, counting empty items, and rejects entries over 16 MiB;
+at depth 8 and at 100,000 nodes per entry, counting empty items and rejecting
+a table whose declared count exceeds the remaining budget before unpacking it, and rejects entries over 16 MiB;
 these are tool limits, not format facts.
 
 ## Ulz compressed leaf
@@ -73,6 +74,9 @@ output reaches the declared size.
 Version 2 uses all 32 bits of every flag word. Version 0 treats the lowest set
 bit of each word as a sentinel: only the bits above it are flags, and a word
 that is zero carries no flags and is an error if output is still incomplete.
+Once output reaches the declared size, version 0 also requires the next flag
+word to be zero; a missing or nonzero terminator is an error. Version 2 ends
+on size alone and may omit the trailing word.
 The psx-spx notes describe the same distinction as "31 flag bits with an
 implied stop bit" for version 0 and "all 32 bits with a stop bit shifted in"
 for version 2. Both readings were confirmed locally: the sentinel sits at bit 0
