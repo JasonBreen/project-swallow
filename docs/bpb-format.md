@@ -58,12 +58,12 @@ A Ulz blob is a 16-byte header followed by three streams.
 | `0x04` | 3 | Decompressed size in bytes |
 | `0x07` | 1 | Version: `0` or `2` are supported; others are rejected |
 | `0x08` | 3 | Offset of the literal stream, relative to the blob start |
-| `0x0b` | 1 | Offset bit count `N` (observed 10–13); length gets `16 - N` bits |
+| `0x0b` | 1 | Offset bit count `N`: only the measured 10–13 are accepted; length gets `16 - N` bits |
 | `0x0c` | 4 | Offset of the pair stream, relative to the blob start |
 | `0x10` | … | Flag words up to the literal offset, then literals, then pairs |
 
 The reader requires `16 <= literal_offset <= pair_offset <= len(blob)`, a
-flag region that is a whole number of 32-bit words, `1 <= N <= 15`, and a
+flag region that is a whole number of 32-bit words, `N` in 10–13 (other counts are unvalidated and rejected), and a
 decompressed size within the 16 MiB in-memory limit.
 
 Decoding consumes flag words as little-endian 32-bit values from bit 31

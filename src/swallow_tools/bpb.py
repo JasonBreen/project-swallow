@@ -284,6 +284,12 @@ def inspect_bpb(path: Path, *, entries: list[int] | None = None,
         'bpb': {'lba': bpb.lba, 'size_bytes': bpb.size, 'sector_bytes': SECTOR_BYTES},
         'decode': decode,
         'entry_count': len(reports),
+        # Bit-31-clear BPH records are not walked; keep their raw words so
+        # reports still distinguish them and detect index changes.
+        'special_records': [
+            {'index': entry.index, 'descriptor': entry.descriptor,
+             'sector_word': entry.sector_word}
+            for entry in index.entries if entry.kind != 'normal'],
         'summary': summarize_nodes(roots),
         'entries': reports,
     }

@@ -6,7 +6,7 @@ No decoded payload was written to disk; the checked-in reports hold metadata.
 
 ## Synthetic tests
 
-The complete suite passes **95 tests**, including 42 new container and Ulz
+The complete suite passes **96 tests**, including 43 new container and Ulz
 tests. They cover hand-built flag/literal/pair vectors for both Ulz versions,
 the version 0 sentinel positions, zero-word error, required terminator,
 sentinel-only word rejection, and final-word leftover flags, round trips through a
