@@ -2,9 +2,10 @@
 
 Run from the repository with PYTHONPATH=src. Supply one or more
 --reference jp1 /path/to/image.bin pairs (keys: jp1, jp2, en1, en2). The
-script checks the BPH/BPB logical hashes against the checked-in baselines,
-walks every normal entry with Ulz decoding, and writes a metadata summary.
-No decoded payload is written to disk.
+script checks the whole-image and BPH/BPB logical hashes against the
+checked-in baselines, walks every normal entry with Ulz decoding, fails if
+any Ulz blob is rejected, and writes a metadata summary. No decoded payload
+is written to disk.
 """
 from __future__ import annotations
 
@@ -15,7 +16,7 @@ import json
 from pathlib import Path
 
 from swallow_tools.bpb import inspect_bpb
-from swallow_tools.disc import FileEntry, PlayStationDisc
+from swallow_tools.disc import FileEntry, PlayStationDisc, file_hashes
 
 KEYS = ('jp1', 'jp2', 'en1', 'en2')
 
@@ -51,6 +52,10 @@ def collect(node: dict, stats: dict) -> None:
 def validate(key: str, path: Path, baseline_dir: Path) -> dict:
     baseline = json.loads((baseline_dir / f'{key}.json').read_text(encoding='utf-8'))
     baseline_files = {entry['path']: entry for entry in baseline['files']}
+    # Archive files are shared between discs (both Japanese BPBs are identical),
+    # so reference identity must come from the whole-image fingerprint.
+    if file_hashes(path) != baseline['hashes']:
+        raise ValueError(f'{key}: whole-image hashes differ from baseline')
     disc = PlayStationDisc(path)
     entries = {entry['path']: FileEntry(**entry) for entry in disc.inspect()['files']}
     for name in ('ACE.BPH', 'ACE.BPB'):
@@ -68,11 +73,15 @@ def validate(key: str, path: Path, baseline_dir: Path) -> dict:
         per_entry.append({'index': entry['index'], 'size': entry['size'],
                           'kind': tree['kind'], 'child_count': tree.get('child_count', 0),
                           'signature': tree['signature']})
+    if stats['ulz_error_paths'] or report['summary']['ulz_errors']:
+        raise ValueError(f'{key}: {report["summary"]["ulz_errors"]} Ulz blob(s) failed to '
+                         f'decode: {stats["ulz_error_paths"][:5]}')
     non_container = [entry['index'] for entry in per_entry if entry['kind'] != 'container']
     return {
         'schema_version': 1,
         'baseline_report': f'docs/reports/{key}.json',
         'source_image': report['source_image'],
+        'whole_image_hashes_match_baseline': True,
         'bph_bpb_logical_hashes_match_baseline': True,
         'entry_count': report['entry_count'],
         'top_level_kinds': dict(Counter(entry['kind'] for entry in per_entry)),
@@ -107,11 +116,11 @@ def main() -> None:
         summary, full = validate(key, Path(filename), baseline_dir)
         args.output_dir.mkdir(parents=True, exist_ok=True)
         (args.output_dir / f'bpb-{key}-full.json').write_text(
-            json.dumps(full, indent=1) + '\n', encoding='utf-8')
+            json.dumps(full, indent=1) + '\n', encoding='utf-8', newline='\n')
         if args.summary_dir:
             args.summary_dir.mkdir(parents=True, exist_ok=True)
             (args.summary_dir / f'bpb-{key}.json').write_text(
-                json.dumps(summary, indent=2) + '\n', encoding='utf-8')
+                json.dumps(summary, indent=2) + '\n', encoding='utf-8', newline='\n')
         print(key, json.dumps({k: v for k, v in summary.items()
                                if k not in ('entries', 'opaque_signatures_stored_top20',
                                             'opaque_signatures_decoded_top20')}))

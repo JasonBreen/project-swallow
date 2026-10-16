@@ -153,15 +153,13 @@ def parse_bph(data: bytes, bpb_size: int) -> BphIndex:
     return BphIndex(header, bpb_size, len(data), tuple(entries), tuple(warnings))
 
 
-def inspect_bph(path: Path) -> dict:
-    """Discover ACE.BPH/BPB via ISO metadata and emit only index metadata.
+def locate_archive_files(disc: PlayStationDisc,
+                         inventory: dict) -> tuple[FileEntry, FileEntry]:
+    """Return validated root ACE.BPH and ACE.BPB entries from an ISO inventory.
 
-    BPB bounds use the ISO-recorded logical size. This does not read or verify
-    every BPB payload sector, decompress assets, or validate game behavior.
+    Each must occur exactly once, lie within the image, and the two extents
+    must not share sectors. The index must also fit the 1 MiB reader limit.
     """
-    disc = PlayStationDisc(path)
-    inventory = disc.inspect()
-
     def find_file(name: str) -> FileEntry:
         candidates = [entry for entry in inventory['files'] if entry['path'] == name]
         if len(candidates) != 1:
@@ -178,6 +176,18 @@ def inspect_bph(path: Path) -> dict:
     bpb_end = bpb.lba + (bpb.size + SECTOR_BYTES - 1) // SECTOR_BYTES
     if bph.size and bpb.size and max(bph.lba, bpb.lba) < min(bph_end, bpb_end):
         raise BphFormatError('ACE.BPH and ACE.BPB ISO extents overlap')
+    return bph, bpb
+
+
+def inspect_bph(path: Path) -> dict:
+    """Discover ACE.BPH/BPB via ISO metadata and emit only index metadata.
+
+    BPB bounds use the ISO-recorded logical size. This does not read or verify
+    every BPB payload sector, decompress assets, or validate game behavior.
+    """
+    disc = PlayStationDisc(path)
+    inventory = disc.inspect()
+    bph, bpb = locate_archive_files(disc, inventory)
     data = disc.read_file(bph)
     index = parse_bph(data, bpb.size)
     return {

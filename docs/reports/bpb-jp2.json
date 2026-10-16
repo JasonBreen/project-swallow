@@ -2,6 +2,7 @@
   "schema_version": 1,
   "baseline_report": "docs/reports/jp2.json",
   "source_image": "Ace Combat 3 - Electrosphere (Japan) (Disc 2).bin",
+  "whole_image_hashes_match_baseline": true,
   "bph_bpb_logical_hashes_match_baseline": true,
   "entry_count": 574,
   "top_level_kinds": {

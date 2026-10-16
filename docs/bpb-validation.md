@@ -6,14 +6,15 @@ No decoded payload was written to disk; the checked-in reports hold metadata.
 
 ## Synthetic tests
 
-The complete suite passes **86 tests**, including 33 new container and Ulz
+The complete suite passes **88 tests**, including 35 new container and Ulz
 tests. They cover hand-built flag/literal/pair vectors for both Ulz versions,
 the version 0 sentinel positions and zero-word error, round trips through a
 local greedy test encoder for both versions and 10–13 offset bits, every
 header rejection, each stream-exhaustion case, early back-references, match
 overrun, the size limit, offset-table rules and rejections, nested and decoded
 classification, recorded (not raised) decode errors, depth and node limits,
-summary counts, synthetic BPH/BPB image discovery, entry filtering, and CLI
+summary counts, empty items charged to the node limit, rejection of
+overlapping BPH/BPB extents, synthetic BPH/BPB image discovery, entry filtering, and CLI
 success/error paths.
 
 ```powershell
@@ -28,8 +29,9 @@ separately for the commit that introduces this change.
 
 ## Four-disc validation
 
-For every reference the logical SHA256 of `ACE.BPH` and `ACE.BPB` matched the
-[baseline](disc-inventory.md) before walking, every normal BPH entry was
+For every reference the whole-image MD5/SHA1/SHA256 and the logical SHA256 of
+`ACE.BPH` and `ACE.BPB` matched the [baseline](disc-inventory.md) before
+walking, every normal BPH entry was
 walked with decoding, and no Ulz blob produced an error.
 
 | Reference | Top-level containers | Opaque top-level | Stored nodes | Ulz blobs (v0 / v2) | Compressed bytes | Decompressed bytes | Report |
@@ -73,8 +75,9 @@ $env:PYTHONPATH = "src"
 python -m swallow_tools.bpb "G:\ProjectSwallow-data\japanese-disc1\Ace Combat 3 - Electrosphere (Japan) (Disc 1).bin" --entry 5 --decode --tree
 ```
 
-The stronger full-walk check verifies BPH/BPB hashes against the baselines,
-walks every entry with decoding, writes complete trees to an ignored local
+The stronger full-walk check verifies whole-image and BPH/BPB hashes against
+the baselines, so a disc supplied under the wrong key is rejected, walks every
+entry with decoding, fails if any Ulz blob is rejected, writes complete trees to an ignored local
 directory, and refreshes the compact summaries:
 
 ```powershell

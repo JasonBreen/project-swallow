@@ -12,6 +12,7 @@ from swallow_tools.bpb import (
     ContainerFormatError, inspect_bpb, main, parse_offset_table, summarize_nodes,
     walk_payload,
 )
+from swallow_tools.bph import BphFormatError
 from test_bph import make_index
 from test_disc import iso_record, raw_sector
 from test_ulz import encode_ulz
@@ -120,6 +121,16 @@ class WalkTests(unittest.TestCase):
         with self.assertRaisesRegex(ContainerFormatError, 'Node count'):
             walk_payload(payload, max_nodes=10)
         self.assertEqual(len(walk_payload(payload, max_nodes=11).children), 10)
+
+    def test_empty_items_count_against_node_limit(self):
+        # Repeated offsets yield many zero-length items; each must be charged.
+        payload = container(*([b''] * 50 + [padded(b'x')]))
+        with self.assertRaisesRegex(ContainerFormatError, 'Node count'):
+            walk_payload(payload, max_nodes=10)
+        with self.assertRaisesRegex(ContainerFormatError, 'Node count'):
+            walk_payload(payload, max_nodes=51)
+        root = walk_payload(payload, max_nodes=52)
+        self.assertEqual(sum(child.kind == 'empty' for child in root.children), 50)
 
     def test_summary_counts(self):
         payload = container(encode_ulz(container(padded(b'abc')), version=0),
@@ -235,6 +246,17 @@ class InspectAndCliTests(unittest.TestCase):
     def test_missing_image_returns_2(self):
         with redirect_stderr(StringIO()):
             self.assertEqual(main([str(Path(self.temp.name) / 'absent.bin')]), 2)
+
+    def test_overlapping_bph_and_bpb_extents_are_rejected(self):
+        root = Path(self.temp.name) / 'overlap'
+        root.mkdir()
+        image = make_image(root, self.payloads, bph_lba=27, bpb_lba=27)
+        with self.assertRaisesRegex(BphFormatError, 'overlap'):
+            inspect_bpb(image)
+        err = StringIO()
+        with redirect_stderr(err):
+            self.assertEqual(main([str(image)]), 2)
+        self.assertIn('overlap', err.getvalue())
 
 
 if __name__ == '__main__':

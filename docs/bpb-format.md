@@ -42,7 +42,7 @@ entries therefore already carry the zero-filled alignment padding measured in
 the BPH validation; nested items do not.
 
 Stored (undecoded) nesting reaches depth 3 in these images. The walker stops
-at depth 8 and at 100,000 nodes per entry and rejects entries over 16 MiB;
+at depth 8 and at 100,000 nodes per entry, counting empty items, and rejects entries over 16 MiB;
 these are tool limits, not format facts.
 
 ## Ulz compressed leaf
@@ -115,7 +115,8 @@ accounting only.
 ## Scope and provenance
 
 The CLI `python -m swallow_tools.bpb IMAGE [--entry N] [--decode] [--json|--tree]`
-reads BPH/BPB through ISO extents and never writes game bytes. The public
+reads BPH/BPB through ISO extents, rejecting overlapping extents exactly as the
+BPH reader does, and never writes game bytes. The public
 [psx-spx Ulz description](https://psx-spx.consoledev.net/cdromfileformats/)
 was consulted after the bit layout had been derived from local samples, and
 the two agree. [Krishty's archive research](https://www.zfx.info/viewtopic.php?p=53328)

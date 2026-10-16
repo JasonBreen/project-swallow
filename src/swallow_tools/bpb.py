@@ -15,8 +15,8 @@ from pathlib import Path
 import struct
 import sys
 
-from .bph import BphFormatError, MAX_INDEX_BYTES, SECTOR_BYTES, parse_bph
-from .disc import DiscFormatError, FileEntry, PlayStationDisc
+from .bph import BphFormatError, SECTOR_BYTES, locate_archive_files, parse_bph
+from .disc import DiscFormatError, PlayStationDisc
 from .ulz import UlzFormatError, decompress_ulz, is_ulz, parse_ulz_header
 
 MAX_DEPTH = 8
@@ -139,11 +139,15 @@ def _walk(data: bytes, decode: bool, path: tuple[int, ...], offset: int, depth: 
         return Node(path, offset, len(data), 'opaque', signature, origin)
     if depth >= max_depth:
         raise ContainerFormatError(f'Container nesting exceeds depth {max_depth}')
-    children = tuple(
-        _walk(data[start:end], decode, path + (index,), start, depth + 1, origin,
-              max_depth, budget)
-        if end > start else Node(path + (index,), start, 0, 'empty', '', origin)
-        for index, (start, end) in enumerate(table.items))
+    children = []
+    for index, (start, end) in enumerate(table.items):
+        if end > start:
+            children.append(_walk(data[start:end], decode, path + (index,), start,
+                                  depth + 1, origin, max_depth, budget))
+        else:
+            budget.take()
+            children.append(Node(path + (index,), start, 0, 'empty', '', origin))
+    children = tuple(children)
     return Node(path, offset, len(data), 'container', signature, origin, children)
 
 
@@ -227,19 +231,7 @@ def inspect_bpb(path: Path, *, entries: list[int] | None = None,
     """Walk BPB entries discovered through the ISO directory and BPH index."""
     disc = PlayStationDisc(path)
     inventory = disc.inspect()
-
-    def find_file(name: str) -> FileEntry:
-        candidates = [entry for entry in inventory['files'] if entry['path'] == name]
-        if len(candidates) != 1:
-            raise BphFormatError(f'Expected exactly one root {name}; found {len(candidates)}')
-        entry = FileEntry(**candidates[0])
-        disc.validate_file_extent(entry)
-        return entry
-
-    bph = find_file('ACE.BPH')
-    bpb = find_file('ACE.BPB')
-    if bph.size > MAX_INDEX_BYTES:
-        raise BphFormatError('BPH index exceeds the 1 MiB reader limit')
+    bph, bpb = locate_archive_files(disc, inventory)
     index = parse_bph(disc.read_file(bph), bpb.size)
     wanted = None if entries is None else set(entries)
     selected = [entry for entry in index.entries if entry.kind == 'normal'
