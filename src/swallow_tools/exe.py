@@ -115,7 +115,9 @@ def parse_psx_exe(header: bytes, file_size: int) -> PsxExe:
 
     warnings: list[str] = []
     text_end = t_addr + t_size
-    entry_in_text = t_addr <= pc < text_end
+    # Containment is judged on physical RAM, so any mirror of the text counts.
+    entry = _ram_offset(pc)
+    entry_in_text = entry is not None and offset <= entry[1] < offset + t_size
     if not entry_in_text:
         warnings.append('Entry point lies outside the text image.')
     if any(reserved_08) or any(reserved_38):
@@ -135,6 +137,7 @@ def parse_psx_exe(header: bytes, file_size: int) -> PsxExe:
 class SystemCnf:
     boot: str
     boot_path: str
+    boot_arguments: str
     settings: dict[str, str]
     ignored_duplicates: tuple[str, ...] = ()
 
@@ -144,6 +147,7 @@ def parse_system_cnf(data: bytes) -> SystemCnf:
 
     Only `cdrom:` boot paths are accepted. The version suffix and leading
     backslashes are removed; subdirectories are returned with `/` separators.
+    Text after whitespace is an argument string, kept apart from the path.
     A repeated key keeps its first value, as the PlayStation OS documentation
     specifies; later lines are listed in `ignored_duplicates`.
     """
@@ -169,11 +173,11 @@ def parse_system_cnf(data: bytes) -> SystemCnf:
     boot = settings.get('BOOT')
     if boot is None:
         raise ExeFormatError('SYSTEM.CNF has no BOOT line')
-    found = re.fullmatch(r'(?i)cdrom:\\*([^;]+)(?:;\d+)?', boot)
+    found = re.fullmatch(r'(?i)cdrom:\\*([^;\s]+)(?:;\d+)?(?:\s+(.*))?', boot)
     if not found:
         raise ExeFormatError(f'Unsupported BOOT path {boot!r}')
     boot_path = found.group(1).replace('\\', '/').upper()
-    return SystemCnf(boot, boot_path, settings, tuple(ignored))
+    return SystemCnf(boot, boot_path, found.group(2) or '', settings, tuple(ignored))
 
 
 def find_path_references(data: bytes, paths: list[str], text_address: int) -> list[dict]:
@@ -186,7 +190,7 @@ def find_path_references(data: bytes, paths: list[str], text_address: int) -> li
     found: list[dict] = []
     for path in sorted(paths):
         pattern = re.compile(rb'(?<![\\\w])\\' + re.escape(path.replace('/', '\\').encode('ascii'))
-                             + rb';\d+', re.I)
+                             + rb';\d+(?!\w)', re.I)
         for match in pattern.finditer(data):
             offset = match.start()
             address = (text_address + offset - HEADER_BYTES
@@ -272,7 +276,8 @@ def inspect_executables(path: Path) -> dict:
         'image_size_bytes': inventory['size_bytes'],
         'volume_id': inventory['volume_id'],
         'system_cnf': {'path': cnf_entry.path, 'boot': cnf.boot,
-                       'boot_path': cnf.boot_path, 'settings': cnf.settings,
+                       'boot_path': cnf.boot_path,
+                       'boot_arguments': cnf.boot_arguments, 'settings': cnf.settings,
                        'ignored_duplicates': list(cnf.ignored_duplicates)},
         'executables': executables,
         'text_range_overlaps': overlaps,

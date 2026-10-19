@@ -50,6 +50,12 @@ class ExeHeaderTests(unittest.TestCase):
             with self.subTest(name=name):
                 self.assertEqual(parse_psx_exe(raw, len(raw)).ram_mirror, name)
 
+    def test_entry_in_another_mirror_of_the_text_counts_as_inside(self):
+        raw = make_exe(t_addr=0x80010000, pc=0x00010010)
+        exe = parse_psx_exe(raw, len(raw))
+        self.assertTrue(exe.entry_in_text)
+        self.assertEqual(exe.warnings, ())
+
     def test_text_may_end_exactly_at_top_of_ram(self):
         raw = make_exe(t_addr=0x801FF800, pc=0x801FF800)
         self.assertEqual(parse_psx_exe(raw, len(raw)).text_end, 0x80200000)
@@ -111,6 +117,11 @@ class SystemCnfTests(unittest.TestCase):
                          'DIR/MAIN.EXE')
         self.assertEqual(parse_system_cnf(b'BOOT = cdrom:MAIN.EXE').boot_path, 'MAIN.EXE')
 
+    def test_boot_arguments_are_kept_apart_from_the_path(self):
+        cnf = parse_system_cnf(b'BOOT = cdrom:\\MAIN.EXE;1 mode 2\n')
+        self.assertEqual((cnf.boot_path, cnf.boot_arguments), ('MAIN.EXE', 'mode 2'))
+        self.assertEqual(parse_system_cnf(b'BOOT = cdrom:MAIN.EXE;1').boot_arguments, '')
+
     def test_first_repeated_key_wins(self):
         cnf = parse_system_cnf(b'BOOT = cdrom:A;1\nTCB = 4\nboot = cdrom:B;1\nTCB = 8\n')
         self.assertEqual((cnf.boot_path, cnf.settings['TCB']), ('A', '4'))
@@ -133,7 +144,7 @@ class PathReferenceTests(unittest.TestCase):
         self.assertEqual([ref['address'] for ref in refs], [None, '0x8001000c'])
 
     def test_name_must_be_a_full_path_component(self):
-        data = make_exe(text=b'\\XGAME.BIN;1\\GAME.BINX;1' + b'\x00' * 2024)
+        data = make_exe(text=b'\\XGAME.BIN;1\\GAME.BINX;1\\GAME.BIN;1X' + b'\x00' * 2012)
         self.assertEqual(find_path_references(data, ['GAME.BIN'], 0x80010000), [])
 
     def test_subdirectory_path_is_not_a_root_match(self):

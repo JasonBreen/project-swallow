@@ -33,7 +33,7 @@ description of the PS-X EXE header.
 |---|---:|---|---|
 | `0x00` | 8 | Magic | Exactly `PS-X EXE` |
 | `0x08` | 8 | Reserved | Kept as hex; nonzero is a warning |
-| `0x10` | 4 | Initial PC | Word aligned; outside the text image is a warning |
+| `0x10` | 4 | Initial PC | Word aligned; outside the text image, compared as physical RAM, is a warning |
 | `0x14` | 4 | Initial GP | Reported only |
 | `0x18` | 4 | Text address | Word aligned, inside one 2 MiB RAM mirror (KUSEG, KSEG0 or KSEG1), clear of the first 64 KiB |
 | `0x1c` | 4 | Text size | A multiple of 2048; header plus text equals the ISO file size exactly; the text ends at or below the top of RAM |
@@ -48,14 +48,16 @@ description of the PS-X EXE header.
 `SYSTEM.CNF` must appear once at the root. Its `BOOT` line must be a
 `cdrom:` path to exactly one ISO file, and that file must be a valid PS-X
 EXE. A repeated key keeps its first value, as the PlayStation OS
-documentation specifies, and the ignored lines are listed in the report. Every other file is checked by content: a file whose first eight
+documentation specifies, and the ignored lines are listed in the report. Text after
+whitespace in `BOOT` is kept as `boot_arguments`, apart from the path. Every other file is checked by content: a file whose first eight
 logical bytes are the magic is parsed as an executable, whatever its name.
 A file whose first sector is MODE2 Form 2 is listed under `form2_skipped`
 and never read as Form 1 data.
 
 Path references are `\NAME;n` strings naming files in the same ISO. A match
 must begin at a path boundary, so `\DIR\GAME.BIN;1` counts only as
-`DIR/GAME.BIN`, never as a root `GAME.BIN`. Each
+`DIR/GAME.BIN`, never as a root `GAME.BIN`, and it must end after the
+version digits. Each
 records its file offset and, for text bytes, its load address. Overlap checks
 compare physical addresses, so the same RAM seen through two mirrors still
 counts as overlap.
