@@ -37,7 +37,7 @@ description of the PS-X EXE header.
 | `0x14` | 4 | Initial GP | Reported only |
 | `0x18` | 4 | Text address | Word aligned, inside one 2 MiB RAM mirror (KUSEG, KSEG0 or KSEG1), clear of the first 64 KiB |
 | `0x1c` | 4 | Text size | A multiple of 2048; header plus text equals the ISO file size exactly; the text ends at or below the top of RAM |
-| `0x20` | 8 | Data address and size | Reported; nonzero is a warning, and no memory effect is assumed |
+| `0x20` | 8 | Data address and size | Reported; either word nonzero is a warning, and no memory effect is assumed |
 | `0x28` | 8 | BSS address and size | Same as data |
 | `0x30` | 8 | Stack base and offset | Reported only |
 | `0x38` | 20 | Reserved | Kept as hex; nonzero is a warning |
@@ -47,12 +47,15 @@ description of the PS-X EXE header.
 
 `SYSTEM.CNF` must appear once at the root. Its `BOOT` line must be a
 `cdrom:` path to exactly one ISO file, and that file must be a valid PS-X
-EXE. Every other file is checked by content: a file whose first eight
+EXE. A repeated key keeps its first value, as the PlayStation OS
+documentation specifies, and the ignored lines are listed in the report. Every other file is checked by content: a file whose first eight
 logical bytes are the magic is parsed as an executable, whatever its name.
 A file whose first sector is MODE2 Form 2 is listed under `form2_skipped`
 and never read as Form 1 data.
 
-Path references are `\NAME;n` strings naming files in the same ISO. Each
+Path references are `\NAME;n` strings naming files in the same ISO. A match
+must begin at a path boundary, so `\DIR\GAME.BIN;1` counts only as
+`DIR/GAME.BIN`, never as a root `GAME.BIN`. Each
 records its file offset and, for text bytes, its load address. Overlap checks
 compare physical addresses, so the same RAM seen through two mirrors still
 counts as overlap.
@@ -87,8 +90,10 @@ python scripts\validate_exe_references.py --reference jp1 <BIN> --output-dir G:\
 The four reports are in `docs/reports/exe-{jp1,jp2,en1,en2}.json`.
 The validation script checks each image's whole-file hashes and each
 executable's hash against the baseline reports before it writes anything.
-Exit codes match the other tools: `0` for success, `2` for input or format
-errors.
+When `docs/reports/exe-KEY.json` exists, the discovered executables must
+match it exactly, so a report that misses an executable fails. Both the
+reader and the script exit with `0` for success and `2` for input, format,
+or validation errors.
 
 ## Next
 

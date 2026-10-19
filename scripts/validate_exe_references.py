@@ -2,6 +2,8 @@
 
 Run from the repository with PYTHONPATH=src. Supply one or more
 --reference jp1 /path/to/image.bin pairs (keys: jp1, jp2, en1, en2).
+When docs/reports/exe-KEY.json exists, the discovered executable set must
+match it exactly. Any validation failure exits with status 2.
 """
 from __future__ import annotations
 
@@ -24,6 +26,13 @@ def validate(key: str, path: Path, baseline_dir: Path) -> dict:
         check=True, capture_output=True, text=True, encoding='utf-8')
     report = json.loads(completed.stdout)
     baseline_files = {e['path']: e for e in baseline['files']}
+    recorded = baseline_dir / f'exe-{key}.json'
+    if recorded.is_file():
+        expected = json.loads(recorded.read_text(encoding='utf-8'))
+        want = {(e['path'], e['sha256']) for e in expected['executables']}
+        got = {(e['path'], e['sha256']) for e in report['executables']}
+        if got != want:
+            raise ValueError(f'{key}: executable set differs from {recorded.name}')
     for exe in report['executables']:
         expected = baseline_files[exe['path']]['content_hash']['sha256']
         if exe['sha256'] != expected:
@@ -53,7 +62,11 @@ def main() -> None:
         if key not in {'jp1', 'jp2', 'en1', 'en2'} or key in seen:
             parser.error('Reference keys must be unique and one of jp1, jp2, en1, en2')
         seen.add(key)
-        report = validate(key, Path(filename), baseline_dir)
+        try:
+            report = validate(key, Path(filename), baseline_dir)
+        except (OSError, KeyError, ValueError, subprocess.CalledProcessError) as exc:
+            print(f'ERROR: {key}: {exc}', file=sys.stderr)
+            raise SystemExit(2) from exc
         args.output_dir.mkdir(parents=True, exist_ok=True)
         (args.output_dir / f'exe-{key}.json').write_bytes(
             (json.dumps(report, indent=2) + '\n').encode('utf-8'))

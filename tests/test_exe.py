@@ -87,6 +87,12 @@ class ExeHeaderTests(unittest.TestCase):
         self.assertEqual(exe.header.reserved_38_hex, '02' * 20)
         self.assertEqual((exe.header.data_address, exe.header.data_size), (0x80030000, 4))
 
+    def test_data_or_bss_address_alone_warns(self):
+        for options in ({'data': (0x80030000, 0)}, {'bss': (0x80030000, 0)}):
+            raw = make_exe(**options)
+            with self.subTest(options=options):
+                self.assertIn('Data or BSS', parse_psx_exe(raw, len(raw)).warnings[0])
+
     def test_bytes_after_marker_warn(self):
         raw = bytearray(make_exe())
         raw[0x7F0] = 1
@@ -105,9 +111,14 @@ class SystemCnfTests(unittest.TestCase):
                          'DIR/MAIN.EXE')
         self.assertEqual(parse_system_cnf(b'BOOT = cdrom:MAIN.EXE').boot_path, 'MAIN.EXE')
 
+    def test_first_repeated_key_wins(self):
+        cnf = parse_system_cnf(b'BOOT = cdrom:A;1\nTCB = 4\nboot = cdrom:B;1\nTCB = 8\n')
+        self.assertEqual((cnf.boot_path, cnf.settings['TCB']), ('A', '4'))
+        self.assertEqual(cnf.ignored_duplicates, ('boot = cdrom:B;1', 'TCB = 8'))
+
     def test_rejections(self):
         for raw in (b'TCB = 4\n', b'BOOT = host:MAIN.EXE;1\n', b'BOOT cdrom:A;1\n',
-                    b'BOOT = cdrom:A;1\nBOOT = cdrom:B;1\n', b'BOOT = cdrom:\xff;1',
+                    b'BOOT = cdrom:\xff;1',
                     b'B' * 2049):
             with self.subTest(raw=raw[:20]), self.assertRaises(ExeFormatError):
                 parse_system_cnf(raw)
@@ -124,6 +135,12 @@ class PathReferenceTests(unittest.TestCase):
     def test_name_must_be_a_full_path_component(self):
         data = make_exe(text=b'\\XGAME.BIN;1\\GAME.BINX;1' + b'\x00' * 2024)
         self.assertEqual(find_path_references(data, ['GAME.BIN'], 0x80010000), [])
+
+    def test_subdirectory_path_is_not_a_root_match(self):
+        data = make_exe(text=b'\\DIR\\GAME.BIN;1\x00cdrom:\\GAME.BIN;1' + b'\x00' * 2017)
+        refs = find_path_references(data, ['GAME.BIN', 'DIR/GAME.BIN'], 0x80010000)
+        self.assertEqual([(r['path'], r['file_offset']) for r in refs],
+                         [('DIR/GAME.BIN', 0x800), ('GAME.BIN', 0x816)])
 
 
 def make_image(root, files, *, cnf=b'BOOT = cdrom:BOOT.EXE;1\r\nTCB = 4\r\n',
@@ -173,9 +190,9 @@ class InspectExecutablesTests(unittest.TestCase):
 
     def test_boot_from_system_cnf_and_executables_found_by_content(self):
         path = make_image(self.root, [('BOOT.EXE', self.boot), ('GAME.BIN', self.game),
-                                      ('DATA.BPB', b'\x00' * 100),
+                                      ('DATA.BPB', b'\x00' * 100), ('TINY.XA', b'\x00' * 4),
                                       ('STREAM.SPB', b'PS-X EXE' + b'\x00' * 4000)],
-                          form2_files=('STREAM.SPB',))
+                          form2_files=('STREAM.SPB', 'TINY.XA'))
         report = inspect_executables(path)
         self.assertEqual(report['system_cnf']['boot_path'], 'BOOT.EXE')
         self.assertEqual(report['system_cnf']['settings']['TCB'], '4')
@@ -186,7 +203,7 @@ class InspectExecutablesTests(unittest.TestCase):
         self.assertEqual(by_path['GAME.BIN']['sha256'], hashlib.sha256(self.game).hexdigest())
         self.assertEqual(by_path['BOOT.EXE']['path_references'][0]['address'], '0x8012000c')
         self.assertEqual(by_path['GAME.BIN']['path_references'][0]['path'], 'DATA.BPB')
-        self.assertEqual(report['form2_skipped'], ['STREAM.SPB'])
+        self.assertEqual(report['form2_skipped'], ['TINY.XA', 'STREAM.SPB'])
         self.assertEqual(report['text_range_overlaps'], [])
 
     def test_overlap_uses_physical_addresses_across_mirrors(self):

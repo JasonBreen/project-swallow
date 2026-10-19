@@ -5,7 +5,7 @@
 - Added a VS Code and Antigravity editor setup: debug configurations for the disc, BPH, BPB, compare, and validation tools; a committed test env file so Test Explorer works on a fresh clone; a shared `[tool.pyright]` configuration for Pylance and basedpyright; LF and final-newline file settings; `TEMP`/`TMP` on `G:` for debug, test, and Windows terminal runs; and a `tests/__init__.py` so root-level (`-t .`) discovery works. See `docs/editor-setup.md`.
 - Added a read-only PS-X EXE header reader and `swallow-exe` CLI (`swallow_tools.exe`). It resolves the boot file from `SYSTEM.CNF`, finds every other executable by its magic rather than its name, validates the header against the file size and the 2 MiB RAM map, and reports hashes, text ranges, uninterpreted fields, and `\NAME;n` path strings that name files on the same disc. Form 2 files are listed and skipped.
 - Found that `ACE3.BIN` is a second PS-X EXE (entry `0x8002572c`, text `0x80010000–0x800bd000`) on all four references, which withdraws the earlier overlay-header reading of its first words. The boot executable contains `\ACE3.BIN;1`, and `ACE3.BIN` names all four archive files. Both are recorded as evidence, not as proof of load order.
-- Added `scripts/validate_exe_references.py`, which checks whole-image and per-executable hashes against the baselines. Expanded synthetic tests from 111 to 127 and documented the contract in `docs/exe-format.md`.
+- Added `scripts/validate_exe_references.py`, which checks whole-image and per-executable hashes against the baselines. Expanded synthetic tests from 111 to 130 and documented the contract in `docs/exe-format.md`.
 
 ## 0.5.0 — 2026-10-16
 

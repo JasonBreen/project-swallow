@@ -12,7 +12,8 @@
       "TCB": "4",
       "EVENT": "16",
       "STACK": "801FFF00"
-    }
+    },
+    "ignored_duplicates": []
   },
   "executables": [
     {

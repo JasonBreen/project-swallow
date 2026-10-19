@@ -123,7 +123,7 @@ def parse_psx_exe(header: bytes, file_size: int) -> PsxExe:
     marker_end = MARKER_OFFSET + len(marker_bytes)
     if any(header[marker_end:HEADER_BYTES]):
         warnings.append('Bytes after the region marker are nonzero; not interpreted.')
-    if d_size or b_size:
+    if d_addr or d_size or b_addr or b_size:
         warnings.append('Data or BSS fields are nonzero; no memory effect is assumed.')
     parsed = PsxExeHeader(pc, gp, t_addr, t_size, d_addr, d_size, b_addr,
                           b_size, s_addr, s_size, marker_bytes.decode('ascii'),
@@ -136,6 +136,7 @@ class SystemCnf:
     boot: str
     boot_path: str
     settings: dict[str, str]
+    ignored_duplicates: tuple[str, ...] = ()
 
 
 def parse_system_cnf(data: bytes) -> SystemCnf:
@@ -143,6 +144,8 @@ def parse_system_cnf(data: bytes) -> SystemCnf:
 
     Only `cdrom:` boot paths are accepted. The version suffix and leading
     backslashes are removed; subdirectories are returned with `/` separators.
+    A repeated key keeps its first value, as the PlayStation OS documentation
+    specifies; later lines are listed in `ignored_duplicates`.
     """
     if len(data) > MAX_SYSTEM_CNF_BYTES:
         raise ExeFormatError('SYSTEM.CNF exceeds the 2048-byte reader limit')
@@ -151,6 +154,7 @@ def parse_system_cnf(data: bytes) -> SystemCnf:
     except UnicodeDecodeError as exc:
         raise ExeFormatError('SYSTEM.CNF is not ASCII') from exc
     settings: dict[str, str] = {}
+    ignored: list[str] = []
     for line in text.splitlines():
         if not line.strip():
             continue
@@ -159,7 +163,8 @@ def parse_system_cnf(data: bytes) -> SystemCnf:
         if not sep or not key:
             raise ExeFormatError(f'Malformed SYSTEM.CNF line: {line!r}')
         if key in settings:
-            raise ExeFormatError(f'Duplicate SYSTEM.CNF key {key}')
+            ignored.append(line.strip())
+            continue
         settings[key] = value.strip()
     boot = settings.get('BOOT')
     if boot is None:
@@ -168,18 +173,19 @@ def parse_system_cnf(data: bytes) -> SystemCnf:
     if not found:
         raise ExeFormatError(f'Unsupported BOOT path {boot!r}')
     boot_path = found.group(1).replace('\\', '/').upper()
-    return SystemCnf(boot, boot_path, settings)
+    return SystemCnf(boot, boot_path, settings, tuple(ignored))
 
 
 def find_path_references(data: bytes, paths: list[str], text_address: int) -> list[dict]:
     """Locate `\\NAME;n` ISO path strings for known files inside an executable.
 
-    A string reference is evidence that code may open the file; it does not
-    prove when or how the file is loaded.
+    A match must start at a path boundary, so `\\DIR\\GAME.BIN;1` names only
+    `DIR/GAME.BIN`, never a root `GAME.BIN`. A string reference is evidence
+    that code may open the file; it does not prove when or how it is loaded.
     """
     found: list[dict] = []
     for path in sorted(paths):
-        pattern = re.compile(rb'\\' + re.escape(path.replace('/', '\\').encode('ascii'))
+        pattern = re.compile(rb'(?<![\\\w])\\' + re.escape(path.replace('/', '\\').encode('ascii'))
                              + rb';\d+', re.I)
         for match in pattern.finditer(data):
             offset = match.start()
@@ -225,10 +231,10 @@ def inspect_executables(path: Path) -> dict:
     executables: list[dict] = []
     form2_skipped: list[str] = []
     for entry in files:
-        if entry.size < len(MAGIC):
+        if entry.size == 0:
             continue
         try:
-            magic = disc.read_file(entry, length=len(MAGIC))
+            magic = disc.read_file(entry, length=min(len(MAGIC), entry.size))
         except Form2SectorError:
             form2_skipped.append(entry.path)
             continue
@@ -266,7 +272,8 @@ def inspect_executables(path: Path) -> dict:
         'image_size_bytes': inventory['size_bytes'],
         'volume_id': inventory['volume_id'],
         'system_cnf': {'path': cnf_entry.path, 'boot': cnf.boot,
-                       'boot_path': cnf.boot_path, 'settings': cnf.settings},
+                       'boot_path': cnf.boot_path, 'settings': cnf.settings,
+                       'ignored_duplicates': list(cnf.ignored_duplicates)},
         'executables': executables,
         'text_range_overlaps': overlaps,
         'form2_skipped': form2_skipped,
