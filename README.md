@@ -22,7 +22,7 @@ The repository begins with the disc and archive tools needed to build that game 
 
 ## Development status
 
-**Pre-alpha · toolchain v0.5.0 · no playable build available yet.**
+**Pre-alpha · toolchain v0.6.0 · no playable build available yet.**
 
 The game is in development. There is currently no native renderer, playable mission, recovered gameplay runtime, or completed English dub. Windows and Linux are target game platforms; current automated coverage runs the Python tools on both.
 
@@ -61,7 +61,7 @@ git lfs pull
 
 See the [reference-disc inventory](discs/README.md) for archive hashes and extraction commands. The tools read extracted raw MODE2/2352 BIN images. Original archives and images remain unchanged.
 
-From the checkout, inspect a Japanese disc, decode its BPH index, and walk one BPB entry:
+From the checkout, inspect a Japanese disc, decode its BPH index, walk one BPB entry, and report its executables:
 
 ```powershell
 $env:PYTHONPATH = "src"
@@ -73,6 +73,7 @@ $disc = "G:\ProjectSwallow-data\japanese-disc1\Ace Combat 3 - Electrosphere (Jap
 python -m swallow_tools $disc --hash --file-hashes --json
 python -m swallow_tools.bph $disc --json
 python -m swallow_tools.bpb $disc --entry 5 --decode --tree
+python -m swallow_tools.exe $disc
 python -m unittest discover -s tests -v
 ```
 
@@ -82,11 +83,12 @@ On Linux:
 PYTHONPATH=src python -m swallow_tools /path/to/disc.bin --hash --file-hashes --json
 PYTHONPATH=src python -m swallow_tools.bph /path/to/disc.bin --json
 PYTHONPATH=src python -m swallow_tools.bpb /path/to/disc.bin --decode
+PYTHONPATH=src python -m swallow_tools.exe /path/to/disc.bin
 PYTHONPATH=src python -m swallow_tools.compare /path/to/japanese.bin /path/to/english.bin --json
 PYTHONPATH=src python -m unittest discover -s tests -v
 ```
 
-An optional editable install, `python -m pip install -e .`, exposes `swallow-disc`, `swallow-bph`, `swallow-bpb`, and `swallow-compare`. Use a virtual environment on your project drive. Tests use synthetic data and require no discs, network, emulator, paid model, or GPU.
+An optional editable install, `python -m pip install -e .`, exposes `swallow-disc`, `swallow-bph`, `swallow-bpb`, `swallow-exe`, and `swallow-compare`. Use a virtual environment on your project drive. Tests use synthetic data and require no discs, network, emulator, paid model, or GPU.
 
 The BPH report contains metadata and validates normal entry ranges against the ISO-recorded BPB size. It does not extract assets or execute the game. Uninterpreted special records remain explicit. Read the [format contract](docs/bph-format.md) and [validation results](docs/bph-validation.md) for the exact guarantees.
 

@@ -12,6 +12,8 @@ Tooling v0.4.0 adds the read-only nested BPB container walker and a validated Na
 
 Tooling v0.5.0 validates PlayStation TIM image leaves to metadata on all four references and records the `00002311` leaves as a measured hypothesis. See [the TIM contract](tim-format.md).
 
+Tooling v0.6.0 starts the executable track with a PS-X EXE header reader validated on all four references. It finds executables by content and shows that `ACE3.BIN` is a second PS-X EXE loaded at `0x80010000`, not an overlay. See [the EXE contract](exe-format.md).
+
 Next, classify the remaining opaque leaves that the walker exposes (the `00002311` leaves, the four text-like top-level entries, and the other decoded leaf signatures) from measured examples, and implement a bounded resource interface for understood formats. Use local-only extraction outputs and reproducible metadata manifests. The project goal is a fully playable open-source AC3 reconstruction, and these tools build its resource foundation.
 
 Separately investigate `ACE.SPH` plus the Form 2 media in `ACE.SPB`. Preserve file/channel identifiers, timing, interleave, and payload boundaries. Do not route streaming data through the Form 1-only file helper.

@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "swallow-tools"
-version = "0.5.0"
+version = "0.6.0"
 description = "Disc and archive tools for Project Swallow, an open-source AC3 reconstruction"
 readme = "README.md"
 requires-python = ">=3.11"
@@ -17,6 +17,7 @@ swallow-disc = "swallow_tools.cli:main"
 swallow-compare = "swallow_tools.compare:main"
 swallow-bph = "swallow_tools.bph:main"
 swallow-bpb = "swallow_tools.bpb:main"
+swallow-exe = "swallow_tools.exe:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]
