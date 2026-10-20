@@ -18,25 +18,32 @@ Project Swallow is building **Ace Combat 3: Electrosphere as a fully playable op
 
 AC3's world of corporate power, fractured loyalties, and digital identity deserves to be experienced as a complete game. Swallow's destination is that experience on Windows and Linux, with enhanced artwork, modern presentation, and an English dub performed by the project team. Original behavior is the reference throughout development.
 
-The repository begins with the disc and archive tools needed to build that game faithfully. Those tools are the foundation of Swallow; the playable reconstruction is the project.
+The repository currently contains the disc and archive tools needed to build that game faithfully. Those tools are the present development stage and foundation of Swallow; the playable reconstruction is still planned.
+
+## How it is built
+
+- **Engine: C (planned).** The game runtime will be written in C. No engine code exists yet.
+- **Executable recovery: MIPS assembly (planned).** The original PlayStation executable and overlays will be disassembled and documented; recovered routines will be the reference for the C runtime. This work has not started.
+- **Resource tooling: Python.** Disc, archive, and validation tools remain standard-library Python; Python is not the planned game runtime.
+- **Original behavior:** The flight model and gameplay will be recovered from AC3's own code, not approximated with generic flight-simulator physics.
 
 ## Development status
 
 **Pre-alpha · toolchain v0.5.0 · no playable build available yet.**
 
-The game is in development. There is currently no native renderer, playable mission, recovered gameplay runtime, or completed English dub. Windows and Linux are target game platforms; current automated coverage runs the Python tools on both.
+The game is in development. There is currently no C engine, native renderer, playable mission, recovered gameplay runtime, or completed English dub. Windows and Linux are target game platforms; current automated coverage runs the Python tools on both.
 
 | Area | Working now | Destination |
 |---|---|---|
 | Source discs | Four fingerprinted references; complete archives stored with Git LFS in this private repository | Reproducible inputs for the complete Japanese campaign |
 | Disc access | ISO directory inspection, raw-image hashes, bounded Form 1 reads, logical-file comparison | Reliable access to game resources |
-| `ACE.BPH` | Typed index parser, explicit payload sizes, range checks, metadata reports; validated against all four references | Resource loading for the game |
-| `ACE.BPB` assets | Nested offset-table containers walked, Namco Ulz (v0/v2) decoded in memory with exact stream accounting, and PlayStation TIM image leaves validated to metadata; other leaf formats still uninterpreted | Original assets and enhanced presentation |
+| `ACE.BPH` | Typed index parser, explicit payload sizes, range checks, metadata reports; validated against all four references | Resource loading for the C runtime |
+| `ACE.BPB` / Ulz | Nested offset-table containers walked; Namco Ulz (v0/v2) decoded in memory with exact stream accounting; other leaf formats still uninterpreted | Decoded resources for the C runtime |
+| TIM metadata | PlayStation TIM image leaves validated to metadata on all four references; pixels are not yet converted or written | Original assets and enhanced presentation |
+| Executable | PS-X EXE and `ACE3.BIN` identified; MIPS recovery is planned | Annotated original routines: loaders, flight model, and missions |
 | Streaming media | Form 2 detected and kept outside the Form 1 reader | Correct XA audio/video, timing, and interleave |
-| Gameplay and campaign | Original behavior established as the reference; runtime work remains ahead | Playable missions, branching routes, transitions, and saves |
+| Gameplay and campaign | Not started; original code will be the reference | Playable missions, branching routes, transitions, and saves |
 | English voices | Human-performed dub planned | A complete, credited team recording |
-
-The toolchain is written in **Python**, with standard-library runtime dependencies. The game's runtime architecture remains an open engineering decision, within the project's **no C** language constraint.
 
 ## Run the toolchain
 
@@ -98,10 +105,10 @@ For disc inspection, `--cue /path/to/game.cue --strict-cue` checks that referenc
 
 1. **Disc baseline — complete.** Identify the four supplied images, preserve originals, and compare supported logical contents.
 2. **BPH index — implemented.** Decode and validate the archive's entry ranges; preserve uncertain fields and publish reproducible metadata.
-3. **BPB containers and compression — implemented.** Walk nested offset tables and decode Ulz versions 0 and 2 with validated stream accounting on all four references.
-4. **Leaf classification — in progress.** TIM image leaves are validated to metadata on all four references; the `00002311` leaves and the four text-like top-level entries remain measured hypotheses.
-5. **Resources and original behavior — next.** Classify the remaining leaf formats; develop a separate XA-aware media reader; establish executable/data behavior with reference captures.
-6. **One complete mission.** Aircraft, level, original flight behavior, controls, weapons, objectives, dialogue, and results working together.
+3. **BPB containers and Ulz compression — implemented.** Walk nested offset tables and decode Ulz versions 0 and 2 with validated stream accounting on all four references.
+4. **TIM metadata — implemented.** Validate PlayStation TIM leaves to metadata; pixel conversion and remaining leaf formats are still planned.
+5. **Executable/MIPS recovery — next.** Disassemble the boot EXE and `ACE3.BIN`, identify library code, and document the original loaders and gameplay routines before writing the C runtime.
+6. **One complete mission in the C runtime.** Aircraft, level, recovered flight model, controls, weapons, objectives, dialogue, and results working together with runtime evidence.
 7. **The full Electrosphere.** Branching campaign, disc-specific content, saves, enhanced presentation, human English dialogue, and platform validation.
 
 The [roadmap](docs/roadmap.md) tracks these stages. Passing parser tests establishes tool behavior; a playable mission and campaign require their own runtime evidence.
