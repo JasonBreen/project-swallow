@@ -18,30 +18,32 @@ Project Swallow is building **Ace Combat 3: Electrosphere as a fully playable op
 
 AC3's world of corporate power, fractured loyalties, and digital identity deserves to be experienced as a complete game. Swallow aims to deliver that on Windows and Linux, with enhanced artwork, modern presentation, and an English dub performed by the project team.
 
-**Original behavior is the reference, not an inspiration.** The flight model and gameplay will be recovered one-to-one from AC3's own code through reverse engineering of the original executable; that work is planned and has not started. They will not be rebuilt, approximated, or replaced with generic flight physics.
+The repository currently contains the disc and archive tools needed to build that game faithfully. Those tools are the present development stage and foundation of Swallow; the playable reconstruction is still planned.
 
 ## How it is built
 
-- **Engine: C.** The game engine will be written in C. No engine code exists yet.
-- **Reverse engineering: MIPS assembly (planned).** The original PlayStation executable and overlays will be disassembled and documented, and the recovered routines will be the ground truth for the engine. This work has not started; see the [executable track](docs/next-task-executable.md).
-- **Tooling: Python, kept minimal.** Disc, archive, and validation tools are standard-library Python. Python is not used for the engine itself.
+- **Engine: C (planned).** The game runtime will be written in C. No engine code exists yet.
+- **Executable recovery: MIPS assembly (planned).** The original PlayStation executable and overlays will be disassembled and documented; recovered routines will be the reference for the C runtime. This work has not started; see the [executable track](docs/next-task-executable.md).
+- **Resource tooling: Python.** Disc, archive, and validation tools remain standard-library Python; Python is not the planned game runtime.
+- **Original behavior:** The flight model and gameplay will be recovered from AC3's own code, not approximated with generic flight-simulator physics.
 - **Evidence first.** No format field or behavior is marked as decoded until bytes, code, or emulator captures confirm it. Hypotheses and counterexamples are written down.
 
 ## Development status
 
 **Pre-alpha · toolchain v0.5.0 · no playable build yet.**
 
-There is currently no engine, renderer, playable mission, or recovered gameplay code. The work so far builds reliable access to the game's data, so the reverse engineering can begin from solid ground.
+The game is in development. There is currently no C engine, native renderer, playable mission, recovered gameplay runtime, or completed English dub. Windows and Linux are target game platforms; current automated coverage runs the Python tools on both.
 
 | Area | Working now | Destination |
 |---|---|---|
 | Source discs | Four fingerprinted references; complete archives stored with Git LFS in this private repository | Reproducible inputs for the complete Japanese campaign |
 | Disc access | ISO directory inspection, raw-image hashes, bounded Form 1 reads, logical-file comparison | Reliable access to game resources |
-| `ACE.BPH` index | Typed parser with explicit payload sizes and range checks; validated on all four references | Resource loading for the engine |
-| `ACE.BPB` contents | Nested DOT1 offset tables walked, Namco **Ulz** (v0/v2) decoded in memory with exact stream accounting, and PlayStation TIM image leaves validated to metadata on all four references; other leaf formats still uninterpreted | Decoded models, textures, and data for the engine |
-| Executable | PS-X EXE and `ACE3.BIN` identified; assembly track [planned](docs/next-task-executable.md) | Annotated original routines: Ulz, loaders, flight model, missions |
+| `ACE.BPH` | Typed index parser, explicit payload sizes, range checks, metadata reports; validated against all four references | Resource loading for the C runtime |
+| `ACE.BPB` / Ulz | Nested offset-table containers walked; Namco Ulz (v0/v2) decoded in memory with exact stream accounting; other leaf formats still uninterpreted | Decoded resources for the C runtime |
+| TIM metadata | PlayStation TIM image leaves validated to metadata on all four references; pixels are not yet converted or written | Original assets and enhanced presentation |
+| Executable | PS-X EXE and `ACE3.BIN` identified; MIPS recovery is [planned](docs/next-task-executable.md) | Annotated original routines: loaders, flight model, and missions |
 | Streaming media | Form 2 detected and kept outside the Form 1 reader | Correct XA audio/video, timing, and interleave |
-| Gameplay and campaign | Not started; to be recovered from the original code | Playable missions, branching routes, transitions, and saves |
+| Gameplay and campaign | Not started; original code will be the reference | Playable missions, branching routes, transitions, and saves |
 | English voices | Human-performed dub planned | A complete, credited team recording |
 
 ## Run the toolchain
@@ -83,11 +85,13 @@ All reports contain metadata and hashes only; no tool writes extracted assets. E
 
 ## From archives to a playable game
 
-1. **Disc baseline: complete.** Identify the four supplied images, preserve the originals, and compare their contents.
-2. **Archive access: in progress.** The BPH index, the BPB structure with Ulz decompression, and TIM image validation are done. Next are the remaining leaf formats, including the `00002311` leaves, and the separate XA streaming reader.
-3. **Executable reverse engineering: next.** Disassemble the boot EXE and `ACE3.BIN` and separate out PsyQ library code. Document game routines in annotated assembly, starting with the Ulz decompressor and the BPB loader, then work toward the flight model.
-4. **One complete mission in the C engine.** Aircraft, level, the recovered flight model, controls, weapons, objectives, dialogue, and results working together, checked against emulator captures.
-5. **The full Electrosphere.** The branching campaign, disc-specific content, saves, enhanced presentation, human English dialogue, and platform validation.
+1. **Disc baseline — complete.** Identify the four supplied images, preserve originals, and compare supported logical contents.
+2. **BPH index — implemented.** Decode and validate the archive's entry ranges; preserve uncertain fields and publish reproducible metadata.
+3. **BPB containers and Ulz compression — implemented.** Walk nested offset tables and decode Ulz versions 0 and 2 with validated stream accounting on all four references.
+4. **TIM metadata — implemented.** Validate PlayStation TIM leaves to metadata; pixel conversion and remaining leaf formats are still planned.
+5. **Executable/MIPS recovery — next.** Disassemble the boot EXE and `ACE3.BIN`, identify library code, and document the original loaders and gameplay routines before writing the C runtime, starting with the Ulz decompressor; see the [executable track](docs/next-task-executable.md).
+6. **One complete mission in the C runtime.** Aircraft, level, recovered flight model, controls, weapons, objectives, dialogue, and results working together with runtime evidence.
+7. **The full Electrosphere.** Branching campaign, disc-specific content, saves, enhanced presentation, human English dialogue, and platform validation.
 
 The [roadmap](docs/roadmap.md) tracks these stages. Passing tests establishes tool behavior; a playable mission needs its own runtime evidence.
 

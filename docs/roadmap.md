@@ -12,13 +12,13 @@ Tooling v0.4.0 adds the read-only nested BPB container walker and a validated Na
 
 Tooling v0.5.0 validates PlayStation TIM image leaves to metadata on all four references and records the `00002311` leaves as a measured hypothesis. See [the TIM contract](tim-format.md).
 
-Next, classify the remaining opaque leaves that the walker exposes (the `00002311` leaves, the four top-level entries that may be overlays, and the other decoded leaf signatures) from measured examples, and implement a bounded resource interface for understood formats. Use local-only extraction outputs and reproducible metadata manifests. The project goal is a fully playable open-source AC3 reconstruction, and these tools build its resource foundation. The game's own Ulz routine has not yet been matched; that is the first goal of the executable track below.
+The disc baseline, BPH parser, BPB container walker, Ulz v0/v2 decoder, and TIM metadata validator are the implemented read-only tooling baseline. Next, classify the remaining opaque leaves that the walker exposes (including the `00002311` leaves and possible overlay entries) from measured examples, and implement a bounded resource interface for understood formats. Use local-only extraction outputs and reproducible metadata manifests. These tools build the resource foundation; they do not constitute a game runtime. The game's own Ulz routine has not yet been matched; that is the first goal of the executable track below.
 
 Separately investigate `ACE.SPH` plus the Form 2 media in `ACE.SPB`. Preserve file/channel identifiers, timing, interleave, and payload boundaries. Do not route streaming data through the Form 1-only file helper.
 
 ## 2. Recover original behavior and inspect assets
 
-This is the executable assembly track, planned and not yet started: [next task](next-task-executable.md). It will cover disassembling the boot EXE and `ACE3.BIN`, identifying PsyQ library code, and documenting game routines in annotated assembly, starting with the Ulz decompressor and the BPB loading path. The flight model and gameplay will be recovered **1:1 from the original code**, never rebuilt or approximated. The engine will be written in C. The form of the recovered code (annotated-asm reference or matching decompilation) is an owner decision recorded in that task. Emulator captures are the behavioral reference.
+The executable/MIPS recovery track is planned and not started: [next task](next-task-executable.md). Disassemble the boot EXE and `ACE3.BIN`, identify library code, and document the original loaders and gameplay routines, using emulation as a reference. The flight model and gameplay will be recovered from the original code, never rebuilt or approximated with generic physics. The planned game runtime will be written in C; no engine or playable mission exists yet. The form of recovered code and the runtime boundary remain decisions to make from measured evidence.
 
 ## 3. One end-to-end mission
 
