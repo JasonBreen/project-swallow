@@ -214,6 +214,8 @@ class UlzRejectionTests(unittest.TestCase):
             'version': good[:7] + b'\x01' + good[8:],
             'offset_bits_zero': good[:11] + b'\x00' + good[12:],
             'offset_bits_16': good[:11] + b'\x10' + good[12:],
+            'offset_bits_9_unvalidated': good[:11] + b'\x09' + good[12:],
+            'offset_bits_14_unvalidated': good[:11] + b'\x0e' + good[12:],
             'literal_misaligned': good[:8] + struct.pack('<I', 18 | (10 << 24)) + good[12:],
             'pair_before_literal': good[:12] + struct.pack('<I', 16) + good[16:],
             'pair_past_end': good[:12] + struct.pack('<I', len(good) + 1) + good[16:],

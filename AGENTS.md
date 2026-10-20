@@ -5,7 +5,7 @@ Build a complete, playable, open-source reconstruction of Ace Combat 3: Electros
 
 ## Work contract
 - Work in the current local workspace. Do not spawn cloud sessions or parallel agents without an explicit request.
-- On this machine, the owner requires Project Swallow work on `G:`. Use `G:\Project-Swallow` for the checkout and keep temporary disc, LFS, verification data, extracts, reports, and scratch files on `G:`; do not stage project data on `C:`.
+- On this machine, the owner requires Project Swallow work on `G:`. Use `G:\Project-Swallow` for the checkout and keep temporary disc, LFS, verification data, extracts, reports, and scratch files on `G:`; do not stage project data on `C:`. Point `TEMP`/`TMP` at `G:\ProjectSwallow-data\tmp` and use `G:\ProjectSwallow-data\tmp\scratch` for agent scratch scripts.
 - The planned game engine is written in C (owner direction, 2026-10-13). Python is for offline tooling only (disc, archive, and validation tools) and stays minimal outside that role. Specific runtime libraries and decompilation-output choices still need measured evidence and owner approval.
 - Keep each task bounded: inspect evidence, implement one interface, add synthetic tests, run them, and report exact results and unresolved questions.
 - Start from `docs/disc-inventory.md` and the checked-in metadata reports. Disc identity is content-addressed; never infer it from the filename alone.
