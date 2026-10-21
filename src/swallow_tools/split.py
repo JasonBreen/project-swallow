@@ -68,9 +68,13 @@ def load_manifest(config_dir: Path) -> list[SplatConfig]:
         if seen & entry.sha256:
             raise SplitError(f'{entry.config}: a SHA256 is listed under two configs')
         seen |= entry.sha256
-    names = [name for entry in configs for name in (entry.config, entry.target, entry.symbols)]
+    # Compared case-insensitively, since Windows maps GAME.PSEXE and
+    # game.psexe to the same file.
+    names = [name.casefold() for entry in configs
+             for name in (entry.config, entry.target, entry.symbols)]
     if len(set(names)) != len(names):
-        raise SplitError('Manifest config, target and symbol names must all be distinct')
+        raise SplitError('Manifest config, target and symbol names must all be distinct, '
+                         'ignoring case')
     return configs
 
 

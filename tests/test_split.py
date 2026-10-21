@@ -165,6 +165,10 @@ class SplitTests(unittest.TestCase):
         (self.configs / 'manifest.json').write_text(json.dumps(manifest))
         with self.assertRaisesRegex(SplitError, 'must all be distinct'):
             load_manifest(self.configs)
+        manifest['configs'][1]['target'] = manifest['configs'][0]['target'].upper()
+        (self.configs / 'manifest.json').write_text(json.dumps(manifest))
+        with self.assertRaisesRegex(SplitError, 'must all be distinct'):
+            load_manifest(self.configs)
 
     def test_main_explains_a_missing_manifest(self):
         stderr = StringIO()
