@@ -71,10 +71,15 @@ def main() -> None:
         except (OSError, KeyError, ValueError, subprocess.CalledProcessError) as exc:
             print(f'ERROR: {key}: {exc}', file=sys.stderr)
             raise SystemExit(2) from exc
-    args.output_dir.mkdir(parents=True, exist_ok=True)
+    try:
+        args.output_dir.mkdir(parents=True, exist_ok=True)
+        for key, report in reports.items():
+            (args.output_dir / f'exe-{key}.json').write_bytes(
+                (json.dumps(report, indent=2) + '\n').encode('utf-8'))
+    except OSError as exc:
+        print(f'ERROR: cannot write reports to {args.output_dir}: {exc}', file=sys.stderr)
+        raise SystemExit(2) from exc
     for key, report in reports.items():
-        (args.output_dir / f'exe-{key}.json').write_bytes(
-            (json.dumps(report, indent=2) + '\n').encode('utf-8'))
         for exe in report['executables']:
             print(key, exe['path'], 'boot' if exe['is_boot'] else 'exe',
                   exe['text_range'], exe['header']['initial_pc'],

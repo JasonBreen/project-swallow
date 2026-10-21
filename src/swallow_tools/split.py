@@ -135,6 +135,7 @@ def split_image(image: Path, work_dir: Path, *, config_dir: Path = DEFAULT_CONFI
         (work_dir / entry.target).write_bytes(data)
         for name in (entry.config, entry.symbols):
             shutil.copyfile(config_dir / name, work_dir / name)
+        before = {item['file'] for item in summarize_asm(work_dir / 'asm')}
         completed = subprocess.run([*splat, 'split', entry.config], cwd=work_dir,
                                    capture_output=True, text=True, encoding='utf-8',
                                    errors='replace')
@@ -143,9 +144,15 @@ def split_image(image: Path, work_dir: Path, *, config_dir: Path = DEFAULT_CONFI
         if completed.returncode != 0:
             raise SplitError(f'splat failed on {entry.config} with exit code '
                              f'{completed.returncode}; see {Path(entry.config).stem}.splat.log')
+        produced = [item for item in summarize_asm(work_dir / 'asm')
+                    if item['file'] not in before and item['functions']]
+        if not produced:
+            raise SplitError(f'splat ran {entry.config} but wrote no assembly with functions; '
+                             f'see {Path(entry.config).stem}.splat.log')
         results.append({'path': exe['path'], 'sha256': exe['sha256'],
                         'is_boot': exe['is_boot'], 'config': entry.config,
-                        'target': entry.target})
+                        'target': entry.target,
+                        'text_files': [item['file'] for item in produced]})
     summary = {
         'schema_version': SCHEMA_VERSION,
         'source_image': image.name,

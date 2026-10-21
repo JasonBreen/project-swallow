@@ -21,6 +21,8 @@ import pathlib, sys
 config = pathlib.Path(sys.argv[2])
 if config.stem == 'fail':
     sys.exit(3)
+if config.stem == 'empty':
+    sys.exit(0)
 asm = pathlib.Path('asm'); asm.mkdir(exist_ok=True)
 (asm / f'{config.stem}_text.s').write_text(
     'glabel func_a\\n.L1:\\nglabel func_b\\ndlabel D_c\\n'
@@ -109,6 +111,11 @@ class SplitTests(unittest.TestCase):
         with self.assertRaisesRegex(SplitError, 'splat failed on fail.yaml with exit code 3'):
             self.split()
         self.assertTrue((self.root / 'work' / 'fail.splat.log').is_file())
+
+    def test_splat_run_without_assembly_is_an_error(self):
+        self.write_manifest(game_config='empty.yaml')
+        with self.assertRaisesRegex(SplitError, 'wrote no assembly with functions'):
+            self.split()
 
     def test_manifest_rejects_missing_files_and_shared_hashes(self):
         (self.configs / 'symbols.game.yaml.txt').unlink()
