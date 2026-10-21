@@ -40,14 +40,27 @@ class SplatConfig:
 
 
 def load_manifest(config_dir: Path) -> list[SplatConfig]:
-    """Read splat/manifest.json and check every file it names exists."""
-    manifest = json.loads((config_dir / 'manifest.json').read_text(encoding='utf-8'))
-    if manifest.get('schema_version') != 1:
-        raise SplitError('Unsupported splat manifest schema version')
-    configs = [SplatConfig(item['config'], item['target'], item['symbols'],
-                           frozenset(item['sha256'])) for item in manifest['configs']]
+    """Read splat/manifest.json and check every file it names exists.
+
+    Every name must be a bare file name, so nothing is copied or written
+    outside the config and work directories.
+    """
+    try:
+        manifest = json.loads((config_dir / 'manifest.json').read_text(encoding='utf-8'))
+        if manifest.get('schema_version') != 1:
+            raise SplitError('Unsupported splat manifest schema version')
+        configs = [SplatConfig(item['config'], item['target'], item['symbols'],
+                               frozenset(item['sha256'])) for item in manifest['configs']]
+    except (ValueError, KeyError, TypeError, AttributeError) as exc:
+        if isinstance(exc, SplitError):
+            raise
+        raise SplitError(f'Malformed splat manifest: {exc}') from exc
     seen: set[str] = set()
     for entry in configs:
+        for name in (entry.config, entry.target, entry.symbols):
+            if (not isinstance(name, str) or name in ('', '.', '..')
+                    or Path(name).name != name or '\\' in name):
+                raise SplitError(f'Manifest name {name!r} is not a bare file name')
         for name in (entry.config, entry.symbols):
             if not (config_dir / name).is_file():
                 raise SplitError(f'Manifest names missing file {name}')

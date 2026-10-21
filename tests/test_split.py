@@ -118,6 +118,23 @@ class SplitTests(unittest.TestCase):
         with self.assertRaisesRegex(SplitError, 'listed under two configs'):
             load_manifest(self.configs)
 
+    def test_manifest_rejects_paths_and_malformed_json(self):
+        for bad in ('../escape.psexe', '/tmp/abs.psexe', 'sub/dir.psexe', '..\\win.psexe'):
+            manifest = json.loads((self.configs / 'manifest.json').read_text())
+            manifest['configs'][0]['target'] = bad
+            (self.configs / 'manifest.json').write_text(json.dumps(manifest))
+            with self.subTest(target=bad), self.assertRaisesRegex(SplitError, 'bare file name'):
+                load_manifest(self.configs)
+        (self.configs / 'manifest.json').write_text('{not json')
+        with self.assertRaisesRegex(SplitError, 'Malformed splat manifest'):
+            load_manifest(self.configs)
+        stderr = StringIO()
+        with redirect_stderr(stderr):
+            code = main([str(self.image), '--work-dir', str(self.root / 'w'),
+                         '--config-dir', str(self.configs)])
+        self.assertEqual(code, 2)
+        self.assertFalse((self.root / 'w').exists())
+
     def test_main_exits_2_on_errors(self):
         stderr = StringIO()
         with redirect_stderr(stderr):
