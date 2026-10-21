@@ -7,7 +7,7 @@
       "id": "supplementary-ps1-acecombat",
       "platform": "PS1",
       "source_label": "ps1 games.tar.bz2",
-      "identity_status": "Japanese Ace Combat identifier observed; exact retail revision and track layout not certified.",
+      "identity_status": "Japanese Ace Combat; source data track and all 63 corrected derived tracks match pinned MAME preservation hashes. Exact retail pressing is not certified.",
       "inspection_report": "docs/reports/supplementary-ps1-acecombat.json",
       "storage": {
         "format": "tar.bz2",
@@ -41,7 +41,21 @@
         "bin_matches_existing_uncompressed_source": true,
         "matches_ac3_baseline": false,
         "cue_filename_references_ok": true,
-        "emulator_boot_tested": false
+        "emulator_boot_tested": false,
+        "track_count_corroborated": 63,
+        "track_validation_report": "docs/reports/supplementary-ps1-track-validation.json"
+      },
+      "derived_reference": {
+        "script": "scripts/prepare_acecombat_reference.py",
+        "stored_in_git": false,
+        "size_bytes": 609534912,
+        "hashes": {
+          "md5": "4aedcd968b07889abfeacb9f1f71c729",
+          "sha1": "1736f8efeb29c78371ee97edbfc35a0abfe6402f",
+          "sha256": "178ce1ddd01f8e024a32b6ba2d8ee3f1d963295740e8b26337fab7a34bfe3244"
+        },
+        "all_63_reference_tracks_match": true,
+        "source_archive_unchanged": true
       }
     },
     {

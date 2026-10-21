@@ -37,7 +37,9 @@ AC3 `manifest.json`.
   disc images. Decompression was streamed and the restored byte count, MD5,
   SHA1, and SHA256 were compared with the supplied ISO.
 - Both additions use Git LFS. Raw extracts and scratch scripts stay on `G:`
-  outside Git. No image was mounted, executed, patched, or booted.
+  outside Git. The supplied images were not modified, mounted, or booted.
+  The separate derived PS1 reference described below has a verified audio-layout
+  correction; it does not replace the original archive.
 
 The new stored data totals **3,523,624,085 bytes**: 429,739,506 bytes for the
 original PS1 archive and 3,093,884,579 bytes across three PS2 volumes. Together
@@ -65,11 +67,46 @@ every BIN byte, including all skipped media.
 The original CUE names the existing `ACECOMBAT.BIN` correctly and declares
 **63 tracks: one MODE2/2352 track and 62 AUDIO tracks**. All declared index
 positions are inside the image and track INDEX 01 positions increase.
-The descriptor was preserved exactly. This is a descriptor/bounds check;
-its timing and track boundaries have not been authenticated against a
-physical disc. PSX Data Center lists 16 tracks for its Japanese release entry,
-so the supplied 63-track descriptor must not be presented as a certified match
-to that catalogue layout. No audio was decoded.
+The descriptor was preserved exactly. MAME's `acecombt` preservation entry
+also records **63 tracks**, with per-track sizes, SHA1, and CRC32, and links to
+Redump disc 1691. The earlier PSX Data Center count of 16 is contradicted by
+this track-level evidence; changing this image to 16 tracks would be incorrect.
+The investigation used the
+[pinned MAME metadata](https://github.com/mamedev/mame/blob/006f4ade8d461bcbd8895a613f27b3b76dc62f24/hash/psx.xml),
+not a fresh physical-disc dump or a directly retrieved Redump record.
+
+### Verified audio-layout correction
+
+The [per-track investigation](reports/supplementary-ps1-track-validation.json)
+establishes the difference between the supplied files and that reference:
+
+- The source data track matches the recorded size, SHA1, and CRC32 exactly.
+- The source CUE synthesizes the first audio track's 150-sector pregap, so
+  those 352,800 bytes are absent from the source BIN.
+- Audio has a consistent **+32-byte read-offset correction**, equivalent to
+  eight stereo sample frames. The original BIN includes a silent final track.
+- Materializing that pregap and advancing the audio by 32 bytes makes
+  **all 63 track sizes, SHA1 hashes, and CRC32 values match** the pinned entry.
+  The data track remains byte-identical. This also corroborates the track
+  boundaries; physical subchannel data was not available.
+
+[`prepare_acecombat_reference.py`](../scripts/prepare_acecombat_reference.py)
+checks both source fingerprints, creates a new derived BIN/CUE, verifies every
+resulting track, and refuses an existing output directory. It copies every
+original data/audio byte, writes 352,768 zero bytes before audio and 32 after
+it, and converts the virtual pregap to explicit CUE indexes. No game payload
+is downloaded. It is restricted to this fingerprinted source and reference.
+
+```powershell
+python scripts/prepare_acecombat_reference.py 'G:\ProjectSwallow-data\imports\2026-10-21-ps1-games\ACECOMBAT.BIN' 'G:\ProjectSwallow-data\imports\2026-10-21-ps1-games\ACECOMBAT.CUE' 'G:\ProjectSwallow-data\imports\2026-10-21-acecombat-corrected'
+```
+
+The generated image is **609,534,912 bytes**, SHA256
+`178ce1ddd01f8e024a32b6ba2d8ee3f1d963295740e8b26337fab7a34bfe3244`.
+The generated `ACECOMBAT.reference.cue` opens the corresponding derived BIN.
+Both generated files stay outside Git; the original archive plus the script
+reproduce them. The checked-in report records the full verification result.
+Audio playback and emulator boot have not been tested.
 
 Use the existing CLI for image metadata, whole-image hashes, and CUE filename
 checks:

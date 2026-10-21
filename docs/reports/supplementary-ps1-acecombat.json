@@ -5613,7 +5613,14 @@
     "data_track_count": 1,
     "audio_track_count": 62,
     "declared_indexes_in_image": true,
-    "timing_validated_against_physical_disc": false
+    "timing_validated_against_physical_disc": false,
+    "track_count_validation": {
+      "reference_track_count": 63,
+      "reference": "docs/reports/supplementary-ps1-track-validation.json",
+      "source_data_track_matches": true,
+      "source_audio_needs_read_offset_correction": true,
+      "all_corrected_tracks_match": true
+    }
   },
   "observed_identity": {
     "title_inference": "Ace Combat (original PlayStation game), Japanese identifier",
