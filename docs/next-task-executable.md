@@ -1,6 +1,6 @@
 # Next bounded task: executable assembly track
 
-**Status: header reader implemented in tooling v0.6.0; MIPS recovery planned, not started.**
+**Status: header reader (v0.6.0) and splat disassembly (v0.7.0) implemented; library identification next.**
 Recorded on 2026-10-13 after the [BPB/Ulz walker](bpb-format.md) landed;
 header evidence updated after the PS-X EXE reader. Read `AGENTS.md` first.
 
@@ -22,7 +22,7 @@ header evidence updated after the PS-X EXE reader. Read `AGENTS.md` first.
 ## Deliverables, in order
 
 1. **Header reader — implemented** (Python tooling): `swallow_tools.exe` resolves `BOOT` from `SYSTEM.CNF`, discovers executables by magic, and reports validated headers, hashes, RAM text ranges, and path strings. It preserves uninterpreted fields and has synthetic regression coverage. This completes the header step for both PS-X EXEs; it does not establish how they are loaded at runtime.
-2. **Disassembly pipeline** for MIPS R3000. Compare a minimal stdlib disassembler against existing tooling (spimdisasm/splat), and record license and provenance. **Ask the owner before adopting third-party tools.** The output is annotated assembly with function boundaries, labels, and cross-references.
+2. **Disassembly pipeline — implemented** with splat, which the owner chose on 2026-10-21 (MIT licensed, pinned in `splat/requirements.txt`). `swallow_tools.split` produces annotated assembly with function boundaries, labels, and cross-references for both executables, outside the repository. See [disassembly](disassembly.md).
 3. **PsyQ library identification** by signature, so library code is separated from game code.
 4. **First game routine: the Ulz decompressor.**
    - Locate it, for example by finding the `Ulz\x1a` magic comparison and the `>> N` / `+ 3` / `+ 1` pattern.

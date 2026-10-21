@@ -12,7 +12,7 @@ Tooling v0.4.0 adds the read-only nested BPB container walker and a validated Na
 
 Tooling v0.5.0 validates PlayStation TIM image leaves to metadata on all four references and records the `00002311` leaves as a measured hypothesis. See [the TIM contract](tim-format.md).
 
-Tooling v0.6.0 starts the executable track with a PS-X EXE header reader validated on all four references. It finds executables by content and shows that `ACE3.BIN` is a second PS-X EXE with a header text address of `0x80010000`; runtime load order remains unverified. See [the EXE contract](exe-format.md).
+Tooling v0.6.0 starts the executable track with a PS-X EXE header reader validated on all four references. It finds executables by content and shows that `ACE3.BIN` is a second PS-X EXE with a header text address of `0x80010000`; runtime load order remains unverified. See [the EXE contract](exe-format.md). Tooling v0.7.0 disassembles both executables with splat on all four references; see [disassembly](disassembly.md).
 
 The disc baseline, BPH parser, BPB container walker, Ulz v0/v2 decoder, TIM metadata validator, and PS-X EXE header reader are the implemented read-only tooling baseline. Next, classify the remaining opaque leaves that the walker exposes (including the `00002311` leaves and possible overlay entries) from measured examples, and implement a bounded resource interface for understood formats. Use local-only extraction outputs and reproducible metadata manifests. These tools build the resource foundation; they do not constitute a game runtime. The game's own Ulz routine has not yet been matched; that is the first goal of the executable track below.
 
@@ -20,7 +20,7 @@ Separately investigate `ACE.SPH` plus the Form 2 media in `ACE.SPB`. Preserve fi
 
 ## 2. Recover original behavior and inspect assets
 
-The executable/MIPS recovery track is planned and not started: [next task](next-task-executable.md). Disassemble the boot EXE and `ACE3.BIN`, identify library code, and document the original loaders and gameplay routines, using emulation as a reference. The flight model and gameplay will be recovered from the original code, never rebuilt or approximated with generic physics. The planned game runtime will be written in C; no engine or playable mission exists yet. The form of recovered code and the runtime boundary remain decisions to make from measured evidence.
+The executable/MIPS recovery track has started: [next task](next-task-executable.md). The boot EXE and `ACE3.BIN` are disassembled with splat; next, identify library code and document the original loaders and gameplay routines, using emulation as a reference. The flight model and gameplay will be recovered from the original code, never rebuilt or approximated with generic physics. The planned game runtime will be written in C; no engine or playable mission exists yet. The form of recovered code and the runtime boundary remain decisions to make from measured evidence.
 
 ## 3. One end-to-end mission
 

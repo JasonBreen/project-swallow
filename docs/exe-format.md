@@ -99,6 +99,6 @@ or validation errors.
 
 ## Next
 
-The disassembly pipeline for both executables, starting with PsyQ library
-identification, then the Ulz decompressor and the BPB loader inside
-`ACE3.BIN`.
+The disassembly pipeline is implemented; see [disassembly](disassembly.md).
+Next come PsyQ library identification, then the Ulz decompressor and the BPB
+loader inside `ACE3.BIN`.

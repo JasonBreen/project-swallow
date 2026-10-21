@@ -1,0 +1,54 @@
+# splat config for the boot executable (SLPS_020.20 on Disc 1, SLPS_020.21 on
+# Disc 2; byte-identical on all four references). Boundaries were measured on
+# 2026-10-21; see docs/disassembly.md. scripts/split_executables.py extracts
+# the file from a disc image, checks its hash, and runs splat in a work
+# directory outside the repository. Generated assembly is never committed.
+name: SLPS_020.2x
+options:
+  basename: boot
+  target_path: boot.psexe
+  base_path: .
+  platform: psx
+  compiler: PSYQ
+
+  asm_path: asm
+  src_path: src
+  build_path: build
+  ld_script_path: boot.ld
+  ld_dependencies: False
+
+  find_file_boundaries: True
+  gp_value: 0x80194F40
+
+  o_as_suffix: True
+  use_legacy_include_asm: False
+  section_order: [".rodata", ".text", ".data", ".bss"]
+
+  symbol_addrs_path:
+    - symbol_addrs.boot.txt
+  undefined_funcs_auto_path: undefined_funcs_auto.boot.txt
+  undefined_syms_auto_path: undefined_syms_auto.boot.txt
+
+  subalign: 2
+  string_encoding: ASCII
+  data_string_encoding: ASCII
+  rodata_string_guesser_level: 2
+  data_string_guesser_level: 2
+segments:
+  - name: header
+    type: header
+    start: 0x0
+
+  - name: main
+    type: code
+    start: 0x800
+    vram: 0x80120000
+    subsegments:
+      # Strings and jump tables; the last table entry is at 0x801233d8.
+      - [0x800, rodata, boot_rodata]
+      # First function 0x801233e8 (prologue, lowest in-range jal target);
+      # last jr $ra at 0x80136610.
+      - [0x3BE8, asm, boot_text]
+      # Starts with a VAB ("pBAV") sound bank header at 0x80136618.
+      - [0x16E18, data, boot_data]
+  - [0x75800]

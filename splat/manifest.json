@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "splat_requirement": "splat64[mips]==0.50.1",
+  "configs": [
+    {
+      "config": "boot.yaml",
+      "target": "boot.psexe",
+      "symbols": "symbol_addrs.boot.txt",
+      "sha256": [
+        "daddca3ac3299372370a8cf7a046eb066537a39cf53216904009c46f2924b0e5"
+      ]
+    },
+    {
+      "config": "ace3.yaml",
+      "target": "ace3.psexe",
+      "symbols": "symbol_addrs.ace3.txt",
+      "sha256": [
+        "2c3f2ce41268176128973ea0cd9b28784a26c0061bff5550c99599388f13ebe9",
+        "ba0557ecf85261c4ec3b7b96d4c63c7faf415bf098554037fce102cf10a5ecb2"
+      ]
+    }
+  ]
+}
