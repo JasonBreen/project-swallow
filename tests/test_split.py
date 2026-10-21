@@ -133,11 +133,12 @@ class SplitTests(unittest.TestCase):
             load_manifest(self.configs)
 
     def test_manifest_rejects_paths_and_malformed_json(self):
-        for bad in ('../escape.psexe', '/tmp/abs.psexe', 'sub/dir.psexe', '..\\win.psexe'):
+        for bad in ('../escape.psexe', '/tmp/abs.psexe', 'sub/dir.psexe', '..\\win.psexe',
+                    'game.psexe.', 'game.psexe ', 'NUL.psexe', 'com1', 'a:b', '.hidden'):
             manifest = json.loads((self.configs / 'manifest.json').read_text())
             manifest['configs'][0]['target'] = bad
             (self.configs / 'manifest.json').write_text(json.dumps(manifest))
-            with self.subTest(target=bad), self.assertRaisesRegex(SplitError, 'bare file name'):
+            with self.subTest(target=bad), self.assertRaisesRegex(SplitError, 'portable file name'):
                 load_manifest(self.configs)
         (self.configs / 'manifest.json').write_text('{not json')
         with self.assertRaisesRegex(SplitError, 'Malformed splat manifest'):

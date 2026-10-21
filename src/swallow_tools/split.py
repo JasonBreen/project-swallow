@@ -15,6 +15,7 @@ import hashlib
 import json
 import os
 from pathlib import Path
+import re
 import shutil
 import subprocess
 import sys
@@ -26,6 +27,12 @@ REPO_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_CONFIG_DIR = REPO_ROOT / 'splat'
 DEFAULT_SPLAT = (sys.executable, '-m', 'splat')
 SCHEMA_VERSION = 1
+# Names the manifest may use: portable on every filesystem the tools run on,
+# so no trailing dot or space, separator, or Windows device name can make two
+# different strings open the same file.
+_SAFE_NAME = re.compile(r'[A-Za-z0-9_][A-Za-z0-9_.-]*[A-Za-z0-9_]')
+_WINDOWS_DEVICES = frozenset({'con', 'prn', 'aux', 'nul', *(f'com{i}' for i in range(10)),
+                              *(f'lpt{i}' for i in range(10))})
 
 
 class SplitError(ValueError):
@@ -43,8 +50,9 @@ class SplatConfig:
 def load_manifest(config_dir: Path) -> list[SplatConfig]:
     """Read splat/manifest.json and check every file it names exists.
 
-    Every name must be a bare file name, so nothing is copied or written
-    outside the config and work directories.
+    Every name must be a bare, portable file name, so nothing is copied or
+    written outside the config and work directories, and no two names open
+    the same file on Windows.
     """
     try:
         manifest = json.loads((config_dir / 'manifest.json').read_text(encoding='utf-8'))
@@ -59,9 +67,10 @@ def load_manifest(config_dir: Path) -> list[SplatConfig]:
     seen: set[str] = set()
     for entry in configs:
         for name in (entry.config, entry.target, entry.symbols):
-            if (not isinstance(name, str) or name in ('', '.', '..')
-                    or Path(name).name != name or '\\' in name):
-                raise SplitError(f'Manifest name {name!r} is not a bare file name')
+            if (not isinstance(name, str) or not _SAFE_NAME.fullmatch(name)
+                    or name.split('.')[0].casefold() in _WINDOWS_DEVICES):
+                raise SplitError(f'Manifest name {name!r} is not a bare, portable file name '
+                                 '(letters, digits, _ . - only)')
         for name in (entry.config, entry.symbols):
             if not (config_dir / name).is_file():
                 raise SplitError(f'Manifest names missing file {name}')
