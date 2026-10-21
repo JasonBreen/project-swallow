@@ -218,6 +218,18 @@ class InspectExecutablesTests(unittest.TestCase):
         path = make_image(self.root, files, cnf=b'BOOT = cdrom:\\MAIN.EXE\r\n')
         with self.assertRaisesRegex(ExeFormatError, 'not found exactly once'):
             inspect_executables(path)
+        path = make_image(self.root, [('MAIN.EXE;1', self.boot)],
+                          cnf=b'BOOT = cdrom:\\MAIN.EXE;2\r\n')
+        with self.assertRaisesRegex(ExeFormatError, 'not found exactly once'):
+            inspect_executables(path)
+
+    def test_references_only_count_versions_present_on_the_disc(self):
+        boot = make_exe(t_addr=0x80120000, pc=0x80120000,
+                        text=b'\\GAME.BIN;2\x00\\GAME.BIN;1' + b'\x00' * 2025)
+        path = make_image(self.root, [('BOOT.EXE', boot), ('GAME.BIN', self.game)])
+        by_path = {exe['path']: exe for exe in inspect_executables(path)['executables']}
+        self.assertEqual([ref['string'] for ref in by_path['BOOT.EXE']['path_references']],
+                         ['\\GAME.BIN;1'])
 
     def test_boot_from_system_cnf_and_executables_found_by_content(self):
         path = make_image(self.root, [('BOOT.EXE', self.boot), ('GAME.BIN', self.game),

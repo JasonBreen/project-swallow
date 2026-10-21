@@ -187,18 +187,22 @@ def parse_system_cnf(data: bytes) -> SystemCnf:
                      version)
 
 
-def find_path_references(data: bytes, paths: list[str], text_address: int) -> list[dict]:
+def find_path_references(data: bytes, paths: list[str], text_address: int,
+                         versions: dict[str, set[int]] | None = None) -> list[dict]:
     """Locate `\\NAME;n` ISO path strings for known files inside an executable.
 
     A match must start at a path boundary, so `\\DIR\\GAME.BIN;1` names only
     `DIR/GAME.BIN`, never a root `GAME.BIN`. A string reference is evidence
     that code may open the file; it does not prove when or how it is loaded.
+    When `versions` lists a path's ISO versions, only those `;n` values count.
     """
     found: list[dict] = []
     for path in sorted(paths):
         pattern = re.compile(rb'(?<![\\\w])\\' + re.escape(path.replace('/', '\\').encode('latin-1'))
-                             + rb';\d+(?!\w)', re.I)
+                             + rb';(\d+)(?!\w)', re.I)
         for match in pattern.finditer(data):
+            if versions and path in versions and int(match.group(1)) not in versions[path]:
+                continue
             offset = match.start()
             address = (text_address + offset - HEADER_BYTES
                        if offset >= HEADER_BYTES else None)
@@ -246,13 +250,18 @@ def inspect_executables(path: Path) -> dict:
         raise ExeFormatError('SYSTEM.CNF exceeds the 2048-byte reader limit')
     cnf = parse_system_cnf(disc.read_file(cnf_entry))
     boot_matches = [entry for entry in files if entry.path.upper() == cnf.boot_path]
-    if len(boot_matches) > 1 and cnf.boot_version is not None:
+    if cnf.boot_version is not None:
         boot_matches = [entry for entry in boot_matches
-                        if _iso_version(entry.raw_name) == cnf.boot_version]
+                        if _iso_version(entry.raw_name) in (None, cnf.boot_version)]
     if len(boot_matches) != 1:
         raise ExeFormatError(f'BOOT file {cnf.boot_path} not found exactly once in the ISO')
 
-    paths = [entry.path for entry in files]
+    paths = sorted({entry.path for entry in files})
+    versions: dict[str, set[int]] = {}
+    for entry in files:
+        version = _iso_version(entry.raw_name)
+        if version is not None:
+            versions.setdefault(entry.path, set()).add(version)
     executables: list[dict] = []
     form2_skipped: list[str] = []
     for entry in files:
@@ -279,7 +288,7 @@ def inspect_executables(path: Path) -> dict:
             'is_boot': entry is boot_matches[0],
             **exe.to_report(),
             'path_references': find_path_references(
-                data, paths, exe.header.text_address),
+                data, paths, exe.header.text_address, versions),
         })
     if not any(item['is_boot'] for item in executables):
         raise ExeFormatError(f'BOOT file {cnf.boot_path} is not a PS-X EXE')

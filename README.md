@@ -82,7 +82,7 @@ On Linux, use the same modules with `PYTHONPATH=src`. `python -m swallow_tools.c
 
 The tests use synthetic data only. They need no discs, network, emulator, paid model, or GPU.
 
-All reports contain metadata and hashes only; no tool writes extracted assets. Exit codes are `0` for success, `2` for input or format errors, and `3` for failed strict CUE-reference checks. Exact guarantees are in the format contracts: [BPH](docs/bph-format.md), [BPB/Ulz](docs/bpb-format.md), [TIM](docs/tim-format.md), and [PS-X EXE](docs/exe-format.md).
+All reports contain metadata and hashes only, and the reporting tools write no extracted assets. The one exception is `swallow-split`, which writes raw executable extracts and the generated assembly to a work directory that must stay outside the repository and outside commits. Exit codes are `0` for success, `2` for input or format errors, and `3` for failed strict CUE-reference checks. Exact guarantees are in the format contracts: [BPH](docs/bph-format.md), [BPB/Ulz](docs/bpb-format.md), [TIM](docs/tim-format.md), and [PS-X EXE](docs/exe-format.md).
 
 The executable reader resolves `BOOT` from `SYSTEM.CNF`, finds other PS-X EXEs by magic, and reports headers, hashes, text ranges, and references to files on the same disc. Form 2 files are listed and skipped. `ACE3.BIN` is a second PS-X EXE; the header and path strings do not establish runtime load order. See the [EXE contract and measurements](docs/exe-format.md).
 

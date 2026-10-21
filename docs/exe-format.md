@@ -47,8 +47,7 @@ description of the PS-X EXE header.
 
 `SYSTEM.CNF` must appear once at the root. Its `BOOT` line must be a
 `cdrom:` path to exactly one ISO file, and that file must be a valid PS-X
-EXE. Its `;n` version, when given, chooses between ISO versions of the same
-name. A repeated key keeps its first value, as the PlayStation OS
+EXE. Its `;n` version, when given, must match the ISO entry's version. A repeated key keeps its first value, as the PlayStation OS
 documentation specifies, and the ignored lines are listed in the report. Text after
 whitespace in `BOOT` is kept as `boot_arguments`, apart from the path. Every other file is checked by content: a file whose first eight
 logical bytes are the magic is parsed as an executable, whatever its name.
@@ -58,7 +57,7 @@ and never read as Form 1 data.
 Path references are `\NAME;n` strings naming files in the same ISO. A match
 must begin at a path boundary, so `\DIR\GAME.BIN;1` counts only as
 `DIR/GAME.BIN`, never as a root `GAME.BIN`, and it must end after the
-version digits. Each
+version digits. Only `;n` versions that exist on the disc count. Each
 records its file offset and, for text bytes, its load address. Overlap checks
 compare physical addresses, so the same RAM seen through two mirrors still
 counts as overlap.
