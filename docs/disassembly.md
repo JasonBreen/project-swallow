@@ -12,9 +12,10 @@ The owner chose [splat](https://github.com/ethteck/splat) on 2026-10-21 over
 a project-written disassembler. splat drives
 [spimdisasm](https://github.com/Decompollaborate/spimdisasm), which decodes
 through [rabbitizer](https://github.com/Decompollaborate/rabbitizer). All
-three are MIT licensed. The version is pinned in
+three are MIT licensed. All three versions are pinned in
 [`splat/requirements.txt`](../splat/requirements.txt) (`splat64[mips]==0.50.1`,
-with spimdisasm 1.42.4 and rabbitizer 1.16.2). It is an optional
+`spimdisasm==1.42.4`, `rabbitizer==1.16.2`), because the decoder versions
+decide the generated assembly and the counts below. It is an optional
 tooling dependency: the package itself still has no dependencies, and the
 synthetic tests run without splat.
 

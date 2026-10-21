@@ -2,7 +2,7 @@
 
 ## 0.7.0 — 2026-10-21
 
-- Adopted splat (owner choice, 2026-10-21) as the MIPS disassembler, pinned to `splat64[mips]==0.50.1` in `splat/requirements.txt` as an optional tooling dependency. Added splat configs and symbol files for the boot executable and `ACE3.BIN`, with rodata, text, and data boundaries measured from the instructions.
+- Adopted splat (owner choice, 2026-10-21) as the MIPS disassembler, pinned with spimdisasm 1.42.4 and rabbitizer 1.16.2 in `splat/requirements.txt` as an optional tooling dependency. Added splat configs and symbol files for the boot executable and `ACE3.BIN`, with rodata, text, and data boundaries measured from the instructions.
 - Added `swallow_tools.split` and the `swallow-split` CLI. It matches executables to configs by SHA256, extracts them to a work directory outside the repository, runs splat, and writes a count report. Generated assembly is never committed.
 - Measured on all four references: 363 functions in the boot text and 1,713 in `ACE3.BIN`, with every undecodable word accounted for. Both entry points follow the PsyQ crt0 pattern; the symbol files name them, their BSS ranges, and their main functions (`0x801233e8`, `0x800261a8`). English-labeled Disc 1's `ACE3.BIN` differs by one data byte, and the code is the same on every disc.
 - Added 10 synthetic tests (143 total) using a fake splat, so CI still needs no third-party packages. Documented the pipeline in `docs/disassembly.md`.
