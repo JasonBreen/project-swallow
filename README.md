@@ -50,7 +50,7 @@ The game is in development. There is currently no C engine, native renderer, pla
 
 You need Python **3.11 or newer**. On the owner's Windows machine, **everything stays on `G:`**: the checkout, extracted discs, temporary files, and reports. Do not use the `C:` drive for this project.
 
-The repository is private. Its four AC3 reference archives use Git LFS, about **1.67 GB compressed**. Two additional owner-supplied discs are recorded in the [supplementary inventory](docs/supplementary-discs.md), with their own LFS archives and storage sizes. These references do not add PS2 parsing or a new game runtime. For a source-only checkout:
+The four AC3 reference archives use Git LFS, about **1.67 GB compressed**. Two additional owner-supplied discs are recorded in the [supplementary inventory](docs/supplementary-discs.md), with their own LFS archives and storage sizes. The PS1 supplement includes a reproducible audio-layout correction checked against all 63 reference tracks. For a source-only checkout:
 
 ```powershell
 Set-Location G:\
