@@ -1,0 +1,103 @@
+{
+  "schema_version": 1,
+  "verified_date": "2026-10-21",
+  "scope": "Supplementary references; the four AC3 baseline inputs retain their existing manifest and profiles.",
+  "inputs": [
+    {
+      "id": "supplementary-ps1-acecombat",
+      "platform": "PS1",
+      "source_label": "ps1 games.tar.bz2",
+      "identity_status": "Japanese Ace Combat identifier observed; exact retail revision and track layout not certified.",
+      "inspection_report": "docs/reports/supplementary-ps1-acecombat.json",
+      "storage": {
+        "format": "tar.bz2",
+        "original_archive_preserved": true,
+        "path": "discs/supplementary/ps1/ps1 games.tar.bz2",
+        "size_bytes": 429739506,
+        "sha256": "06afaf4033acbb053382f2848534011c2c370813a5c1d75849f084c248484bdd"
+      },
+      "members": [
+        {
+          "name": "ACECOMBAT.BIN",
+          "size_bytes": 609182112,
+          "hashes": {
+            "md5": "3e855676149b87d7adc4cde92485cd42",
+            "sha1": "cc43cd5fa5b02ba95fda0a15a3f6abe5c509fe61",
+            "sha256": "96a667f18a6f070c47f988347352adc87479a8ecc258c19ab1f342f3cf3bd7b3"
+          }
+        },
+        {
+          "name": "ACECOMBAT.CUE",
+          "size_bytes": 4041,
+          "hashes": {
+            "md5": "ca7b156161135e8ca97c0ef394395951",
+            "sha1": "6cb530f242feca84a0f437d4cf0443a37b769b41",
+            "sha256": "812f1e248877f7d7ba10cc5609d0ea4c782a35b62946b307567ce938dc4d7dd0"
+          }
+        }
+      ],
+      "verification": {
+        "bin_hashes_match_inspection_report": true,
+        "bin_matches_existing_uncompressed_source": true,
+        "matches_ac3_baseline": false,
+        "cue_filename_references_ok": true,
+        "emulator_boot_tested": false
+      }
+    },
+    {
+      "id": "supplementary-ps2-ace-combat-zero",
+      "platform": "PS2",
+      "source_label": "Ace Combat Zero.iso",
+      "identity_status": "SLUS_213.46 boot identifier observed; exact retail pressing not certified.",
+      "inspection_report": "docs/reports/supplementary-ps2-ace-combat-zero.json",
+      "storage": {
+        "format": "7z-split",
+        "original_input_format": "iso",
+        "archive_created_for_storage": true,
+        "all_volumes_required": true,
+        "volume_size_limit_bytes": 1073741824,
+        "total_size_bytes": 3093884579,
+        "volumes": [
+          {
+            "path": "discs/supplementary/ps2/Ace Combat Zero.7z.001",
+            "size_bytes": 1073741824,
+            "sha256": "38fe402e1f4a6f798562f9d2cf626c87ac2262b71164ddac01640ddab7468187"
+          },
+          {
+            "path": "discs/supplementary/ps2/Ace Combat Zero.7z.002",
+            "size_bytes": 1073741824,
+            "sha256": "271d3cb1494b69bff488d19a2170f407e8df05bbcebb2bee27d544f5cdf2c6ef"
+          },
+          {
+            "path": "discs/supplementary/ps2/Ace Combat Zero.7z.003",
+            "size_bytes": 946400931,
+            "sha256": "95c91572b0ce598ca278c4cfb849c31ae118eeb0b83495c500725c048705bbab"
+          }
+        ]
+      },
+      "members": [
+        {
+          "name": "Ace Combat Zero.iso",
+          "size_bytes": 4240605184,
+          "hashes": {
+            "md5": "61c016fad9d992dee8dcb0aec2a6c31f",
+            "sha1": "e72c3d5fd27bcd6c71cdd1a5bee26956bc625e43",
+            "sha256": "4d9f41ff87690fe8a4cb1a20599d055e66107f9990a823af47fb1c8a58745d3d"
+          }
+        }
+      ],
+      "verification": {
+        "decompressed_size_bytes": 4240605184,
+        "decompressed_hashes": {
+          "md5": "61c016fad9d992dee8dcb0aec2a6c31f",
+          "sha1": "e72c3d5fd27bcd6c71cdd1a5bee26956bc625e43",
+          "sha256": "4d9f41ff87690fe8a4cb1a20599d055e66107f9990a823af47fb1c8a58745d3d"
+        },
+        "decompressed_member_matches_source_image": true,
+        "archive_decoder_exit_code": 0,
+        "matches_ac3_baseline": false,
+        "emulator_boot_tested": false
+      }
+    }
+  ]
+}
