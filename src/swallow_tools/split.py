@@ -67,6 +67,9 @@ def load_manifest(config_dir: Path) -> list[SplatConfig]:
         if seen & entry.sha256:
             raise SplitError(f'{entry.config}: a SHA256 is listed under two configs')
         seen |= entry.sha256
+    names = [name for entry in configs for name in (entry.config, entry.target, entry.symbols)]
+    if len(set(names)) != len(names):
+        raise SplitError('Manifest config, target and symbol names must all be distinct')
     return configs
 
 
@@ -121,10 +124,12 @@ def split_image(image: Path, work_dir: Path, *, config_dir: Path = DEFAULT_CONFI
 
     work_dir.mkdir(parents=True, exist_ok=True)
     disc = PlayStationDisc(image)
-    files = {item['path']: FileEntry(**item) for item in disc.inspect()['files']}
+    # Keyed by extent, since ISO versions of one name share a stripped path.
+    files = {(item['lba'], item['size']): FileEntry(**item)
+             for item in disc.inspect()['files'] if not item['is_directory']}
     results = []
     for exe, entry in staged:
-        data = _read_whole(disc, files[exe['path']])
+        data = _read_whole(disc, files[(exe['lba'], exe['size_bytes'])])
         if hashlib.sha256(data).hexdigest() != exe['sha256']:
             raise SplitError(f"{exe['path']}: bytes changed between report and extraction")
         (work_dir / entry.target).write_bytes(data)
@@ -157,10 +162,16 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument('bin', type=Path, help='Local raw MODE2/2352 disc image')
     parser.add_argument('--work-dir', type=Path, required=True,
                         help='Empty directory outside the repository for splat output')
-    parser.add_argument('--config-dir', type=Path, default=DEFAULT_CONFIG_DIR)
+    parser.add_argument('--config-dir', type=Path, default=DEFAULT_CONFIG_DIR,
+                        help='Directory with manifest.json (default: splat/ in this checkout)')
     parser.add_argument('--python', default=sys.executable,
                         help='Python interpreter with splat installed (default: this one)')
     args = parser.parse_args(argv)
+    if not (args.config_dir / 'manifest.json').is_file():
+        print(f'ERROR: no manifest.json in {args.config_dir}; run from a repository '
+              'checkout (for example an editable install) or pass --config-dir',
+              file=sys.stderr)
+        return 2
     try:
         summary = split_image(args.bin, args.work_dir, config_dir=args.config_dir,
                               splat=(args.python, '-m', 'splat'))

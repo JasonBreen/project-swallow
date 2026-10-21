@@ -135,6 +135,31 @@ class SplitTests(unittest.TestCase):
         self.assertEqual(code, 2)
         self.assertFalse((self.root / 'w').exists())
 
+    def test_iso_versions_of_one_name_are_staged_from_their_own_extents(self):
+        newer = make_exe(text=b'\x22' * 2048)
+        self.game = newer
+        self.image = make_image(self.root, [('BOOT.EXE;1', self.boot), ('BOOT.EXE;2', newer)],
+                                cnf=b'BOOT = cdrom:BOOT.EXE;1\r\n')
+        self.write_manifest()
+        self.split()
+        self.assertEqual((self.root / 'work' / 'boot.psexe').read_bytes(), self.boot)
+        self.assertEqual((self.root / 'work' / 'game.psexe').read_bytes(), newer)
+
+    def test_manifest_names_must_be_distinct(self):
+        manifest = json.loads((self.configs / 'manifest.json').read_text())
+        manifest['configs'][1]['target'] = manifest['configs'][0]['target']
+        (self.configs / 'manifest.json').write_text(json.dumps(manifest))
+        with self.assertRaisesRegex(SplitError, 'must all be distinct'):
+            load_manifest(self.configs)
+
+    def test_main_explains_a_missing_manifest(self):
+        stderr = StringIO()
+        with redirect_stderr(stderr):
+            code = main([str(self.image), '--work-dir', str(self.root / 'w'),
+                         '--config-dir', str(self.root / 'nowhere')])
+        self.assertEqual(code, 2)
+        self.assertIn('pass --config-dir', stderr.getvalue())
+
     def test_main_exits_2_on_errors(self):
         stderr = StringIO()
         with redirect_stderr(stderr):
