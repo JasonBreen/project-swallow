@@ -35,8 +35,8 @@ description of the PS-X EXE header.
 | `0x08` | 8 | Reserved | Kept as hex; nonzero is a warning |
 | `0x10` | 4 | Initial PC | Word aligned; outside the text image, compared as physical RAM, is a warning |
 | `0x14` | 4 | Initial GP | Reported only |
-| `0x18` | 4 | Text address | Word aligned, inside one 2 MiB RAM mirror (KUSEG, KSEG0 or KSEG1), clear of the first 64 KiB |
-| `0x1c` | 4 | Text size | A multiple of 2048; header plus text equals the ISO file size exactly; the text ends at or below the top of RAM |
+| `0x18` | 4 | Text address | Word aligned, inside main RAM through KUSEG, KSEG0 or KSEG1 and any of the four 2 MiB bus mirrors in each, clear of the first 64 KiB |
+| `0x1c` | 4 | Text size | A multiple of 2048; header plus text equals the ISO file size exactly; the text does not run past the end of its 2 MiB mirror |
 | `0x20` | 8 | Data address and size | Reported; either word nonzero is a warning, and no memory effect is assumed |
 | `0x28` | 8 | BSS address and size | Same as data |
 | `0x30` | 8 | Stack base and offset | Reported only |
@@ -47,7 +47,8 @@ description of the PS-X EXE header.
 
 `SYSTEM.CNF` must appear once at the root. Its `BOOT` line must be a
 `cdrom:` path to exactly one ISO file, and that file must be a valid PS-X
-EXE. A repeated key keeps its first value, as the PlayStation OS
+EXE. Its `;n` version, when given, chooses between ISO versions of the same
+name. A repeated key keeps its first value, as the PlayStation OS
 documentation specifies, and the ignored lines are listed in the report. Text after
 whitespace in `BOOT` is kept as `boot_arguments`, apart from the path. Every other file is checked by content: a file whose first eight
 logical bytes are the magic is parsed as an executable, whatever its name.

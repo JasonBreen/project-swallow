@@ -58,16 +58,21 @@ def main() -> None:
     args = parser.parse_args()
     baseline_dir = Path(__file__).resolve().parents[1] / 'docs' / 'reports'
     seen = set()
-    for key, filename in args.reference:
+    for key, _ in args.reference:
         if key not in {'jp1', 'jp2', 'en1', 'en2'} or key in seen:
             parser.error('Reference keys must be unique and one of jp1, jp2, en1, en2')
         seen.add(key)
+    # Validate every reference before writing any report, so a failure never
+    # leaves a mix of refreshed and stale reports behind.
+    reports = {}
+    for key, filename in args.reference:
         try:
-            report = validate(key, Path(filename), baseline_dir)
+            reports[key] = validate(key, Path(filename), baseline_dir)
         except (OSError, KeyError, ValueError, subprocess.CalledProcessError) as exc:
             print(f'ERROR: {key}: {exc}', file=sys.stderr)
             raise SystemExit(2) from exc
-        args.output_dir.mkdir(parents=True, exist_ok=True)
+    args.output_dir.mkdir(parents=True, exist_ok=True)
+    for key, report in reports.items():
         (args.output_dir / f'exe-{key}.json').write_bytes(
             (json.dumps(report, indent=2) + '\n').encode('utf-8'))
         for exe in report['executables']:

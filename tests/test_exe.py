@@ -50,6 +50,11 @@ class ExeHeaderTests(unittest.TestCase):
             with self.subTest(name=name):
                 self.assertEqual(parse_psx_exe(raw, len(raw)).ram_mirror, name)
 
+    def test_bus_mirrors_of_main_ram_are_accepted(self):
+        raw = make_exe(t_addr=0x80210000, pc=0x00010010)
+        exe = parse_psx_exe(raw, len(raw))
+        self.assertEqual((exe.ram_mirror, exe.entry_in_text), ('kseg0', True))
+
     def test_entry_in_another_mirror_of_the_text_counts_as_inside(self):
         raw = make_exe(t_addr=0x80010000, pc=0x00010010)
         exe = parse_psx_exe(raw, len(raw))
@@ -66,7 +71,9 @@ class ExeHeaderTests(unittest.TestCase):
             'text size not sector multiple': make_exe(t_size=2047),
             'unaligned text address': make_exe(t_addr=0x80010002),
             'unaligned entry': make_exe(pc=0x80010001),
-            'outside RAM': make_exe(t_addr=0x80200000, pc=0x80200000),
+            'outside RAM': make_exe(t_addr=0x80800000, pc=0x80800000),
+            'kernel area through a bus mirror': make_exe(t_addr=0x80200000, pc=0x80200000),
+            'wraps a bus mirror': make_exe(t_addr=0x803FF800, text=b'\x00' * 4096),
             'kernel area': make_exe(t_addr=0x8000F800, pc=0x8000F800),
             'past top of RAM': make_exe(t_addr=0x801FF800, text=b'\x00' * 4096),
             'unprintable marker': make_exe(marker=b'Sony\x07'),
@@ -109,13 +116,13 @@ class SystemCnfTests(unittest.TestCase):
     def test_boot_path_and_settings(self):
         cnf = parse_system_cnf(
             b'BOOT = cdrom:SLPS_020.20;1\r\nTCB = 4\r\nEVENT = 16\r\nSTACK = 801FFF00\r\n')
-        self.assertEqual(cnf.boot_path, 'SLPS_020.20')
+        self.assertEqual((cnf.boot_path, cnf.boot_version), ('SLPS_020.20', 1))
         self.assertEqual(cnf.settings['STACK'], '801FFF00')
 
     def test_backslashes_subdirectories_and_case(self):
         self.assertEqual(parse_system_cnf(b'boot=CDROM:\\\\dir\\main.exe;1').boot_path,
                          'DIR/MAIN.EXE')
-        self.assertEqual(parse_system_cnf(b'BOOT = cdrom:MAIN.EXE').boot_path, 'MAIN.EXE')
+        self.assertIsNone(parse_system_cnf(b'BOOT = cdrom:MAIN.EXE').boot_version)
 
     def test_boot_arguments_are_kept_apart_from_the_path(self):
         cnf = parse_system_cnf(b'BOOT = cdrom:\\MAIN.EXE;1 mode 2\n')
@@ -169,7 +176,9 @@ def make_image(root, files, *, cnf=b'BOOT = cdrom:BOOT.EXE;1\r\nTCB = 4\r\n',
     if extra_cnf:
         entries.append(('SYSTEM.CNF', cnf))
     for name, data in entries:
-        directory += iso_record(name.encode() + b';1', lba, len(data))
+        raw_name = name.encode('latin-1')
+        raw_name = raw_name if b';' in raw_name else raw_name + b';1'
+        directory += iso_record(raw_name, lba, len(data))
         for index in range(max(1, (len(data) + 2047) // 2048)):
             contents[lba + index] = (name, data[index * 2048:(index + 1) * 2048])
         lba += max(1, (len(data) + 2047) // 2048)
@@ -199,6 +208,17 @@ class InspectExecutablesTests(unittest.TestCase):
     def tearDown(self):
         self.tmp.cleanup()
 
+    def test_boot_version_chooses_between_versions_of_one_name(self):
+        older = make_exe(t_addr=0x80120000, pc=0x80120000, text=b'\x01' * 2048)
+        files = [('MAIN.EXE;1', self.boot), ('MAIN.EXE;2', older)]
+        path = make_image(self.root, files, cnf=b'BOOT = cdrom:\\MAIN.EXE;1\r\n')
+        report = inspect_executables(path)
+        boot = [exe for exe in report['executables'] if exe['is_boot']]
+        self.assertEqual([exe['sha256'] for exe in boot], [hashlib.sha256(self.boot).hexdigest()])
+        path = make_image(self.root, files, cnf=b'BOOT = cdrom:\\MAIN.EXE\r\n')
+        with self.assertRaisesRegex(ExeFormatError, 'not found exactly once'):
+            inspect_executables(path)
+
     def test_boot_from_system_cnf_and_executables_found_by_content(self):
         path = make_image(self.root, [('BOOT.EXE', self.boot), ('GAME.BIN', self.game),
                                       ('DATA.BPB', b'\x00' * 100), ('TINY.XA', b'\x00' * 4),
@@ -223,6 +243,18 @@ class InspectExecutablesTests(unittest.TestCase):
                                       ('OTHER.EXE', other)])
         self.assertEqual(inspect_executables(path)['text_range_overlaps'],
                          [['GAME.BIN', 'OTHER.EXE']])
+        bus_mirror = make_exe(t_addr=0xA0410800, pc=0xA0410800)
+        path = make_image(self.root, [('BOOT.EXE', self.boot), ('GAME.BIN', self.game),
+                                      ('MIRROR.EXE', bus_mirror)])
+        self.assertEqual(inspect_executables(path)['text_range_overlaps'],
+                         [['GAME.BIN', 'MIRROR.EXE']])
+
+    def test_non_ascii_file_names_do_not_break_path_matching(self):
+        path = make_image(self.root, [('BOOT.EXE', self.boot), ('GAME.BIN', self.game),
+                                      ('CAF\xc9.DAT', b'\x00' * 10)])
+        by_path = {exe['path']: exe for exe in inspect_executables(path)['executables']}
+        self.assertEqual([ref['string'] for ref in by_path['BOOT.EXE']['path_references']],
+                         ['\\GAME.BIN;1'])
 
     def test_disc_level_rejections(self):
         cases = {

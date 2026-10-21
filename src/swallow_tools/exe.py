@@ -22,7 +22,9 @@ HEADER_BYTES = 0x800
 HEADER = struct.Struct('<8s8sIIIIIIIIII20s')
 MARKER_OFFSET = 0x4C
 RAM_BYTES = 2 * 1024 * 1024
-# Main RAM is visible through three CPU address mirrors: KUSEG, KSEG0, KSEG1.
+# Main RAM is visible through three CPU segments (KUSEG, KSEG0, KSEG1), and
+# within each the 2 MiB repeats four times across the first 8 MiB.
+RAM_WINDOW_BYTES = 8 * 1024 * 1024
 RAM_MIRRORS = {0x00000000: 'kuseg', 0x80000000: 'kseg0', 0xA0000000: 'kseg1'}
 KERNEL_RAM_BYTES = 0x10000
 MAX_SYSTEM_CNF_BYTES = 2048
@@ -73,9 +75,10 @@ class PsxExe:
 
 
 def _ram_offset(address: int) -> tuple[str, int] | None:
+    """Return the CPU segment and the physical offset into the 2 MiB of RAM."""
     for base, name in RAM_MIRRORS.items():
-        if base <= address < base + RAM_BYTES:
-            return name, address - base
+        if base <= address < base + RAM_WINDOW_BYTES:
+            return name, (address - base) % RAM_BYTES
     return None
 
 
@@ -108,7 +111,7 @@ def parse_psx_exe(header: bytes, file_size: int) -> PsxExe:
         raise ExeFormatError(f'Text address 0x{t_addr:08x} overlaps kernel RAM')
     if offset + t_size > RAM_BYTES:
         raise ExeFormatError(
-            f'Text range 0x{t_addr:08x}+0x{t_size:x} exceeds 2 MiB of main RAM')
+            f'Text range 0x{t_addr:08x}+0x{t_size:x} runs past the end of a 2 MiB RAM mirror')
     marker_bytes = header[MARKER_OFFSET:HEADER_BYTES].split(b'\x00', 1)[0]
     if any(byte < 0x20 or byte > 0x7E for byte in marker_bytes):
         raise ExeFormatError('Region marker is not printable ASCII')
@@ -140,13 +143,15 @@ class SystemCnf:
     boot_arguments: str
     settings: dict[str, str]
     ignored_duplicates: tuple[str, ...] = ()
+    boot_version: int | None = None
 
 
 def parse_system_cnf(data: bytes) -> SystemCnf:
     """Read KEY = VALUE lines and resolve BOOT to a root-relative ISO path.
 
-    Only `cdrom:` boot paths are accepted. The version suffix and leading
-    backslashes are removed; subdirectories are returned with `/` separators.
+    Only `cdrom:` boot paths are accepted. Leading backslashes are removed and
+    subdirectories are returned with `/` separators. The `;n` version is kept
+    apart in `boot_version`, to choose between versions of one name.
     Text after whitespace is an argument string, kept apart from the path.
     A repeated key keeps its first value, as the PlayStation OS documentation
     specifies; later lines are listed in `ignored_duplicates`.
@@ -173,11 +178,13 @@ def parse_system_cnf(data: bytes) -> SystemCnf:
     boot = settings.get('BOOT')
     if boot is None:
         raise ExeFormatError('SYSTEM.CNF has no BOOT line')
-    found = re.fullmatch(r'(?i)cdrom:\\*([^;\s]+)(?:;\d+)?(?:\s+(.*))?', boot)
+    found = re.fullmatch(r'(?i)cdrom:\\*([^;\s]+)(?:;(\d+))?(?:\s+(.*))?', boot)
     if not found:
         raise ExeFormatError(f'Unsupported BOOT path {boot!r}')
     boot_path = found.group(1).replace('\\', '/').upper()
-    return SystemCnf(boot, boot_path, found.group(2) or '', settings, tuple(ignored))
+    version = None if found.group(2) is None else int(found.group(2))
+    return SystemCnf(boot, boot_path, found.group(3) or '', settings, tuple(ignored),
+                     version)
 
 
 def find_path_references(data: bytes, paths: list[str], text_address: int) -> list[dict]:
@@ -189,7 +196,7 @@ def find_path_references(data: bytes, paths: list[str], text_address: int) -> li
     """
     found: list[dict] = []
     for path in sorted(paths):
-        pattern = re.compile(rb'(?<![\\\w])\\' + re.escape(path.replace('/', '\\').encode('ascii'))
+        pattern = re.compile(rb'(?<![\\\w])\\' + re.escape(path.replace('/', '\\').encode('latin-1'))
                              + rb';\d+(?!\w)', re.I)
         for match in pattern.finditer(data):
             offset = match.start()
@@ -197,11 +204,22 @@ def find_path_references(data: bytes, paths: list[str], text_address: int) -> li
                        if offset >= HEADER_BYTES else None)
             found.append({
                 'path': path,
-                'string': match.group().decode('ascii'),
+                'string': match.group().decode('latin-1'),
                 'file_offset': offset,
                 'address': None if address is None else f'0x{address:08x}',
             })
     return found
+
+
+def _physical_start(exe: dict) -> int:
+    located = _ram_offset(int(exe['text_range'][0], 16))
+    assert located is not None  # parse_psx_exe already rejected other addresses
+    return located[1]
+
+
+def _iso_version(raw_name: str) -> int | None:
+    _, sep, version = raw_name.rpartition(';')
+    return int(version) if sep and version.isdigit() else None
 
 
 def _read_whole(disc: PlayStationDisc, entry: FileEntry) -> bytes:
@@ -228,6 +246,9 @@ def inspect_executables(path: Path) -> dict:
         raise ExeFormatError('SYSTEM.CNF exceeds the 2048-byte reader limit')
     cnf = parse_system_cnf(disc.read_file(cnf_entry))
     boot_matches = [entry for entry in files if entry.path.upper() == cnf.boot_path]
+    if len(boot_matches) > 1 and cnf.boot_version is not None:
+        boot_matches = [entry for entry in boot_matches
+                        if _iso_version(entry.raw_name) == cnf.boot_version]
     if len(boot_matches) != 1:
         raise ExeFormatError(f'BOOT file {cnf.boot_path} not found exactly once in the ISO')
 
@@ -266,8 +287,8 @@ def inspect_executables(path: Path) -> dict:
     overlaps = []
     for index, first in enumerate(executables):
         for second in executables[index + 1:]:
-            a0, a1 = (int(value, 16) & 0x1FFFFFFF for value in first['text_range'])
-            b0, b1 = (int(value, 16) & 0x1FFFFFFF for value in second['text_range'])
+            a0, b0 = (_physical_start(exe) for exe in (first, second))
+            a1, b1 = a0 + first['header']['text_size'], b0 + second['header']['text_size']
             if max(a0, b0) < min(a1, b1):
                 overlaps.append([first['path'], second['path']])
     return {
