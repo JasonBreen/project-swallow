@@ -13,6 +13,7 @@ import argparse
 from dataclasses import dataclass
 import hashlib
 import json
+import os
 from pathlib import Path
 import shutil
 import subprocess
@@ -121,6 +122,10 @@ def split_image(image: Path, work_dir: Path, *, config_dir: Path = DEFAULT_CONFI
         if any(other is entry for _, other in staged):
             raise SplitError(f"{exe['path']}: {entry.config} already matched another file")
         staged.append((exe, entry))
+    unmatched = [entry.config for entry in configs
+                 if not any(other is entry for _, other in staged)]
+    if unmatched:
+        raise SplitError(f"No executable on {image.name} matches {', '.join(unmatched)}")
 
     work_dir.mkdir(parents=True, exist_ok=True)
     disc = PlayStationDisc(image)
@@ -179,9 +184,15 @@ def main(argv: list[str] | None = None) -> int:
               'checkout (for example an editable install) or pass --config-dir',
               file=sys.stderr)
         return 2
+    python = args.python
+    # splat runs with the work directory as cwd, so a relative interpreter
+    # path is made absolute here. Bare names stay PATH lookups, and abspath
+    # (not resolve) keeps a venv's interpreter symlink intact.
+    if os.sep in python or (os.altsep and os.altsep in python):
+        python = os.path.abspath(python)
     try:
         summary = split_image(args.bin, args.work_dir, config_dir=args.config_dir,
-                              splat=(args.python, '-m', 'splat'))
+                              splat=(python, '-m', 'splat'))
     except (OSError, KeyError, DiscFormatError, ExeFormatError, SplitError) as exc:
         print(f'ERROR: {exc}', file=sys.stderr)
         return 2

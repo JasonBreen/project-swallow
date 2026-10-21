@@ -7,6 +7,7 @@ import json
 import sys
 import tempfile
 import unittest
+from unittest import mock
 
 from swallow_tools.split import (
     DEFAULT_CONFIG_DIR, REPO_ROOT, SplitError, load_manifest, main, split_image,
@@ -83,6 +84,12 @@ class SplitTests(unittest.TestCase):
     def test_unknown_executable_hash_is_an_error(self):
         self.write_manifest(boot_hash='0' * 64)
         with self.assertRaisesRegex(SplitError, 'BOOT.EXE: SHA256 .* matches no splat config'):
+            self.split()
+        self.assertFalse((self.root / 'work').exists())
+
+    def test_config_without_a_matching_executable_is_an_error(self):
+        self.image = make_image(self.root, [('BOOT.EXE', self.boot)])
+        with self.assertRaisesRegex(SplitError, 'matches game.yaml'):
             self.split()
         self.assertFalse((self.root / 'work').exists())
 
@@ -166,6 +173,19 @@ class SplitTests(unittest.TestCase):
                          '--config-dir', str(self.root / 'nowhere')])
         self.assertEqual(code, 2)
         self.assertIn('pass --config-dir', stderr.getvalue())
+
+    def test_main_makes_a_relative_python_path_absolute(self):
+        seen = []
+        def fake_split(image, work_dir, *, config_dir, splat):
+            seen.append(splat)
+            return {'executables': [], 'asm_files': []}
+        with mock.patch('swallow_tools.split.split_image', fake_split):
+            for python in ('python3', str(Path('venv') / 'bin' / 'python')):
+                main([str(self.image), '--work-dir', str(self.root / 'w'),
+                      '--config-dir', str(self.configs), '--python', python])
+        self.assertEqual(seen[0][0], 'python3')
+        self.assertTrue(Path(seen[1][0]).is_absolute())
+        self.assertEqual(Path(seen[1][0]), Path.cwd() / 'venv' / 'bin' / 'python')
 
     def test_main_exits_2_on_errors(self):
         stderr = StringIO()

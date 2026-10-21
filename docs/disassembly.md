@@ -88,7 +88,9 @@ python -m swallow_tools.split <BIN> --work-dir G:\ProjectSwallow-data\splat\jp1 
 ```
 
 The work directory must be empty or absent. The tool matches executables to
-configs by SHA256 and fails on any executable without a config. It writes
+configs by SHA256 and fails on any executable without a config, or any
+config without an executable. A relative `--python` path is taken from the
+current directory. It writes
 `asm/`, the linker scripts, one `*.splat.log` per config, and
 `split-report.json` with the counts above. It exits with `0` for success and
 `2` for input, format, or splat errors.

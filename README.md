@@ -30,7 +30,7 @@ The repository currently contains the disc and archive tools needed to build tha
 
 ## Development status
 
-**Pre-alpha · toolchain v0.6.0 · no playable build available yet.**
+**Pre-alpha · toolchain v0.7.0 · no playable build available yet.**
 
 The game is in development. There is currently no C engine, native renderer, playable mission, recovered gameplay runtime, or completed English dub. Windows and Linux are target game platforms; current automated coverage runs the Python tools on both.
 
