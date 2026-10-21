@@ -6,7 +6,8 @@ No decoded payload was written to disk; the checked-in reports hold metadata.
 
 ## Synthetic tests
 
-The complete suite passes **111 tests**: 95 from v0.4.0 plus 16 TIM
+The complete suite passes **112 tests**: 95 from v0.4.0, one special-record
+report test added during review, and 16 TIM
 validator and walker tests added in v0.5.0 (header, flag, CLUT, pixel-block,
 VRAM, length, and trailing-byte rules; walker classification of valid,
 rejected, padded, and decoded TIM leaves; summary and CLI output). The

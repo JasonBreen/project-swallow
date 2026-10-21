@@ -284,13 +284,17 @@ class WalkTests(unittest.TestCase):
         self.assertNotIn('ulz', report['children'][0])
 
 
-def make_image(root, payloads, *, bph_lba=27, bpb_lba=32):
-    """Synthetic image with a BPH index and BPB payloads packed at sector offsets."""
+def make_image(root, payloads, *, bph_lba=27, bpb_lba=32, special=()):
+    """Synthetic image with a BPH index and BPB payloads packed at sector offsets.
+
+    ``special`` appends raw (descriptor, sector_word) records with bit 31 clear.
+    """
     records, blobs, sector = [], [], 0
     for payload in payloads:
         records.append((0xE0000000 | ((len(payload) + 3) // 4), sector))
         blobs.append((sector, payload))
         sector += (len(payload) + 2047) // 2048
+    records.extend(special)
     index = make_index(records)
     bpb_size = sector * 2048
     pvd = bytearray(2048)
@@ -392,6 +396,20 @@ class InspectAndCliTests(unittest.TestCase):
     def test_missing_image_returns_2(self):
         with redirect_stderr(StringIO()):
             self.assertEqual(main([str(Path(self.temp.name) / 'absent.bin')]), 2)
+
+    def test_special_records_keep_raw_words_and_are_not_walked(self):
+        root = Path(self.temp.name) / 'special'
+        root.mkdir()
+        image = make_image(root, self.payloads[:1],
+                           special=[(0x50000011, 0x12345678), (0x50000022, 0)])
+        report = inspect_bpb(image)
+        self.assertEqual(report['entry_count'], 1)
+        self.assertEqual(report['special_records'], [
+            {'index': 1, 'descriptor': 0x50000011, 'sector_word': 0x12345678},
+            {'index': 2, 'descriptor': 0x50000022, 'sector_word': 0}])
+        self.assertEqual(inspect_bpb(self.image)['special_records'], [])
+        with self.assertRaises(BphFormatError):
+            inspect_bpb(image, entries=[1])
 
     def test_overlapping_bph_and_bpb_extents_are_rejected(self):
         root = Path(self.temp.name) / 'overlap'

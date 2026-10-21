@@ -67,12 +67,12 @@ A Ulz blob is a 16-byte header followed by three streams.
 | `0x04` | 3 | Decompressed size in bytes |
 | `0x07` | 1 | Version: `0` or `2` are supported; others are rejected |
 | `0x08` | 3 | Offset of the literal stream, relative to the blob start |
-| `0x0b` | 1 | Offset bit count `N` (observed 10–13); length gets `16 - N` bits |
+| `0x0b` | 1 | Offset bit count `N`: only the measured 10–13 are accepted; length gets `16 - N` bits |
 | `0x0c` | 4 | Offset of the pair stream, relative to the blob start |
 | `0x10` | … | Flag words up to the literal offset, then literals, then pairs |
 
 The reader requires `16 <= literal_offset <= pair_offset <= len(blob)`, a
-flag region that is a whole number of 32-bit words, `1 <= N <= 15`, and a
+flag region that is a whole number of 32-bit words, `N` in 10–13 (other counts are unvalidated and rejected), and a
 decompressed size within the 16 MiB in-memory limit.
 
 Decoding consumes flag words as little-endian 32-bit values from bit 31
@@ -129,6 +129,14 @@ accounting only.
 - Four top-level entries (indices 1–4 on every image) are opaque: each starts
   with a small count word followed by text-like fixed records, not an offset
   table. They are identical across all four images and remain uninterpreted.
+  **Hypothesis, unverified:** they may be code or data overlays. On Japanese
+  Disc 1 their count words are 4, 5, 6, and 7, and they hold 285, 1,179, 50,
+  and 415 words in the PlayStation RAM range (`0x80010000`–`0x801fffff`), for
+  example `0x800d1890` in entry 1. No count meaning or load address has been
+  decoded; the [executable track](next-task-executable.md) checks this first.
+- Four opaque leaves on Japanese Disc 1 contain the Ulz signature at a nonzero
+  offset: `508.0.1`, `525.0.0`, `536.0.1`, and `543.0.0`. Their own header
+  shapes are unknown, so the embedded data is not walked or decoded.
 - Opaque leaves other than validated TIM images are not decoded. The most
   frequent remaining signature, `00002311`, is measured as an open hypothesis
   in the [TIM contract's unknowns](tim-format.md#the-00002311-leaves-open-hypothesis).
