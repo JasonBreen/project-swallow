@@ -1,0 +1,127 @@
+{
+  "schema_version": 1,
+  "source_image": "Ace Combat 3 - Electrosphere (Japan) (Disc 2).bin",
+  "image_size_bytes": 723813888,
+  "volume_id": "ACE3ES2",
+  "system_cnf": {
+    "path": "SYSTEM.CNF",
+    "boot": "cdrom:SLPS_020.21;1",
+    "boot_path": "SLPS_020.21",
+    "boot_arguments": "",
+    "settings": {
+      "BOOT": "cdrom:SLPS_020.21;1",
+      "TCB": "4",
+      "EVENT": "16",
+      "STACK": "801FFF00"
+    },
+    "ignored_duplicates": []
+  },
+  "executables": [
+    {
+      "path": "ACE3.BIN",
+      "lba": 259,
+      "size_bytes": 710656,
+      "sha256": "2c3f2ce41268176128973ea0cd9b28784a26c0061bff5550c99599388f13ebe9",
+      "is_boot": false,
+      "header": {
+        "initial_pc": "0x8002572c",
+        "initial_gp": "0x00000000",
+        "text_address": "0x80010000",
+        "text_size": 708608,
+        "data_address": "0x00000000",
+        "data_size": 0,
+        "bss_address": "0x00000000",
+        "bss_size": 0,
+        "stack_base": "0x801ffff0",
+        "stack_offset": 0,
+        "marker": "Sony Computer Entertainment Inc. for Japan area",
+        "reserved_08_hex": "0000000000000000",
+        "reserved_38_hex": "0000000000000000000000000000000000000000"
+      },
+      "ram_mirror": "kseg0",
+      "text_range": [
+        "0x80010000",
+        "0x800bd000"
+      ],
+      "entry_in_text": true,
+      "warnings": [],
+      "path_references": [
+        {
+          "path": "ACE.BPB",
+          "string": "\\ACE.BPB;1",
+          "file_offset": 2996,
+          "address": "0x800103b4"
+        },
+        {
+          "path": "ACE.BPH",
+          "string": "\\ACE.BPH;1",
+          "file_offset": 3020,
+          "address": "0x800103cc"
+        },
+        {
+          "path": "ACE.SPB",
+          "string": "\\ACE.SPB;1",
+          "file_offset": 2984,
+          "address": "0x800103a8"
+        },
+        {
+          "path": "ACE.SPH",
+          "string": "\\ACE.SPH;1",
+          "file_offset": 3008,
+          "address": "0x800103c0"
+        }
+      ]
+    },
+    {
+      "path": "SLPS_020.21",
+      "lba": 24,
+      "size_bytes": 481280,
+      "sha256": "daddca3ac3299372370a8cf7a046eb066537a39cf53216904009c46f2924b0e5",
+      "is_boot": true,
+      "header": {
+        "initial_pc": "0x801255ac",
+        "initial_gp": "0x00000000",
+        "text_address": "0x80120000",
+        "text_size": 479232,
+        "data_address": "0x00000000",
+        "data_size": 0,
+        "bss_address": "0x00000000",
+        "bss_size": 0,
+        "stack_base": "0x801ffff0",
+        "stack_offset": 0,
+        "marker": "Sony Computer Entertainment Inc. for Japan area",
+        "reserved_08_hex": "0000000000000000",
+        "reserved_38_hex": "0000000000000000000000000000000000000000"
+      },
+      "ram_mirror": "kseg0",
+      "text_range": [
+        "0x80120000",
+        "0x80195000"
+      ],
+      "entry_in_text": true,
+      "warnings": [],
+      "path_references": [
+        {
+          "path": "ACE3.BIN",
+          "string": "\\ACE3.BIN;1",
+          "file_offset": 2060,
+          "address": "0x8012000c"
+        }
+      ]
+    }
+  ],
+  "text_range_overlaps": [],
+  "form2_skipped": [
+    "ACE.SPB"
+  ],
+  "reference_validation": {
+    "baseline_report": "docs/reports/jp2.json",
+    "whole_image_hashes_match": true,
+    "whole_image_hashes": {
+      "md5": "50760963ae8a26ea0188b165f05b33a1",
+      "sha1": "a23e046b1eb695e02d214d269fca70dbe0a437f7",
+      "sha256": "cfd9cd36ba858aa81927306ec761a228c8e88be48f1b1db9ac9d7f2bdbe8c854"
+    },
+    "executable_hashes_match_baseline": true
+  }
+}

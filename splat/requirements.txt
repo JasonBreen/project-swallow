@@ -1,0 +1,4 @@
+# Measured with these exact versions; docs/disassembly.md counts depend on them.
+splat64[mips]==0.50.1
+spimdisasm==1.42.4
+rabbitizer==1.16.2

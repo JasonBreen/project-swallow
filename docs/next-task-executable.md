@@ -1,7 +1,8 @@
 # Next bounded task: executable assembly track
 
-**Status: planned, not started.** Recorded on 2026-10-13 after the
-[BPB/Ulz walker](bpb-format.md) landed. Read `AGENTS.md` first.
+**Status: header reader (v0.6.0) and splat disassembly (v0.7.0) implemented; library identification next.**
+Recorded on 2026-10-13 after the [BPB/Ulz walker](bpb-format.md) landed;
+header evidence updated after the PS-X EXE reader. Read `AGENTS.md` first.
 
 ## Owner direction
 
@@ -14,14 +15,14 @@
 ## Known evidence
 
 - **`SLPS_020.20`/`SLPS_020.21`:** a PS-X EXE with entry point `0x801255ac`, load address `0x80120000`, and text size `0x75000`. It links PsyQ libraries (`$Id: sys.c … 1998/01/12`, `bios.c`, `intr.c`). Its content is byte-identical on all four discs.
-- **`ACE3.BIN`:** 710,656 bytes. Its first words (`2c570280 00000000 00000180 00d00a00`) look like an overlay header. This is unverified, and no field has been decoded. It is identical across the Japanese discs and the same on English Disc 2, but differs on English Disc 1.
+- **`ACE3.BIN`:** 710,656 bytes, identified by `PS-X EXE` magic as a second executable. Its header specifies entry `0x8002572c`, text address `0x80010000`, and text size `0xad000`. The earlier possible-overlay words (`2c570280 00000000 00000180 00d00a00`) are header fields at file offset `0x10`; that hypothesis is withdrawn. It is identical across the Japanese discs and the same on English Disc 2, but differs on English Disc 1. The boot executable contains `\ACE3.BIN;1`; runtime load order remains unverified. See the [EXE contract and measurements](exe-format.md).
 - **BPB entries 1–4** contain strings and words like `0x800d1890` and may be overlays (hypothesis in [bpb-format.md](bpb-format.md)).
 - **Ulz decoding** is structurally validated against all measured blocks, but has not been compared with the game's own routine. Open question: English-labeled v0 blocks leave reference flags after the declared size. Does the game stop at the size, or overrun? See [bpb-validation.md](bpb-validation.md).
 
 ## Deliverables, in order
 
-1. **Header parsers** (Python tooling): the PS-X EXE header, and an `ACE3.BIN` header *hypothesis*. The load address and entry point must come from evidence, such as code that references the overlay or emulator RAM. Use typed results, raw fields, and synthetic tests, as the BPH/BPB tools do.
-2. **Disassembly pipeline** for MIPS R3000. Compare a minimal stdlib disassembler against existing tooling (spimdisasm/splat), and record license and provenance. **Ask the owner before adopting third-party tools.** The output is annotated assembly with function boundaries, labels, and cross-references.
+1. **Header reader — implemented** (Python tooling): `swallow_tools.exe` resolves `BOOT` from `SYSTEM.CNF`, discovers executables by magic, and reports validated headers, hashes, RAM text ranges, and path strings. It preserves uninterpreted fields and has synthetic regression coverage. This completes the header step for both PS-X EXEs; it does not establish how they are loaded at runtime.
+2. **Disassembly pipeline — implemented** with splat, which the owner chose on 2026-10-21 (MIT licensed, pinned in `splat/requirements.txt`). `swallow_tools.split` produces annotated assembly with function boundaries, labels, and cross-references for both executables, outside the repository. See [disassembly](disassembly.md).
 3. **PsyQ library identification** by signature, so library code is separated from game code.
 4. **First game routine: the Ulz decompressor.**
    - Locate it, for example by finding the `Ulz\x1a` magic comparison and the `>> N` / `+ 3` / `+ 1` pattern.

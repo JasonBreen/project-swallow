@@ -1,0 +1,13 @@
+// Symbols splat cannot find from jal targets alone. Each entry cites its
+// evidence. Names stay generic until the code proves more.
+// Format: name = 0xADDRESS; // type:... size:...
+
+// PS-X EXE header initial PC. The body matches the PsyQ crt0 pattern: clear
+// 0x80194F88-0x801CEE00, read the RAM size table, call InitHeap, call main.
+boot_entry = 0x801255AC; // type:func size:0xAC
+// Read by boot_entry through lui/addiu 0x80125658; four 0x00200000 words.
+boot_ram_size_table = 0x80125658; // type:u32 size:0x10
+// BIOS A(0x39) stub (li $t2,0xA0; jr $t2; li $t1,0x39), InitHeap per psx-spx.
+InitHeap = 0x80125668; // type:func
+// Called by boot_entry after InitHeap.
+boot_main = 0x801233E8; // type:func

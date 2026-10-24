@@ -1,8 +1,18 @@
 # Changelog
 
-## Unreleased
+## 0.7.0 — 2026-10-21
+
+- Adopted splat (owner choice, 2026-10-21) as the MIPS disassembler, pinned with spimdisasm 1.42.4 and rabbitizer 1.16.2 in `splat/requirements.txt` as an optional tooling dependency. Added splat configs and symbol files for the boot executable and `ACE3.BIN`, with rodata, text, and data boundaries measured from the instructions.
+- Added `swallow_tools.split` and the `swallow-split` CLI. It matches executables to configs by SHA256, extracts them to a work directory outside the repository, runs splat, and writes a count report. Generated assembly is never committed.
+- Measured on all four references: 363 functions in the boot text and 1,713 in `ACE3.BIN`, with every undecodable word accounted for. Both entry points follow the PsyQ crt0 pattern; the symbol files name them, their BSS ranges, and their main functions (`0x801233e8`, `0x800261a8`). English-labeled Disc 1's `ACE3.BIN` differs by one data byte, and the code is the same on every disc.
+- Added 21 synthetic tests (154 total), the splat ones using a fake splat, so CI still needs no third-party packages. Documented the pipeline in `docs/disassembly.md`.
+
+## 0.6.0 — 2026-10-19
 
 - Added a VS Code and Antigravity editor setup: debug configurations for the disc, BPH, BPB, compare, and validation tools; a committed test env file so Test Explorer works on a fresh clone; a shared `[tool.pyright]` configuration for Pylance and basedpyright; LF and final-newline file settings; `TEMP`/`TMP` on `G:` for debug, test, and Windows terminal runs; and a `tests/__init__.py` so root-level (`-t .`) discovery works. See `docs/editor-setup.md`.
+- Added a read-only PS-X EXE header reader and `swallow-exe` CLI (`swallow_tools.exe`). It resolves the boot file from `SYSTEM.CNF`, finds every other executable by its magic rather than its name, validates the header against the file size and the 2 MiB RAM map, and reports hashes, text ranges, uninterpreted fields, and `\NAME;n` path strings that name files on the same disc. Form 2 files are listed and skipped.
+- Found that `ACE3.BIN` is a second PS-X EXE (entry `0x8002572c`, text `0x80010000–0x800bd000`) on all four references, which withdraws the earlier overlay-header reading of its first words. The boot executable contains `\ACE3.BIN;1`, and `ACE3.BIN` names all four archive files. Both are recorded as evidence, not as proof of load order.
+- Added `scripts/validate_exe_references.py`, which checks whole-image and per-executable hashes against the baselines. Added 21 synthetic tests and documented the contract in `docs/exe-format.md`.
 - Owner direction (recorded 2026-10-13): the C language is permitted and the game engine is C; Python stays limited to offline tooling. The `C:` drive must not be used; all work and data stay on `G:`. AGENTS.md and the README replace the earlier "no C" wording, which had been misread as a language ban.
 - Expanded the Team NEMO (Project NEMO) acknowledgment in CREDITS.md and the README, sourced from Romhacking.net: the full crew with credited roles, and esperknight's decompression work noted as prior art. The provenance of the English-labeled discs is still unverified.
 - Planned the executable assembly track ([next task](docs/next-task-executable.md)): recover flight and gameplay behavior 1:1 from the original code, starting by matching the game's own Ulz routine.
