@@ -91,6 +91,23 @@ def load_signatures(root: Path, versions: list[str] | None = None) -> list[Signa
     return signatures
 
 
+def _aligned_hits(pattern: re.Pattern, text: bytes, limit: int) -> list[int]:
+    """Word-aligned match starts, overlapping ones included, up to limit.
+
+    finditer() skips matches that start inside an earlier match, which would
+    hide a second placement of a repetitive signature.
+    """
+    hits, pos = [], 0
+    while len(hits) < limit:
+        match = pattern.search(text, pos)
+        if match is None:
+            break
+        if match.start() % 4 == 0:
+            hits.append(match.start())
+        pos = match.start() + 1
+    return hits
+
+
 def match_signatures(text: bytes, text_address: int, signatures: list[Signature]) -> dict:
     """Place library objects in text and name their global labels.
 
@@ -101,7 +118,7 @@ def match_signatures(text: bytes, text_address: int, signatures: list[Signature]
     """
     found: dict[tuple, dict] = {}
     for sig in signatures:
-        hits = [m.start() for m in sig.pattern.finditer(text) if m.start() % 4 == 0]
+        hits = _aligned_hits(sig.pattern, text, limit=2)
         if len(hits) != 1:
             continue
         key = (sig.library, sig.obj, hits[0], sig.size, sig.labels)

@@ -17,7 +17,7 @@ replaced by wildcards. The tool:
    [the EXE contract](exe-format.md).
 2. Tries every signature. A signature counts only when it pins at least 32
    bytes (eight instructions) and matches exactly once, at a word-aligned
-   offset.
+   offset. Overlapping matches count, so a repetitive pattern is ambiguous.
 3. Merges an object that matches identically in several SDK versions into one
    entry that lists all of them.
 4. Resolves overlapping candidates by keeping the one with the most fixed

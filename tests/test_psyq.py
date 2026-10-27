@@ -65,6 +65,18 @@ class PsyqTests(unittest.TestCase):
         self.assertEqual(result['objects'], [])
         self.assertIsNone(result['library_range'])
 
+    def test_overlapping_placements_count_as_ambiguous(self):
+        repeated = b'ABCD' * 10
+        self.write_sigs('430', 'LIBX.LIB', [self.obj('REPEAT.OBJ', repeated, [('Repeat', 0)])])
+        sigs = load_signatures(self.sigs)
+        self.assertEqual(match_signatures(b'ABCD' * 11, 0x80010000, sigs)['objects'], [])
+        # An unaligned match must not hide an aligned one that overlaps it.
+        self.assertEqual(len(match_signatures(b'\x00\x00' + repeated + b'\x00' * 6, 0x80010000,
+                                              sigs)['objects']), 0)
+        self.write_sigs('440', 'LIBY.LIB', [self.obj('RUN.OBJ', b'A' * 40, [('Run', 0)])])
+        result = match_signatures(b'\x00\x00' + b'A' * 42, 0x80010000, load_signatures(self.sigs))
+        self.assertEqual([o['address'] for o in result['objects']], ['0x80010004'])
+
     def test_versions_merge_and_more_fixed_bytes_win_overlaps(self):
         same = self.obj('A.OBJ', BODY, [('FuncA', 0)])
         self.write_sigs('430', 'LIBX.LIB', [same])
