@@ -68,15 +68,18 @@ alone. The `ACE3.BIN` BSS starts at `0x800bce40`, which is inside the last
 
 | Text file | Functions | Data labels in text | Undecodable words |
 |---|---:|---:|---:|
-| `boot_text.s` | 363 | 2 | 5 |
-| `ace3_text.s` | 1,713 | 3 | 8 |
+| `boot_text.s` | 364 | 2 | 5 |
+| `ace3_text.s` | 1,715 | 3 | 8 |
 
-The counts are the same on all four references. Every undecodable word is
-accounted for: the four RAM size table words in each executable, plus 8-byte
-markers that begin with `Ps` (`0x7350`) at `0x8012d008`, `0x800a6268`, and
-`0x800af2f8`. Each marker sits between library-style code. **Hypothesis:** these
-are PsyQ module stamps that can anchor library identification. That is not
-yet verified.
+The counts are the same on all four references. They include the PsyQ
+library names from [library identification](psyq-libraries.md) (v0.8.0),
+which split one more boot function and two more `ACE3.BIN` functions than
+the v0.7.0 symbols did (363 and 1,713). Every undecodable word is accounted
+for: the four RAM size table words in each executable, plus 8-byte words
+that begin with `Ps` (`0x7350`) at `0x8012d008`, `0x800a6268`, and
+`0x800af2f8`. Signature matching places each `Ps` word at the start of a
+Sony library object, so they are library bytes, not game code. See
+[the `Ps` words](psyq-libraries.md#the-ps-words).
 
 ## Reproduce
 
@@ -97,8 +100,7 @@ current directory. It writes
 
 ## Next
 
-- Identify PsyQ library functions by signature, starting from the `Ps` markers
-  and the BIOS call stubs, so that library code is separated from game code.
+- PsyQ library identification is done; see [library identification](psyq-libraries.md).
 - Reassemble the output with a MIPS assembler and compare it byte for byte
   with the input. That needs a toolchain choice, which is not made here.
 - Locate the Ulz decompressor in `ace3_text.s`.

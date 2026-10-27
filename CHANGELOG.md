@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.8.0 — 2026-10-27
+
+- Added `swallow_tools.psyq` and the `swallow-psyq` CLI. It finds Sony PsyQ library objects in each disc executable by signature, using a separate, uncommitted copy of the signature data from `lab313ru/psx_psyq_signatures` (pinned commit `e9e46e7`). A signature counts only when it pins at least 32 bytes and matches once, word-aligned. The report holds names, addresses, and sizes, never game bytes.
+- Measured on all four references: 88 library objects (69,284 bytes, 88% of the text) in the boot executable and 118 (82,348 bytes) in `ACE3.BIN`. `ACE3.BIN`'s own game code is `0x800257e8–0x8009b910` (483,624 bytes, 1,284 functions). The boot libraries all match PsyQ 4.3. The `ACE3.BIN` libraries match 4.5, except LIBPRESS, which matches 4.6 and 4.7. Recorded in `docs/reports/psyq-jp1.json`. The other three discs give the same result.
+- `--update-symbols` writes the library names into a generated section of the splat symbol files, below the hand-written entries. With them, splat names 237 of 364 boot functions and 286 of 1,715 `ACE3.BIN` functions.
+- The three `Ps` words that splat cannot decode are the first bytes of Sony objects (LIBAPI `C114.OBJ` and LIBGTE `MSC00.OBJ`), so they are library code. Removed the `ace3_ps_marker_800AF2F8` data symbol, since that word is now known to open `C114.OBJ`, ahead of `_96_remove`.
+- Added 7 synthetic tests (161 total). Documented the method and results in `docs/psyq-libraries.md`.
+
 ## 0.7.0 — 2026-10-21
 
 - Adopted splat (owner choice, 2026-10-21) as the MIPS disassembler, pinned with spimdisasm 1.42.4 and rabbitizer 1.16.2 in `splat/requirements.txt` as an optional tooling dependency. Added splat configs and symbol files for the boot executable and `ACE3.BIN`, with rodata, text, and data boundaries measured from the instructions.
