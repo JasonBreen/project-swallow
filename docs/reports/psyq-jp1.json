@@ -1,0 +1,6197 @@
+{
+  "schema_version": 1,
+  "source_image": "Ace Combat 3 - Electrosphere (Japan) (Disc 1).bin",
+  "executables": [
+    {
+      "path": "ACE3.BIN",
+      "sha256": "2c3f2ce41268176128973ea0cd9b28784a26c0061bff5550c99599388f13ebe9",
+      "is_boot": false,
+      "text_address": "0x80010000",
+      "library_bytes": 82348,
+      "library_range": [
+        "0x80025724",
+        "0x800afcf8"
+      ],
+      "objects": [
+        {
+          "library": "2MBYTE.OBJ",
+          "object": "2MBYTE.OBJ",
+          "address": "0x80025724",
+          "size": 196,
+          "versions": [
+            "260",
+            "300",
+            "330",
+            "340",
+            "350",
+            "3610",
+            "3611",
+            "370",
+            "400",
+            "410",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBPAD.LIB",
+          "object": "PADMAIN.OBJ",
+          "address": "0x8009b910",
+          "size": 3536,
+          "versions": [
+            "440",
+            "450"
+          ]
+        },
+        {
+          "library": "LIBPAD.LIB",
+          "object": "PADIF.OBJ",
+          "address": "0x8009c6e0",
+          "size": 1584,
+          "versions": [
+            "440",
+            "450"
+          ]
+        },
+        {
+          "library": "LIBPAD.LIB",
+          "object": "PADENTRY.OBJ",
+          "address": "0x8009cd10",
+          "size": 1216,
+          "versions": [
+            "440",
+            "450"
+          ]
+        },
+        {
+          "library": "LIBPAD.LIB",
+          "object": "PADCMD.OBJ",
+          "address": "0x8009d1d0",
+          "size": 3072,
+          "versions": [
+            "440",
+            "450"
+          ]
+        },
+        {
+          "library": "LIBPAD.LIB",
+          "object": "PADPORTD.OBJ",
+          "address": "0x8009ddd0",
+          "size": 1632,
+          "versions": [
+            "440",
+            "450"
+          ]
+        },
+        {
+          "library": "LIBPAD.LIB",
+          "object": "PADSEQD.OBJ",
+          "address": "0x8009e430",
+          "size": 1216,
+          "versions": [
+            "440",
+            "450"
+          ]
+        },
+        {
+          "library": "LIBPAD.LIB",
+          "object": "WAITRC2.OBJ",
+          "address": "0x8009e8f0",
+          "size": 192,
+          "versions": [
+            "430",
+            "440",
+            "450"
+          ]
+        },
+        {
+          "library": "LIBSN.LIB",
+          "object": "_DIVDI3.OBJ",
+          "address": "0x8009e9b0",
+          "size": 152,
+          "versions": [
+            "330",
+            "340",
+            "350",
+            "3610",
+            "3611",
+            "370",
+            "400",
+            "410",
+            "420",
+            "430",
+            "440",
+            "450",
+            "460"
+          ]
+        },
+        {
+          "library": "LIBSN.LIB",
+          "object": "_UDIVMOD.OBJ",
+          "address": "0x8009ea68",
+          "size": 1552,
+          "versions": [
+            "330",
+            "340",
+            "3610",
+            "3611",
+            "370",
+            "400",
+            "410",
+            "420",
+            "430",
+            "440",
+            "450",
+            "460"
+          ]
+        },
+        {
+          "library": "LIBSPU.LIB",
+          "object": "S_INI.OBJ",
+          "address": "0x8009f078",
+          "size": 352,
+          "versions": [
+            "410",
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBSPU.LIB",
+          "object": "SPU.OBJ",
+          "address": "0x8009f1d8",
+          "size": 2880,
+          "versions": [
+            "410",
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBSPU.LIB",
+          "object": "S_DCB.OBJ",
+          "address": "0x8009fd18",
+          "size": 48,
+          "versions": [
+            "410",
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBSPU.LIB",
+          "object": "S_Q.OBJ",
+          "address": "0x8009fd68",
+          "size": 128,
+          "versions": [
+            "410",
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBSPU.LIB",
+          "object": "S_SR.OBJ",
+          "address": "0x8009fde8",
+          "size": 208,
+          "versions": [
+            "410",
+            "420",
+            "430",
+            "440",
+            "450",
+            "460"
+          ]
+        },
+        {
+          "library": "LIBSPU.LIB",
+          "object": "S_M_UTIL.OBJ",
+          "address": "0x8009feb8",
+          "size": 272,
+          "versions": [
+            "410",
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBSPU.LIB",
+          "object": "S_SRMP.OBJ",
+          "address": "0x8009ffc8",
+          "size": 1248,
+          "versions": [
+            "410",
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBSPU.LIB",
+          "object": "S_SRA.OBJ",
+          "address": "0x800a04a8",
+          "size": 1232,
+          "versions": [
+            "370",
+            "400",
+            "410",
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBSPU.LIB",
+          "object": "S_SRD.OBJ",
+          "address": "0x800a0978",
+          "size": 128,
+          "versions": [
+            "410",
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBSPU.LIB",
+          "object": "S_SRV.OBJ",
+          "address": "0x800a09f8",
+          "size": 48,
+          "versions": [
+            "410",
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBSPU.LIB",
+          "object": "S_SAV.OBJ",
+          "address": "0x800a0a28",
+          "size": 704,
+          "versions": [
+            "410",
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBSPU.LIB",
+          "object": "S_CRWA.OBJ",
+          "address": "0x800a0ce8",
+          "size": 416,
+          "versions": [
+            "410",
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBSPU.LIB",
+          "object": "S_RDD.OBJ",
+          "address": "0x800a0e88",
+          "size": 112,
+          "versions": [
+            "410",
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBSPU.LIB",
+          "object": "S_SK.OBJ",
+          "address": "0x800a0ef8",
+          "size": 448,
+          "versions": [
+            "410",
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBSPU.LIB",
+          "object": "S_R.OBJ",
+          "address": "0x800a10b8",
+          "size": 96,
+          "versions": [
+            "410",
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBSPU.LIB",
+          "object": "S_W0.OBJ",
+          "address": "0x800a1118",
+          "size": 352,
+          "versions": [
+            "410",
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBSPU.LIB",
+          "object": "S_STSA.OBJ",
+          "address": "0x800a1278",
+          "size": 96,
+          "versions": [
+            "410",
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBSPU.LIB",
+          "object": "S_STM.OBJ",
+          "address": "0x800a12d8",
+          "size": 48,
+          "versions": [
+            "410",
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBSPU.LIB",
+          "object": "S_ITC.OBJ",
+          "address": "0x800a1308",
+          "size": 176,
+          "versions": [
+            "410",
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBSPU.LIB",
+          "object": "S_SCA.OBJ",
+          "address": "0x800a13b8",
+          "size": 896,
+          "versions": [
+            "410",
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBSPU.LIB",
+          "object": "SR_GAKS.OBJ",
+          "address": "0x800a1738",
+          "size": 352,
+          "versions": [
+            "410",
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBSPU.LIB",
+          "object": "S_SVA.OBJ",
+          "address": "0x800a1898",
+          "size": 1536,
+          "versions": [
+            "410",
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBSPU.LIB",
+          "object": "S_N2P.OBJ",
+          "address": "0x800a1e98",
+          "size": 512,
+          "versions": [
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBETC.LIB",
+          "object": "VSYNC.OBJ",
+          "address": "0x800a2098",
+          "size": 528,
+          "versions": [
+            "410",
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBETC.LIB",
+          "object": "INTR.OBJ",
+          "address": "0x800a22a8",
+          "size": 1728,
+          "versions": [
+            "410",
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBETC.LIB",
+          "object": "INTR_VB.OBJ",
+          "address": "0x800a2968",
+          "size": 288,
+          "versions": [
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBETC.LIB",
+          "object": "INTR_DMA.OBJ",
+          "address": "0x800a2a88",
+          "size": 672,
+          "versions": [
+            "410",
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBETC.LIB",
+          "object": "VMODE.OBJ",
+          "address": "0x800a2d28",
+          "size": 48,
+          "versions": [
+            "410",
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBCD.LIB",
+          "object": "EVENT.OBJ",
+          "address": "0x800a2d58",
+          "size": 336,
+          "versions": [
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBCD.LIB",
+          "object": "SYS.OBJ",
+          "address": "0x800a2ea8",
+          "size": 1552,
+          "versions": [
+            "450"
+          ]
+        },
+        {
+          "library": "LIBCD.LIB",
+          "object": "BIOS.OBJ",
+          "address": "0x800a34b8",
+          "size": 6000,
+          "versions": [
+            "450"
+          ]
+        },
+        {
+          "library": "LIBCD.LIB",
+          "object": "ISO9660.OBJ",
+          "address": "0x800a4c28",
+          "size": 2416,
+          "versions": [
+            "410",
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBCD.LIB",
+          "object": "CDREAD.OBJ",
+          "address": "0x800a5598",
+          "size": 2512,
+          "versions": [
+            "440",
+            "450"
+          ]
+        },
+        {
+          "library": "LIBCD.LIB",
+          "object": "S_002.OBJ",
+          "address": "0x800a5f68",
+          "size": 400,
+          "versions": [
+            "450"
+          ]
+        },
+        {
+          "library": "LIBGTE.LIB",
+          "object": "GEO_00.OBJ",
+          "address": "0x800a60f8",
+          "size": 208,
+          "versions": [
+            "410",
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBGTE.LIB",
+          "object": "GEO_01.OBJ",
+          "address": "0x800a61c8",
+          "size": 160,
+          "versions": [
+            "370",
+            "400",
+            "410",
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBGTE.LIB",
+          "object": "MSC00.OBJ",
+          "address": "0x800a6268",
+          "size": 144,
+          "versions": [
+            "450"
+          ]
+        },
+        {
+          "library": "LIBGTE.LIB",
+          "object": "MSC01.OBJ",
+          "address": "0x800a62f8",
+          "size": 144,
+          "versions": [
+            "410",
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBGTE.LIB",
+          "object": "MSC02.OBJ",
+          "address": "0x800a6388",
+          "size": 688,
+          "versions": [
+            "410",
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBGTE.LIB",
+          "object": "MTX_000.OBJ",
+          "address": "0x800a6638",
+          "size": 272,
+          "versions": [
+            "3610",
+            "3611",
+            "370",
+            "400",
+            "410",
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBGTE.LIB",
+          "object": "MTX_003.OBJ",
+          "address": "0x800a6748",
+          "size": 352,
+          "versions": [
+            "3610",
+            "3611",
+            "370",
+            "400",
+            "410",
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBGTE.LIB",
+          "object": "MTX_004.OBJ",
+          "address": "0x800a68a8",
+          "size": 352,
+          "versions": [
+            "410",
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBGTE.LIB",
+          "object": "MTX_00B.OBJ",
+          "address": "0x800a6a08",
+          "size": 272,
+          "versions": [
+            "3610",
+            "3611",
+            "370",
+            "400",
+            "410",
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBGTE.LIB",
+          "object": "MTX_01.OBJ",
+          "address": "0x800a6b18",
+          "size": 320,
+          "versions": [
+            "410",
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBGTE.LIB",
+          "object": "MTX_03.OBJ",
+          "address": "0x800a6c58",
+          "size": 272,
+          "versions": [
+            "350",
+            "3610",
+            "3611",
+            "370",
+            "400",
+            "410",
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBGTE.LIB",
+          "object": "MTX_04.OBJ",
+          "address": "0x800a6d68",
+          "size": 272,
+          "versions": [
+            "350",
+            "3610",
+            "3611",
+            "370",
+            "400",
+            "410",
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBGTE.LIB",
+          "object": "MTX_06.OBJ",
+          "address": "0x800a6e78",
+          "size": 96,
+          "versions": [
+            "350",
+            "3610",
+            "3611",
+            "370",
+            "400",
+            "410",
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBGTE.LIB",
+          "object": "MTX_07.OBJ",
+          "address": "0x800a6ed8",
+          "size": 48,
+          "versions": [
+            "350",
+            "3610",
+            "3611",
+            "370",
+            "400",
+            "410",
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBGTE.LIB",
+          "object": "MTX_08.OBJ",
+          "address": "0x800a6f08",
+          "size": 320,
+          "versions": [
+            "410",
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBGTE.LIB",
+          "object": "MTX_09.OBJ",
+          "address": "0x800a7048",
+          "size": 48,
+          "versions": [
+            "350",
+            "3610",
+            "3611",
+            "370",
+            "400",
+            "410",
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBGTE.LIB",
+          "object": "MTX_11.OBJ",
+          "address": "0x800a7078",
+          "size": 48,
+          "versions": [
+            "350",
+            "3610",
+            "3611",
+            "370",
+            "400",
+            "410",
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBGTE.LIB",
+          "object": "MTX_12.OBJ",
+          "address": "0x800a70a8",
+          "size": 32,
+          "versions": [
+            "350",
+            "3610",
+            "3611",
+            "370",
+            "400",
+            "410",
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBGTE.LIB",
+          "object": "REG08.OBJ",
+          "address": "0x800a70c8",
+          "size": 32,
+          "versions": [
+            "350",
+            "3610",
+            "3611",
+            "370",
+            "400",
+            "410",
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBGTE.LIB",
+          "object": "REG10.OBJ",
+          "address": "0x800a70f8",
+          "size": 32,
+          "versions": [
+            "350",
+            "3610",
+            "3611",
+            "370",
+            "400",
+            "410",
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBGTE.LIB",
+          "object": "REG12.OBJ",
+          "address": "0x800a7118",
+          "size": 32,
+          "versions": [
+            "350",
+            "3610",
+            "3611",
+            "370",
+            "400",
+            "410",
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBGTE.LIB",
+          "object": "SMP_00.OBJ",
+          "address": "0x800a7148",
+          "size": 528,
+          "versions": [
+            "330",
+            "340",
+            "350",
+            "3610",
+            "3611",
+            "370",
+            "400",
+            "410",
+            "420",
+            "430",
+            "440",
+            "450"
+          ]
+        },
+        {
+          "library": "LIBGTE.LIB",
+          "object": "SMP_02.OBJ",
+          "address": "0x800a7358",
+          "size": 48,
+          "versions": [
+            "350",
+            "3610",
+            "3611",
+            "370",
+            "400",
+            "410",
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBGTE.LIB",
+          "object": "SMP_03.OBJ",
+          "address": "0x800a7388",
+          "size": 96,
+          "versions": [
+            "350",
+            "3610",
+            "3611",
+            "370",
+            "400",
+            "410",
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBGTE.LIB",
+          "object": "SMP_04.OBJ",
+          "address": "0x800a73e8",
+          "size": 48,
+          "versions": [
+            "350",
+            "3610",
+            "3611",
+            "370",
+            "400",
+            "410",
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBGTE.LIB",
+          "object": "SMP_05.OBJ",
+          "address": "0x800a7418",
+          "size": 48,
+          "versions": [
+            "350",
+            "3610",
+            "3611",
+            "370",
+            "400",
+            "410",
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBGTE.LIB",
+          "object": "FGO_00.OBJ",
+          "address": "0x800a7448",
+          "size": 64,
+          "versions": [
+            "400",
+            "410",
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBGTE.LIB",
+          "object": "FGO_01.OBJ",
+          "address": "0x800a7488",
+          "size": 656,
+          "versions": [
+            "330",
+            "340",
+            "350",
+            "3610",
+            "3611",
+            "370",
+            "400",
+            "410",
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBGTE.LIB",
+          "object": "FGO_02.OBJ",
+          "address": "0x800a7718",
+          "size": 656,
+          "versions": [
+            "330",
+            "340",
+            "350",
+            "3610",
+            "3611",
+            "370",
+            "400",
+            "410",
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBGTE.LIB",
+          "object": "RMAT_01.OBJ",
+          "address": "0x800a79a8",
+          "size": 528,
+          "versions": [
+            "410",
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBGTE.LIB",
+          "object": "RATAN.OBJ",
+          "address": "0x800a7bb8",
+          "size": 384,
+          "versions": [
+            "410",
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBGTE.LIB",
+          "object": "PATCHGTE.OBJ",
+          "address": "0x800a7d38",
+          "size": 224,
+          "versions": [
+            "410",
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBGPU.LIB",
+          "object": "SYS.OBJ",
+          "address": "0x800a7e18",
+          "size": 12080,
+          "versions": [
+            "440",
+            "450"
+          ]
+        },
+        {
+          "library": "LIBGPU.LIB",
+          "object": "TMD.OBJ",
+          "address": "0x800aad48",
+          "size": 6272,
+          "versions": [
+            "410",
+            "420",
+            "430",
+            "440",
+            "450"
+          ]
+        },
+        {
+          "library": "LIBGPU.LIB",
+          "object": "E03.OBJ",
+          "address": "0x800ac5c8",
+          "size": 192,
+          "versions": [
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBGPU.LIB",
+          "object": "E04.OBJ",
+          "address": "0x800ac688",
+          "size": 64,
+          "versions": [
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBGPU.LIB",
+          "object": "P00.OBJ",
+          "address": "0x800ac6c8",
+          "size": 64,
+          "versions": [
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBGPU.LIB",
+          "object": "P01.OBJ",
+          "address": "0x800ac708",
+          "size": 32,
+          "versions": [
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBGPU.LIB",
+          "object": "P08.OBJ",
+          "address": "0x800ac728",
+          "size": 48,
+          "versions": [
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBGPU.LIB",
+          "object": "P33.OBJ",
+          "address": "0x800ac758",
+          "size": 48,
+          "versions": [
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBGPU.LIB",
+          "object": "P35.OBJ",
+          "address": "0x800ac788",
+          "size": 112,
+          "versions": [
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBGPU.LIB",
+          "object": "P41.OBJ",
+          "address": "0x800ac7f8",
+          "size": 160,
+          "versions": [
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBPRESS.LIB",
+          "object": "LIBPRESS.OBJ",
+          "address": "0x800ac898",
+          "size": 1680,
+          "versions": [
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBPRESS.LIB",
+          "object": "VLC_C.OBJ",
+          "address": "0x800acf28",
+          "size": 896,
+          "versions": [
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBPRESS.LIB",
+          "object": "BUILD.OBJ",
+          "address": "0x800ad2a8",
+          "size": 240,
+          "versions": [
+            "410",
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBCARD.LIB",
+          "object": "CARD.OBJ",
+          "address": "0x800ad3d8",
+          "size": 64,
+          "versions": [
+            "410",
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBCARD.LIB",
+          "object": "INIT.OBJ",
+          "address": "0x800ad438",
+          "size": 256,
+          "versions": [
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBCARD.LIB",
+          "object": "PATCH.OBJ",
+          "address": "0x800ad568",
+          "size": 544,
+          "versions": [
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBCARD.LIB",
+          "object": "END.OBJ",
+          "address": "0x800ad788",
+          "size": 128,
+          "versions": [
+            "410",
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBCARD.LIB",
+          "object": "FORMAT.OBJ",
+          "address": "0x800ad808",
+          "size": 960,
+          "versions": [
+            "450"
+          ]
+        },
+        {
+          "library": "LIBC2.LIB",
+          "object": "BZERO.OBJ",
+          "address": "0x800adbe8",
+          "size": 48,
+          "versions": [
+            "370",
+            "400",
+            "410",
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBC2.LIB",
+          "object": "CTYPE.OBJ",
+          "address": "0x800adc18",
+          "size": 112,
+          "versions": [
+            "300",
+            "410",
+            "420",
+            "430",
+            "440",
+            "450"
+          ]
+        },
+        {
+          "library": "LIBC2.LIB",
+          "object": "MEMCHR.OBJ",
+          "address": "0x800adc88",
+          "size": 80,
+          "versions": [
+            "300",
+            "330",
+            "340",
+            "350",
+            "3610",
+            "3611",
+            "370",
+            "400",
+            "410",
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBC2.LIB",
+          "object": "MEMCPY.OBJ",
+          "address": "0x800adcd8",
+          "size": 64,
+          "versions": [
+            "300",
+            "410",
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBC2.LIB",
+          "object": "MEMSET.OBJ",
+          "address": "0x800add18",
+          "size": 48,
+          "versions": [
+            "370",
+            "400",
+            "410",
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBC2.LIB",
+          "object": "RAND.OBJ",
+          "address": "0x800add48",
+          "size": 64,
+          "versions": [
+            "410",
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBC2.LIB",
+          "object": "STRCAT.OBJ",
+          "address": "0x800add88",
+          "size": 176,
+          "versions": [
+            "410",
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBC2.LIB",
+          "object": "STRCMP.OBJ",
+          "address": "0x800ade38",
+          "size": 112,
+          "versions": [
+            "410",
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBC2.LIB",
+          "object": "STRCPY.OBJ",
+          "address": "0x800adea8",
+          "size": 80,
+          "versions": [
+            "410",
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBC2.LIB",
+          "object": "STRLEN.OBJ",
+          "address": "0x800adef8",
+          "size": 64,
+          "versions": [
+            "410",
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBC2.LIB",
+          "object": "STRNCMP.OBJ",
+          "address": "0x800adf38",
+          "size": 128,
+          "versions": [
+            "410",
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBC2.LIB",
+          "object": "PRINTF.OBJ",
+          "address": "0x800adfb8",
+          "size": 64,
+          "versions": [
+            "410",
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBC2.LIB",
+          "object": "PRNT.OBJ",
+          "address": "0x800adff8",
+          "size": 1696,
+          "versions": [
+            "410",
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBC2.LIB",
+          "object": "PUTCHAR.OBJ",
+          "address": "0x800ae698",
+          "size": 608,
+          "versions": [
+            "410",
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBC2.LIB",
+          "object": "SPRINTF.OBJ",
+          "address": "0x800ae8f8",
+          "size": 2176,
+          "versions": [
+            "410",
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBC.LIB",
+          "object": "MEMMOVE.OBJ",
+          "address": "0x800af178",
+          "size": 112,
+          "versions": [
+            "410",
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBC2.LIB",
+          "object": "PUTS.OBJ",
+          "address": "0x800af1e8",
+          "size": 96,
+          "versions": [
+            "410",
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBC2.LIB",
+          "object": "SETJMP.OBJ",
+          "address": "0x800af248",
+          "size": 128,
+          "versions": [
+            "300",
+            "330",
+            "340",
+            "350",
+            "3610",
+            "3611",
+            "370",
+            "400",
+            "410",
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBAPI.LIB",
+          "object": "C114.OBJ",
+          "address": "0x800af2f8",
+          "size": 32,
+          "versions": [
+            "450"
+          ]
+        },
+        {
+          "library": "LIBAPI.LIB",
+          "object": "COUNTER.OBJ",
+          "address": "0x800af488",
+          "size": 368,
+          "versions": [
+            "410",
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBAPI.LIB",
+          "object": "FIRST.OBJ",
+          "address": "0x800af5f8",
+          "size": 672,
+          "versions": [
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBAPI.LIB",
+          "object": "PAD.OBJ",
+          "address": "0x800af8a8",
+          "size": 768,
+          "versions": [
+            "420",
+            "430",
+            "440",
+            "450"
+          ]
+        },
+        {
+          "library": "LIBAPI.LIB",
+          "object": "PATCH.OBJ",
+          "address": "0x800afbe8",
+          "size": 160,
+          "versions": [
+            "410",
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBAPI.LIB",
+          "object": "CHCLRPAD.OBJ",
+          "address": "0x800afc88",
+          "size": 112,
+          "versions": [
+            "410",
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        }
+      ],
+      "labels": [
+        {
+          "name": "__main",
+          "address": "0x80025724",
+          "library": "2MBYTE.OBJ",
+          "object": "2MBYTE.OBJ"
+        },
+        {
+          "name": "stup2",
+          "address": "0x8002572c",
+          "library": "2MBYTE.OBJ",
+          "object": "2MBYTE.OBJ"
+        },
+        {
+          "name": "__SN_ENTRY_POINT",
+          "address": "0x8002572c",
+          "library": "2MBYTE.OBJ",
+          "object": "2MBYTE.OBJ"
+        },
+        {
+          "name": "stup1",
+          "address": "0x80025750",
+          "library": "2MBYTE.OBJ",
+          "object": "2MBYTE.OBJ"
+        },
+        {
+          "name": "stup0",
+          "address": "0x800257cc",
+          "library": "2MBYTE.OBJ",
+          "object": "2MBYTE.OBJ"
+        },
+        {
+          "name": "PadEnableCom",
+          "address": "0x8009b910",
+          "library": "LIBPAD.LIB",
+          "object": "PADMAIN.OBJ"
+        },
+        {
+          "name": "_padSetVsyncParam",
+          "address": "0x8009ba28",
+          "library": "LIBPAD.LIB",
+          "object": "PADMAIN.OBJ"
+        },
+        {
+          "name": "_padChkVsync",
+          "address": "0x8009bc4c",
+          "library": "LIBPAD.LIB",
+          "object": "PADMAIN.OBJ"
+        },
+        {
+          "name": "_padStartCom",
+          "address": "0x8009bc60",
+          "library": "LIBPAD.LIB",
+          "object": "PADMAIN.OBJ"
+        },
+        {
+          "name": "_padStopCom",
+          "address": "0x8009bd2c",
+          "library": "LIBPAD.LIB",
+          "object": "PADMAIN.OBJ"
+        },
+        {
+          "name": "_padInitSioMode",
+          "address": "0x8009bd70",
+          "library": "LIBPAD.LIB",
+          "object": "PADMAIN.OBJ"
+        },
+        {
+          "name": "_padSioRW",
+          "address": "0x8009c194",
+          "library": "LIBPAD.LIB",
+          "object": "PADMAIN.OBJ"
+        },
+        {
+          "name": "_padSioRW2",
+          "address": "0x8009c3a4",
+          "library": "LIBPAD.LIB",
+          "object": "PADMAIN.OBJ"
+        },
+        {
+          "name": "_padClrIntSio0",
+          "address": "0x8009c61c",
+          "library": "LIBPAD.LIB",
+          "object": "PADMAIN.OBJ"
+        },
+        {
+          "name": "_padWaitRXready",
+          "address": "0x8009c6ac",
+          "library": "LIBPAD.LIB",
+          "object": "PADMAIN.OBJ"
+        },
+        {
+          "name": "PadChkVsync",
+          "address": "0x8009cd10",
+          "library": "LIBPAD.LIB",
+          "object": "PADENTRY.OBJ"
+        },
+        {
+          "name": "PadStartCom",
+          "address": "0x8009cd30",
+          "library": "LIBPAD.LIB",
+          "object": "PADENTRY.OBJ"
+        },
+        {
+          "name": "PadStopCom",
+          "address": "0x8009cd50",
+          "library": "LIBPAD.LIB",
+          "object": "PADENTRY.OBJ"
+        },
+        {
+          "name": "PadChkMtap",
+          "address": "0x8009cd70",
+          "library": "LIBPAD.LIB",
+          "object": "PADENTRY.OBJ"
+        },
+        {
+          "name": "PadGetState",
+          "address": "0x8009cdbc",
+          "library": "LIBPAD.LIB",
+          "object": "PADENTRY.OBJ"
+        },
+        {
+          "name": "PadInfoMode",
+          "address": "0x8009ce88",
+          "library": "LIBPAD.LIB",
+          "object": "PADENTRY.OBJ"
+        },
+        {
+          "name": "PadInfoAct",
+          "address": "0x8009cf80",
+          "library": "LIBPAD.LIB",
+          "object": "PADENTRY.OBJ"
+        },
+        {
+          "name": "PadInfoComb",
+          "address": "0x8009d054",
+          "library": "LIBPAD.LIB",
+          "object": "PADENTRY.OBJ"
+        },
+        {
+          "name": "PadSetActAlign",
+          "address": "0x8009d0fc",
+          "library": "LIBPAD.LIB",
+          "object": "PADENTRY.OBJ"
+        },
+        {
+          "name": "PadSetMainMode",
+          "address": "0x8009d134",
+          "library": "LIBPAD.LIB",
+          "object": "PADENTRY.OBJ"
+        },
+        {
+          "name": "PadSetAct",
+          "address": "0x8009d17c",
+          "library": "LIBPAD.LIB",
+          "object": "PADENTRY.OBJ"
+        },
+        {
+          "name": "_padSetAct",
+          "address": "0x8009d1d0",
+          "library": "LIBPAD.LIB",
+          "object": "PADCMD.OBJ"
+        },
+        {
+          "name": "_padSetCmd",
+          "address": "0x8009d1dc",
+          "library": "LIBPAD.LIB",
+          "object": "PADCMD.OBJ"
+        },
+        {
+          "name": "_padSendAtLoadInfo",
+          "address": "0x8009d1ec",
+          "library": "LIBPAD.LIB",
+          "object": "PADCMD.OBJ"
+        },
+        {
+          "name": "_padRecvAtLoadInfo",
+          "address": "0x8009d270",
+          "library": "LIBPAD.LIB",
+          "object": "PADCMD.OBJ"
+        },
+        {
+          "name": "_padGetActSize",
+          "address": "0x8009d4e0",
+          "library": "LIBPAD.LIB",
+          "object": "PADCMD.OBJ"
+        },
+        {
+          "name": "_padLoadActInfo",
+          "address": "0x8009d518",
+          "library": "LIBPAD.LIB",
+          "object": "PADCMD.OBJ"
+        },
+        {
+          "name": "_padSetActAlign",
+          "address": "0x8009da8c",
+          "library": "LIBPAD.LIB",
+          "object": "PADCMD.OBJ"
+        },
+        {
+          "name": "_padSetMainMode",
+          "address": "0x8009dbd8",
+          "library": "LIBPAD.LIB",
+          "object": "PADCMD.OBJ"
+        },
+        {
+          "name": "_padCmdParaMode",
+          "address": "0x8009dd24",
+          "library": "LIBPAD.LIB",
+          "object": "PADCMD.OBJ"
+        },
+        {
+          "name": "PadInitDirect",
+          "address": "0x8009ddd0",
+          "library": "LIBPAD.LIB",
+          "object": "PADPORTD.OBJ"
+        },
+        {
+          "name": "_padInitDirSeq",
+          "address": "0x8009e430",
+          "library": "LIBPAD.LIB",
+          "object": "PADSEQD.OBJ"
+        },
+        {
+          "name": "_dirFailAuto",
+          "address": "0x8009e7d8",
+          "library": "LIBPAD.LIB",
+          "object": "PADSEQD.OBJ"
+        },
+        {
+          "name": "setRC2wait",
+          "address": "0x8009e8f0",
+          "library": "LIBPAD.LIB",
+          "object": "WAITRC2.OBJ"
+        },
+        {
+          "name": "chkRC2wait",
+          "address": "0x8009e910",
+          "library": "LIBPAD.LIB",
+          "object": "WAITRC2.OBJ"
+        },
+        {
+          "name": "__divdi3",
+          "address": "0x8009e9b0",
+          "library": "LIBSN.LIB",
+          "object": "_DIVDI3.OBJ"
+        },
+        {
+          "name": "__udivmoddi4",
+          "address": "0x8009ea68",
+          "library": "LIBSN.LIB",
+          "object": "_UDIVMOD.OBJ"
+        },
+        {
+          "name": "_SpuInit",
+          "address": "0x8009f078",
+          "library": "LIBSPU.LIB",
+          "object": "S_INI.OBJ"
+        },
+        {
+          "name": "SpuStart",
+          "address": "0x8009f160",
+          "library": "LIBSPU.LIB",
+          "object": "S_INI.OBJ"
+        },
+        {
+          "name": "_spu_init",
+          "address": "0x8009f1d8",
+          "library": "LIBSPU.LIB",
+          "object": "SPU.OBJ"
+        },
+        {
+          "name": "_spu_FiDMA",
+          "address": "0x8009f618",
+          "library": "LIBSPU.LIB",
+          "object": "SPU.OBJ"
+        },
+        {
+          "name": "_spu_Fr_",
+          "address": "0x8009f6d4",
+          "library": "LIBSPU.LIB",
+          "object": "SPU.OBJ"
+        },
+        {
+          "name": "_spu_t",
+          "address": "0x8009f77c",
+          "library": "LIBSPU.LIB",
+          "object": "SPU.OBJ"
+        },
+        {
+          "name": "_spu_Fw",
+          "address": "0x8009f9fc",
+          "library": "LIBSPU.LIB",
+          "object": "SPU.OBJ"
+        },
+        {
+          "name": "_spu_Fr",
+          "address": "0x8009fa80",
+          "library": "LIBSPU.LIB",
+          "object": "SPU.OBJ"
+        },
+        {
+          "name": "_spu_FsetRXX",
+          "address": "0x8009fae4",
+          "library": "LIBSPU.LIB",
+          "object": "SPU.OBJ"
+        },
+        {
+          "name": "_spu_FsetRXXa",
+          "address": "0x8009fb28",
+          "library": "LIBSPU.LIB",
+          "object": "SPU.OBJ"
+        },
+        {
+          "name": "_spu_FgetRXXa",
+          "address": "0x8009fbcc",
+          "library": "LIBSPU.LIB",
+          "object": "SPU.OBJ"
+        },
+        {
+          "name": "_spu_FsetPCR",
+          "address": "0x8009fc08",
+          "library": "LIBSPU.LIB",
+          "object": "SPU.OBJ"
+        },
+        {
+          "name": "_spu_Fw1ts",
+          "address": "0x8009fcb0",
+          "library": "LIBSPU.LIB",
+          "object": "SPU.OBJ"
+        },
+        {
+          "name": "_SpuDataCallback",
+          "address": "0x8009fd18",
+          "library": "LIBSPU.LIB",
+          "object": "S_DCB.OBJ"
+        },
+        {
+          "name": "SpuQuit",
+          "address": "0x8009fd68",
+          "library": "LIBSPU.LIB",
+          "object": "S_Q.OBJ"
+        },
+        {
+          "name": "SpuSetReverb",
+          "address": "0x8009fde8",
+          "library": "LIBSPU.LIB",
+          "object": "S_SR.OBJ"
+        },
+        {
+          "name": "_SpuIsInAllocateArea",
+          "address": "0x8009feb8",
+          "library": "LIBSPU.LIB",
+          "object": "S_M_UTIL.OBJ"
+        },
+        {
+          "name": "_SpuIsInAllocateArea_",
+          "address": "0x8009ff38",
+          "library": "LIBSPU.LIB",
+          "object": "S_M_UTIL.OBJ"
+        },
+        {
+          "name": "SpuSetReverbModeParam",
+          "address": "0x8009ffc8",
+          "library": "LIBSPU.LIB",
+          "object": "S_SRMP.OBJ"
+        },
+        {
+          "name": "_spu_setReverbAttr",
+          "address": "0x800a04a8",
+          "library": "LIBSPU.LIB",
+          "object": "S_SRA.OBJ"
+        },
+        {
+          "name": "SpuSetReverbDepth",
+          "address": "0x800a0978",
+          "library": "LIBSPU.LIB",
+          "object": "S_SRD.OBJ"
+        },
+        {
+          "name": "SpuSetReverbVoice",
+          "address": "0x800a09f8",
+          "library": "LIBSPU.LIB",
+          "object": "S_SRV.OBJ"
+        },
+        {
+          "name": "_SpuSetAnyVoice",
+          "address": "0x800a0a28",
+          "library": "LIBSPU.LIB",
+          "object": "S_SAV.OBJ"
+        },
+        {
+          "name": "SpuClearReverbWorkArea",
+          "address": "0x800a0ce8",
+          "library": "LIBSPU.LIB",
+          "object": "S_CRWA.OBJ"
+        },
+        {
+          "name": "SpuReadDecodedData",
+          "address": "0x800a0e88",
+          "library": "LIBSPU.LIB",
+          "object": "S_RDD.OBJ"
+        },
+        {
+          "name": "SpuSetKey",
+          "address": "0x800a0ef8",
+          "library": "LIBSPU.LIB",
+          "object": "S_SK.OBJ"
+        },
+        {
+          "name": "SpuRead",
+          "address": "0x800a10b8",
+          "library": "LIBSPU.LIB",
+          "object": "S_R.OBJ"
+        },
+        {
+          "name": "SpuWrite0",
+          "address": "0x800a1118",
+          "library": "LIBSPU.LIB",
+          "object": "S_W0.OBJ"
+        },
+        {
+          "name": "SpuSetTransferStartAddr",
+          "address": "0x800a1278",
+          "library": "LIBSPU.LIB",
+          "object": "S_STSA.OBJ"
+        },
+        {
+          "name": "SpuSetTransferMode",
+          "address": "0x800a12d8",
+          "library": "LIBSPU.LIB",
+          "object": "S_STM.OBJ"
+        },
+        {
+          "name": "SpuIsTransferCompleted",
+          "address": "0x800a1308",
+          "library": "LIBSPU.LIB",
+          "object": "S_ITC.OBJ"
+        },
+        {
+          "name": "SpuSetCommonAttr",
+          "address": "0x800a13b8",
+          "library": "LIBSPU.LIB",
+          "object": "S_SCA.OBJ"
+        },
+        {
+          "name": "SpuRGetAllKeysStatus",
+          "address": "0x800a1738",
+          "library": "LIBSPU.LIB",
+          "object": "SR_GAKS.OBJ"
+        },
+        {
+          "name": "SpuGetAllKeysStatus",
+          "address": "0x800a180c",
+          "library": "LIBSPU.LIB",
+          "object": "SR_GAKS.OBJ"
+        },
+        {
+          "name": "SpuSetVoiceAttr",
+          "address": "0x800a1898",
+          "library": "LIBSPU.LIB",
+          "object": "S_SVA.OBJ"
+        },
+        {
+          "name": "_spu_note2pitch",
+          "address": "0x800a1e98",
+          "library": "LIBSPU.LIB",
+          "object": "S_N2P.OBJ"
+        },
+        {
+          "name": "_spu_pitch2note",
+          "address": "0x800a1f68",
+          "library": "LIBSPU.LIB",
+          "object": "S_N2P.OBJ"
+        },
+        {
+          "name": "VSync",
+          "address": "0x800a2098",
+          "library": "LIBETC.LIB",
+          "object": "VSYNC.OBJ"
+        },
+        {
+          "name": "ResetCallback",
+          "address": "0x800a22a8",
+          "library": "LIBETC.LIB",
+          "object": "INTR.OBJ"
+        },
+        {
+          "name": "InterruptCallback",
+          "address": "0x800a22d8",
+          "library": "LIBETC.LIB",
+          "object": "INTR.OBJ"
+        },
+        {
+          "name": "DMACallback",
+          "address": "0x800a2308",
+          "library": "LIBETC.LIB",
+          "object": "INTR.OBJ"
+        },
+        {
+          "name": "VSyncCallback",
+          "address": "0x800a2338",
+          "library": "LIBETC.LIB",
+          "object": "INTR.OBJ"
+        },
+        {
+          "name": "VSyncCallbacks",
+          "address": "0x800a236c",
+          "library": "LIBETC.LIB",
+          "object": "INTR.OBJ"
+        },
+        {
+          "name": "StopCallback",
+          "address": "0x800a239c",
+          "library": "LIBETC.LIB",
+          "object": "INTR.OBJ"
+        },
+        {
+          "name": "RestartCallback",
+          "address": "0x800a23cc",
+          "library": "LIBETC.LIB",
+          "object": "INTR.OBJ"
+        },
+        {
+          "name": "CheckCallback",
+          "address": "0x800a23fc",
+          "library": "LIBETC.LIB",
+          "object": "INTR.OBJ"
+        },
+        {
+          "name": "GetIntrMask",
+          "address": "0x800a240c",
+          "library": "LIBETC.LIB",
+          "object": "INTR.OBJ"
+        },
+        {
+          "name": "SetIntrMask",
+          "address": "0x800a2424",
+          "library": "LIBETC.LIB",
+          "object": "INTR.OBJ"
+        },
+        {
+          "name": "startIntrVSync",
+          "address": "0x800a2968",
+          "library": "LIBETC.LIB",
+          "object": "INTR_VB.OBJ"
+        },
+        {
+          "name": "startIntrDMA",
+          "address": "0x800a2a88",
+          "library": "LIBETC.LIB",
+          "object": "INTR_DMA.OBJ"
+        },
+        {
+          "name": "SetVideoMode",
+          "address": "0x800a2d28",
+          "library": "LIBETC.LIB",
+          "object": "VMODE.OBJ"
+        },
+        {
+          "name": "GetVideoMode",
+          "address": "0x800a2d3c",
+          "library": "LIBETC.LIB",
+          "object": "VMODE.OBJ"
+        },
+        {
+          "name": "CdInit",
+          "address": "0x800a2d58",
+          "library": "LIBCD.LIB",
+          "object": "EVENT.OBJ"
+        },
+        {
+          "name": "CdStatus",
+          "address": "0x800a2ea8",
+          "library": "LIBCD.LIB",
+          "object": "SYS.OBJ"
+        },
+        {
+          "name": "CdMode",
+          "address": "0x800a2eb8",
+          "library": "LIBCD.LIB",
+          "object": "SYS.OBJ"
+        },
+        {
+          "name": "CdLastCom",
+          "address": "0x800a2ec8",
+          "library": "LIBCD.LIB",
+          "object": "SYS.OBJ"
+        },
+        {
+          "name": "CdLastPos",
+          "address": "0x800a2ed8",
+          "library": "LIBCD.LIB",
+          "object": "SYS.OBJ"
+        },
+        {
+          "name": "CdReset",
+          "address": "0x800a2ee4",
+          "library": "LIBCD.LIB",
+          "object": "SYS.OBJ"
+        },
+        {
+          "name": "CdFlush",
+          "address": "0x800a2f50",
+          "library": "LIBCD.LIB",
+          "object": "SYS.OBJ"
+        },
+        {
+          "name": "CdSetDebug",
+          "address": "0x800a2f70",
+          "library": "LIBCD.LIB",
+          "object": "SYS.OBJ"
+        },
+        {
+          "name": "CdComstr",
+          "address": "0x800a2f84",
+          "library": "LIBCD.LIB",
+          "object": "SYS.OBJ"
+        },
+        {
+          "name": "CdIntstr",
+          "address": "0x800a2fb8",
+          "library": "LIBCD.LIB",
+          "object": "SYS.OBJ"
+        },
+        {
+          "name": "CdSync",
+          "address": "0x800a2fec",
+          "library": "LIBCD.LIB",
+          "object": "SYS.OBJ"
+        },
+        {
+          "name": "CdReady",
+          "address": "0x800a300c",
+          "library": "LIBCD.LIB",
+          "object": "SYS.OBJ"
+        },
+        {
+          "name": "CdSyncCallback",
+          "address": "0x800a302c",
+          "library": "LIBCD.LIB",
+          "object": "SYS.OBJ"
+        },
+        {
+          "name": "CdReadyCallback",
+          "address": "0x800a3040",
+          "library": "LIBCD.LIB",
+          "object": "SYS.OBJ"
+        },
+        {
+          "name": "CdControl",
+          "address": "0x800a3054",
+          "library": "LIBCD.LIB",
+          "object": "SYS.OBJ"
+        },
+        {
+          "name": "CdControlF",
+          "address": "0x800a3190",
+          "library": "LIBCD.LIB",
+          "object": "SYS.OBJ"
+        },
+        {
+          "name": "CdControlB",
+          "address": "0x800a32c4",
+          "library": "LIBCD.LIB",
+          "object": "SYS.OBJ"
+        },
+        {
+          "name": "CdMix",
+          "address": "0x800a3410",
+          "library": "LIBCD.LIB",
+          "object": "SYS.OBJ"
+        },
+        {
+          "name": "CdGetSector",
+          "address": "0x800a3430",
+          "library": "LIBCD.LIB",
+          "object": "SYS.OBJ"
+        },
+        {
+          "name": "CdGetSector2",
+          "address": "0x800a3450",
+          "library": "LIBCD.LIB",
+          "object": "SYS.OBJ"
+        },
+        {
+          "name": "CdDataCallback",
+          "address": "0x800a3470",
+          "library": "LIBCD.LIB",
+          "object": "SYS.OBJ"
+        },
+        {
+          "name": "CdDataSync",
+          "address": "0x800a3494",
+          "library": "LIBCD.LIB",
+          "object": "SYS.OBJ"
+        },
+        {
+          "name": "CD_sync",
+          "address": "0x800a3a1c",
+          "library": "LIBCD.LIB",
+          "object": "BIOS.OBJ"
+        },
+        {
+          "name": "CD_ready",
+          "address": "0x800a3c9c",
+          "library": "LIBCD.LIB",
+          "object": "BIOS.OBJ"
+        },
+        {
+          "name": "CD_cw",
+          "address": "0x800a3f64",
+          "library": "LIBCD.LIB",
+          "object": "BIOS.OBJ"
+        },
+        {
+          "name": "CD_vol",
+          "address": "0x800a4370",
+          "library": "LIBCD.LIB",
+          "object": "BIOS.OBJ"
+        },
+        {
+          "name": "CD_flush",
+          "address": "0x800a43f8",
+          "library": "LIBCD.LIB",
+          "object": "BIOS.OBJ"
+        },
+        {
+          "name": "CD_initvol",
+          "address": "0x800a44cc",
+          "library": "LIBCD.LIB",
+          "object": "BIOS.OBJ"
+        },
+        {
+          "name": "CD_initintr",
+          "address": "0x800a45bc",
+          "library": "LIBCD.LIB",
+          "object": "BIOS.OBJ"
+        },
+        {
+          "name": "CD_init",
+          "address": "0x800a4608",
+          "library": "LIBCD.LIB",
+          "object": "BIOS.OBJ"
+        },
+        {
+          "name": "CD_datasync",
+          "address": "0x800a47e8",
+          "library": "LIBCD.LIB",
+          "object": "BIOS.OBJ"
+        },
+        {
+          "name": "CD_getsector",
+          "address": "0x800a4950",
+          "library": "LIBCD.LIB",
+          "object": "BIOS.OBJ"
+        },
+        {
+          "name": "CD_getsector2",
+          "address": "0x800a4a50",
+          "library": "LIBCD.LIB",
+          "object": "BIOS.OBJ"
+        },
+        {
+          "name": "CD_set_test_parmnum",
+          "address": "0x800a4b3c",
+          "library": "LIBCD.LIB",
+          "object": "BIOS.OBJ"
+        },
+        {
+          "name": "CdSearchFile",
+          "address": "0x800a4c28",
+          "library": "LIBCD.LIB",
+          "object": "ISO9660.OBJ"
+        },
+        {
+          "name": "CdReadBreak",
+          "address": "0x800a5af8",
+          "library": "LIBCD.LIB",
+          "object": "CDREAD.OBJ"
+        },
+        {
+          "name": "CdRead",
+          "address": "0x800a5c98",
+          "library": "LIBCD.LIB",
+          "object": "CDREAD.OBJ"
+        },
+        {
+          "name": "CdReadSync",
+          "address": "0x800a5e34",
+          "library": "LIBCD.LIB",
+          "object": "CDREAD.OBJ"
+        },
+        {
+          "name": "CdReadCallback",
+          "address": "0x800a5f38",
+          "library": "LIBCD.LIB",
+          "object": "CDREAD.OBJ"
+        },
+        {
+          "name": "CdReadMode",
+          "address": "0x800a5f4c",
+          "library": "LIBCD.LIB",
+          "object": "CDREAD.OBJ"
+        },
+        {
+          "name": "CdIntToPos",
+          "address": "0x800a5f68",
+          "library": "LIBCD.LIB",
+          "object": "S_002.OBJ"
+        },
+        {
+          "name": "CdPosToInt",
+          "address": "0x800a606c",
+          "library": "LIBCD.LIB",
+          "object": "S_002.OBJ"
+        },
+        {
+          "name": "rsin",
+          "address": "0x800a60f8",
+          "library": "LIBGTE.LIB",
+          "object": "GEO_00.OBJ"
+        },
+        {
+          "name": "sin_1",
+          "address": "0x800a6134",
+          "library": "LIBGTE.LIB",
+          "object": "GEO_00.OBJ"
+        },
+        {
+          "name": "rcos",
+          "address": "0x800a61c8",
+          "library": "LIBGTE.LIB",
+          "object": "GEO_01.OBJ"
+        },
+        {
+          "name": "InitGeom",
+          "address": "0x800a6270",
+          "library": "LIBGTE.LIB",
+          "object": "MSC00.OBJ"
+        },
+        {
+          "name": "SquareRoot0",
+          "address": "0x800a62f8",
+          "library": "LIBGTE.LIB",
+          "object": "MSC01.OBJ"
+        },
+        {
+          "name": "InvSquareRoot",
+          "address": "0x800a6388",
+          "library": "LIBGTE.LIB",
+          "object": "MSC02.OBJ"
+        },
+        {
+          "name": "VectorNormalS",
+          "address": "0x800a6414",
+          "library": "LIBGTE.LIB",
+          "object": "MSC02.OBJ"
+        },
+        {
+          "name": "VectorNormal",
+          "address": "0x800a6428",
+          "library": "LIBGTE.LIB",
+          "object": "MSC02.OBJ"
+        },
+        {
+          "name": "VectorNormalSS",
+          "address": "0x800a6458",
+          "library": "LIBGTE.LIB",
+          "object": "MSC02.OBJ"
+        },
+        {
+          "name": "MatrixNormal",
+          "address": "0x800a6548",
+          "library": "LIBGTE.LIB",
+          "object": "MSC02.OBJ"
+        },
+        {
+          "name": "MulMatrix0",
+          "address": "0x800a6638",
+          "library": "LIBGTE.LIB",
+          "object": "MTX_000.OBJ"
+        },
+        {
+          "name": "CompMatrix",
+          "address": "0x800a6748",
+          "library": "LIBGTE.LIB",
+          "object": "MTX_003.OBJ"
+        },
+        {
+          "name": "ApplyMatrixLV",
+          "address": "0x800a68a8",
+          "library": "LIBGTE.LIB",
+          "object": "MTX_004.OBJ"
+        },
+        {
+          "name": "SetMulMatrix",
+          "address": "0x800a6a08",
+          "library": "LIBGTE.LIB",
+          "object": "MTX_00B.OBJ"
+        },
+        {
+          "name": "ApplyRotMatrixLV",
+          "address": "0x800a6b18",
+          "library": "LIBGTE.LIB",
+          "object": "MTX_01.OBJ"
+        },
+        {
+          "name": "MulMatrix",
+          "address": "0x800a6c58",
+          "library": "LIBGTE.LIB",
+          "object": "MTX_03.OBJ"
+        },
+        {
+          "name": "MulMatrix2",
+          "address": "0x800a6d68",
+          "library": "LIBGTE.LIB",
+          "object": "MTX_04.OBJ"
+        },
+        {
+          "name": "ApplyMatrixSV",
+          "address": "0x800a6e78",
+          "library": "LIBGTE.LIB",
+          "object": "MTX_06.OBJ"
+        },
+        {
+          "name": "TransMatrix",
+          "address": "0x800a6ed8",
+          "library": "LIBGTE.LIB",
+          "object": "MTX_07.OBJ"
+        },
+        {
+          "name": "ScaleMatrix",
+          "address": "0x800a6f08",
+          "library": "LIBGTE.LIB",
+          "object": "MTX_08.OBJ"
+        },
+        {
+          "name": "SetRotMatrix",
+          "address": "0x800a7048",
+          "library": "LIBGTE.LIB",
+          "object": "MTX_09.OBJ"
+        },
+        {
+          "name": "SetColorMatrix",
+          "address": "0x800a7078",
+          "library": "LIBGTE.LIB",
+          "object": "MTX_11.OBJ"
+        },
+        {
+          "name": "SetTransMatrix",
+          "address": "0x800a70a8",
+          "library": "LIBGTE.LIB",
+          "object": "MTX_12.OBJ"
+        },
+        {
+          "name": "ReadGeomOffset",
+          "address": "0x800a70c8",
+          "library": "LIBGTE.LIB",
+          "object": "REG08.OBJ"
+        },
+        {
+          "name": "SetBackColor",
+          "address": "0x800a70f8",
+          "library": "LIBGTE.LIB",
+          "object": "REG10.OBJ"
+        },
+        {
+          "name": "SetGeomOffset",
+          "address": "0x800a7118",
+          "library": "LIBGTE.LIB",
+          "object": "REG12.OBJ"
+        },
+        {
+          "name": "LightColor",
+          "address": "0x800a7148",
+          "library": "LIBGTE.LIB",
+          "object": "SMP_00.OBJ"
+        },
+        {
+          "name": "DpqColorLight",
+          "address": "0x800a7170",
+          "library": "LIBGTE.LIB",
+          "object": "SMP_00.OBJ"
+        },
+        {
+          "name": "DpqColor3",
+          "address": "0x800a7198",
+          "library": "LIBGTE.LIB",
+          "object": "SMP_00.OBJ"
+        },
+        {
+          "name": "Intpl",
+          "address": "0x800a71d4",
+          "library": "LIBGTE.LIB",
+          "object": "SMP_00.OBJ"
+        },
+        {
+          "name": "Square12",
+          "address": "0x800a71f8",
+          "library": "LIBGTE.LIB",
+          "object": "SMP_00.OBJ"
+        },
+        {
+          "name": "Square0",
+          "address": "0x800a7220",
+          "library": "LIBGTE.LIB",
+          "object": "SMP_00.OBJ"
+        },
+        {
+          "name": "AverageZ3",
+          "address": "0x800a7248",
+          "library": "LIBGTE.LIB",
+          "object": "SMP_00.OBJ"
+        },
+        {
+          "name": "AverageZ4",
+          "address": "0x800a7268",
+          "library": "LIBGTE.LIB",
+          "object": "SMP_00.OBJ"
+        },
+        {
+          "name": "OuterProduct12",
+          "address": "0x800a728c",
+          "library": "LIBGTE.LIB",
+          "object": "SMP_00.OBJ"
+        },
+        {
+          "name": "OuterProduct0",
+          "address": "0x800a72e4",
+          "library": "LIBGTE.LIB",
+          "object": "SMP_00.OBJ"
+        },
+        {
+          "name": "Lzc",
+          "address": "0x800a733c",
+          "library": "LIBGTE.LIB",
+          "object": "SMP_00.OBJ"
+        },
+        {
+          "name": "RotTransPers",
+          "address": "0x800a7358",
+          "library": "LIBGTE.LIB",
+          "object": "SMP_02.OBJ"
+        },
+        {
+          "name": "RotTransPers3",
+          "address": "0x800a7388",
+          "library": "LIBGTE.LIB",
+          "object": "SMP_03.OBJ"
+        },
+        {
+          "name": "RotTrans",
+          "address": "0x800a73e8",
+          "library": "LIBGTE.LIB",
+          "object": "SMP_04.OBJ"
+        },
+        {
+          "name": "NormalClip",
+          "address": "0x800a7418",
+          "library": "LIBGTE.LIB",
+          "object": "SMP_05.OBJ"
+        },
+        {
+          "name": "TransposeMatrix",
+          "address": "0x800a7448",
+          "library": "LIBGTE.LIB",
+          "object": "FGO_00.OBJ"
+        },
+        {
+          "name": "RotMatrix",
+          "address": "0x800a7488",
+          "library": "LIBGTE.LIB",
+          "object": "FGO_01.OBJ"
+        },
+        {
+          "name": "RotMatrixYXZ",
+          "address": "0x800a7718",
+          "library": "LIBGTE.LIB",
+          "object": "FGO_02.OBJ"
+        },
+        {
+          "name": "RotMatrix_gte",
+          "address": "0x800a79a8",
+          "library": "LIBGTE.LIB",
+          "object": "RMAT_01.OBJ"
+        },
+        {
+          "name": "ratan2",
+          "address": "0x800a7bb8",
+          "library": "LIBGTE.LIB",
+          "object": "RATAN.OBJ"
+        },
+        {
+          "name": "_patch_gte",
+          "address": "0x800a7d38",
+          "library": "LIBGTE.LIB",
+          "object": "PATCHGTE.OBJ"
+        },
+        {
+          "name": "ResetGraph",
+          "address": "0x800a7e18",
+          "library": "LIBGPU.LIB",
+          "object": "SYS.OBJ"
+        },
+        {
+          "name": "SetGraphDebug",
+          "address": "0x800a7f8c",
+          "library": "LIBGPU.LIB",
+          "object": "SYS.OBJ"
+        },
+        {
+          "name": "SetGraphQueue",
+          "address": "0x800a7fe8",
+          "library": "LIBGPU.LIB",
+          "object": "SYS.OBJ"
+        },
+        {
+          "name": "GetGraphDebug",
+          "address": "0x800a808c",
+          "library": "LIBGPU.LIB",
+          "object": "SYS.OBJ"
+        },
+        {
+          "name": "DrawSyncCallback",
+          "address": "0x800a809c",
+          "library": "LIBGPU.LIB",
+          "object": "SYS.OBJ"
+        },
+        {
+          "name": "SetDispMask",
+          "address": "0x800a80fc",
+          "library": "LIBGPU.LIB",
+          "object": "SYS.OBJ"
+        },
+        {
+          "name": "DrawSync",
+          "address": "0x800a8194",
+          "library": "LIBGPU.LIB",
+          "object": "SYS.OBJ"
+        },
+        {
+          "name": "ClearImage",
+          "address": "0x800a8318",
+          "library": "LIBGPU.LIB",
+          "object": "SYS.OBJ"
+        },
+        {
+          "name": "ClearImage2",
+          "address": "0x800a83a8",
+          "library": "LIBGPU.LIB",
+          "object": "SYS.OBJ"
+        },
+        {
+          "name": "LoadImage",
+          "address": "0x800a8440",
+          "library": "LIBGPU.LIB",
+          "object": "SYS.OBJ"
+        },
+        {
+          "name": "StoreImage",
+          "address": "0x800a84a0",
+          "library": "LIBGPU.LIB",
+          "object": "SYS.OBJ"
+        },
+        {
+          "name": "MoveImage",
+          "address": "0x800a8500",
+          "library": "LIBGPU.LIB",
+          "object": "SYS.OBJ"
+        },
+        {
+          "name": "ClearOTag",
+          "address": "0x800a85b8",
+          "library": "LIBGPU.LIB",
+          "object": "SYS.OBJ"
+        },
+        {
+          "name": "ClearOTagR",
+          "address": "0x800a8680",
+          "library": "LIBGPU.LIB",
+          "object": "SYS.OBJ"
+        },
+        {
+          "name": "DrawPrim",
+          "address": "0x800a872c",
+          "library": "LIBGPU.LIB",
+          "object": "SYS.OBJ"
+        },
+        {
+          "name": "DrawOTag",
+          "address": "0x800a8788",
+          "library": "LIBGPU.LIB",
+          "object": "SYS.OBJ"
+        },
+        {
+          "name": "PutDrawEnv",
+          "address": "0x800a87f8",
+          "library": "LIBGPU.LIB",
+          "object": "SYS.OBJ"
+        },
+        {
+          "name": "DrawOTagEnv",
+          "address": "0x800a88b8",
+          "library": "LIBGPU.LIB",
+          "object": "SYS.OBJ"
+        },
+        {
+          "name": "GetDrawEnv",
+          "address": "0x800a8990",
+          "library": "LIBGPU.LIB",
+          "object": "SYS.OBJ"
+        },
+        {
+          "name": "PutDispEnv",
+          "address": "0x800a89c4",
+          "library": "LIBGPU.LIB",
+          "object": "SYS.OBJ"
+        },
+        {
+          "name": "GetDispEnv",
+          "address": "0x800a8ebc",
+          "library": "LIBGPU.LIB",
+          "object": "SYS.OBJ"
+        },
+        {
+          "name": "GetODE",
+          "address": "0x800a8ef0",
+          "library": "LIBGPU.LIB",
+          "object": "SYS.OBJ"
+        },
+        {
+          "name": "SetDrawArea",
+          "address": "0x800a8f20",
+          "library": "LIBGPU.LIB",
+          "object": "SYS.OBJ"
+        },
+        {
+          "name": "SetDrawOffset",
+          "address": "0x800a8fa0",
+          "library": "LIBGPU.LIB",
+          "object": "SYS.OBJ"
+        },
+        {
+          "name": "SetDrawEnv",
+          "address": "0x800a8fe0",
+          "library": "LIBGPU.LIB",
+          "object": "SYS.OBJ"
+        },
+        {
+          "name": "LoadImage2",
+          "address": "0x800aa8e0",
+          "library": "LIBGPU.LIB",
+          "object": "SYS.OBJ"
+        },
+        {
+          "name": "StoreImage2",
+          "address": "0x800aa9cc",
+          "library": "LIBGPU.LIB",
+          "object": "SYS.OBJ"
+        },
+        {
+          "name": "MoveImage2",
+          "address": "0x800aaab8",
+          "library": "LIBGPU.LIB",
+          "object": "SYS.OBJ"
+        },
+        {
+          "name": "DrawOTag2",
+          "address": "0x800aabfc",
+          "library": "LIBGPU.LIB",
+          "object": "SYS.OBJ"
+        },
+        {
+          "name": "_GPU_ResetCallback",
+          "address": "0x800aacf8",
+          "library": "LIBGPU.LIB",
+          "object": "SYS.OBJ"
+        },
+        {
+          "name": "OpenTIM",
+          "address": "0x800aad48",
+          "library": "LIBGPU.LIB",
+          "object": "TMD.OBJ"
+        },
+        {
+          "name": "ReadTIM",
+          "address": "0x800aad58",
+          "library": "LIBGPU.LIB",
+          "object": "TMD.OBJ"
+        },
+        {
+          "name": "OpenTMD",
+          "address": "0x800aadbc",
+          "library": "LIBGPU.LIB",
+          "object": "TMD.OBJ"
+        },
+        {
+          "name": "ReadTMD",
+          "address": "0x800aadfc",
+          "library": "LIBGPU.LIB",
+          "object": "TMD.OBJ"
+        },
+        {
+          "name": "SetDefDrawEnv",
+          "address": "0x800ac5c8",
+          "library": "LIBGPU.LIB",
+          "object": "E03.OBJ"
+        },
+        {
+          "name": "SetDefDispEnv",
+          "address": "0x800ac688",
+          "library": "LIBGPU.LIB",
+          "object": "E04.OBJ"
+        },
+        {
+          "name": "GetTPage",
+          "address": "0x800ac6c8",
+          "library": "LIBGPU.LIB",
+          "object": "P00.OBJ"
+        },
+        {
+          "name": "GetClut",
+          "address": "0x800ac708",
+          "library": "LIBGPU.LIB",
+          "object": "P01.OBJ"
+        },
+        {
+          "name": "CatPrim",
+          "address": "0x800ac728",
+          "library": "LIBGPU.LIB",
+          "object": "P08.OBJ"
+        },
+        {
+          "name": "SetDrawTPage",
+          "address": "0x800ac758",
+          "library": "LIBGPU.LIB",
+          "object": "P33.OBJ"
+        },
+        {
+          "name": "SetDrawLoad",
+          "address": "0x800ac788",
+          "library": "LIBGPU.LIB",
+          "object": "P35.OBJ"
+        },
+        {
+          "name": "SetDrawMode",
+          "address": "0x800ac7f8",
+          "library": "LIBGPU.LIB",
+          "object": "P41.OBJ"
+        },
+        {
+          "name": "DecDCTReset",
+          "address": "0x800ac898",
+          "library": "LIBPRESS.LIB",
+          "object": "LIBPRESS.OBJ"
+        },
+        {
+          "name": "DecDCTGetEnv",
+          "address": "0x800ac8cc",
+          "library": "LIBPRESS.LIB",
+          "object": "LIBPRESS.OBJ"
+        },
+        {
+          "name": "DecDCTPutEnv",
+          "address": "0x800ac958",
+          "library": "LIBPRESS.LIB",
+          "object": "LIBPRESS.OBJ"
+        },
+        {
+          "name": "DecDCTin",
+          "address": "0x800ac9f0",
+          "library": "LIBPRESS.LIB",
+          "object": "LIBPRESS.OBJ"
+        },
+        {
+          "name": "DecDCTout",
+          "address": "0x800aca6c",
+          "library": "LIBPRESS.LIB",
+          "object": "LIBPRESS.OBJ"
+        },
+        {
+          "name": "DecDCTinSync",
+          "address": "0x800aca8c",
+          "library": "LIBPRESS.LIB",
+          "object": "LIBPRESS.OBJ"
+        },
+        {
+          "name": "DecDCToutSync",
+          "address": "0x800acac8",
+          "library": "LIBPRESS.LIB",
+          "object": "LIBPRESS.OBJ"
+        },
+        {
+          "name": "DecDCTinCallback",
+          "address": "0x800acb10",
+          "library": "LIBPRESS.LIB",
+          "object": "LIBPRESS.OBJ"
+        },
+        {
+          "name": "DecDCToutCallback",
+          "address": "0x800acb34",
+          "library": "LIBPRESS.LIB",
+          "object": "LIBPRESS.OBJ"
+        },
+        {
+          "name": "DecDCTvlcSize2",
+          "address": "0x800acf28",
+          "library": "LIBPRESS.LIB",
+          "object": "VLC_C.OBJ"
+        },
+        {
+          "name": "DecDCTvlc2",
+          "address": "0x800acf58",
+          "library": "LIBPRESS.LIB",
+          "object": "VLC_C.OBJ"
+        },
+        {
+          "name": "DecDCTvlcBuild",
+          "address": "0x800ad2a8",
+          "library": "LIBPRESS.LIB",
+          "object": "BUILD.OBJ"
+        },
+        {
+          "name": "_card_clear",
+          "address": "0x800ad3d8",
+          "library": "LIBCARD.LIB",
+          "object": "CARD.OBJ"
+        },
+        {
+          "name": "InitCARD",
+          "address": "0x800ad438",
+          "library": "LIBCARD.LIB",
+          "object": "INIT.OBJ"
+        },
+        {
+          "name": "StartCARD",
+          "address": "0x800ad4c8",
+          "library": "LIBCARD.LIB",
+          "object": "INIT.OBJ"
+        },
+        {
+          "name": "StopCARD",
+          "address": "0x800ad510",
+          "library": "LIBCARD.LIB",
+          "object": "INIT.OBJ"
+        },
+        {
+          "name": "_patch_card_info",
+          "address": "0x800ad568",
+          "library": "LIBCARD.LIB",
+          "object": "PATCH.OBJ"
+        },
+        {
+          "name": "_patch_card",
+          "address": "0x800ad644",
+          "library": "LIBCARD.LIB",
+          "object": "PATCH.OBJ"
+        },
+        {
+          "name": "_patch_card2",
+          "address": "0x800ad6d8",
+          "library": "LIBCARD.LIB",
+          "object": "PATCH.OBJ"
+        },
+        {
+          "name": "_copy_memcard_patch",
+          "address": "0x800ad748",
+          "library": "LIBCARD.LIB",
+          "object": "PATCH.OBJ"
+        },
+        {
+          "name": "_ExitCard",
+          "address": "0x800ad788",
+          "library": "LIBCARD.LIB",
+          "object": "END.OBJ"
+        },
+        {
+          "name": "_card_format",
+          "address": "0x800ad808",
+          "library": "LIBCARD.LIB",
+          "object": "FORMAT.OBJ"
+        },
+        {
+          "name": "bzero",
+          "address": "0x800adbe8",
+          "library": "LIBC2.LIB",
+          "object": "BZERO.OBJ"
+        },
+        {
+          "name": "toupper",
+          "address": "0x800adc18",
+          "library": "LIBC2.LIB",
+          "object": "CTYPE.OBJ"
+        },
+        {
+          "name": "tolower",
+          "address": "0x800adc4c",
+          "library": "LIBC2.LIB",
+          "object": "CTYPE.OBJ"
+        },
+        {
+          "name": "memchr",
+          "address": "0x800adc88",
+          "library": "LIBC2.LIB",
+          "object": "MEMCHR.OBJ"
+        },
+        {
+          "name": "memcpy",
+          "address": "0x800adcd8",
+          "library": "LIBC2.LIB",
+          "object": "MEMCPY.OBJ"
+        },
+        {
+          "name": "memset",
+          "address": "0x800add18",
+          "library": "LIBC2.LIB",
+          "object": "MEMSET.OBJ"
+        },
+        {
+          "name": "rand",
+          "address": "0x800add48",
+          "library": "LIBC2.LIB",
+          "object": "RAND.OBJ"
+        },
+        {
+          "name": "srand",
+          "address": "0x800add78",
+          "library": "LIBC2.LIB",
+          "object": "RAND.OBJ"
+        },
+        {
+          "name": "strcat",
+          "address": "0x800add88",
+          "library": "LIBC2.LIB",
+          "object": "STRCAT.OBJ"
+        },
+        {
+          "name": "strcmp",
+          "address": "0x800ade38",
+          "library": "LIBC2.LIB",
+          "object": "STRCMP.OBJ"
+        },
+        {
+          "name": "strcpy",
+          "address": "0x800adea8",
+          "library": "LIBC2.LIB",
+          "object": "STRCPY.OBJ"
+        },
+        {
+          "name": "strlen",
+          "address": "0x800adef8",
+          "library": "LIBC2.LIB",
+          "object": "STRLEN.OBJ"
+        },
+        {
+          "name": "strncmp",
+          "address": "0x800adf38",
+          "library": "LIBC2.LIB",
+          "object": "STRNCMP.OBJ"
+        },
+        {
+          "name": "printf",
+          "address": "0x800adfb8",
+          "library": "LIBC2.LIB",
+          "object": "PRINTF.OBJ"
+        },
+        {
+          "name": "prnt",
+          "address": "0x800adff8",
+          "library": "LIBC2.LIB",
+          "object": "PRNT.OBJ"
+        },
+        {
+          "name": "_putchar",
+          "address": "0x800ae698",
+          "library": "LIBC2.LIB",
+          "object": "PUTCHAR.OBJ"
+        },
+        {
+          "name": "_putchar_flash",
+          "address": "0x800ae794",
+          "library": "LIBC2.LIB",
+          "object": "PUTCHAR.OBJ"
+        },
+        {
+          "name": "putchar",
+          "address": "0x800ae7d0",
+          "library": "LIBC2.LIB",
+          "object": "PUTCHAR.OBJ"
+        },
+        {
+          "name": "sprintf",
+          "address": "0x800ae8f8",
+          "library": "LIBC2.LIB",
+          "object": "SPRINTF.OBJ"
+        },
+        {
+          "name": "memmove",
+          "address": "0x800af178",
+          "library": "LIBC.LIB",
+          "object": "MEMMOVE.OBJ"
+        },
+        {
+          "name": "puts",
+          "address": "0x800af1e8",
+          "library": "LIBC2.LIB",
+          "object": "PUTS.OBJ"
+        },
+        {
+          "name": "setjmp",
+          "address": "0x800af248",
+          "library": "LIBC2.LIB",
+          "object": "SETJMP.OBJ"
+        },
+        {
+          "name": "longjmp",
+          "address": "0x800af284",
+          "library": "LIBC2.LIB",
+          "object": "SETJMP.OBJ"
+        },
+        {
+          "name": "_96_remove",
+          "address": "0x800af300",
+          "library": "LIBAPI.LIB",
+          "object": "C114.OBJ"
+        },
+        {
+          "name": "SetRCnt",
+          "address": "0x800af488",
+          "library": "LIBAPI.LIB",
+          "object": "COUNTER.OBJ"
+        },
+        {
+          "name": "GetRCnt",
+          "address": "0x800af524",
+          "library": "LIBAPI.LIB",
+          "object": "COUNTER.OBJ"
+        },
+        {
+          "name": "StartRCnt",
+          "address": "0x800af55c",
+          "library": "LIBAPI.LIB",
+          "object": "COUNTER.OBJ"
+        },
+        {
+          "name": "StopRCnt",
+          "address": "0x800af58c",
+          "library": "LIBAPI.LIB",
+          "object": "COUNTER.OBJ"
+        },
+        {
+          "name": "ResetRCnt",
+          "address": "0x800af5c0",
+          "library": "LIBAPI.LIB",
+          "object": "COUNTER.OBJ"
+        },
+        {
+          "name": "firstfile",
+          "address": "0x800af5f8",
+          "library": "LIBAPI.LIB",
+          "object": "FIRST.OBJ"
+        },
+        {
+          "name": "SetInitPadFlag",
+          "address": "0x800af8a8",
+          "library": "LIBAPI.LIB",
+          "object": "PAD.OBJ"
+        },
+        {
+          "name": "ReadInitPadFlag",
+          "address": "0x800af8b4",
+          "library": "LIBAPI.LIB",
+          "object": "PAD.OBJ"
+        },
+        {
+          "name": "PAD_init",
+          "address": "0x800af8c4",
+          "library": "LIBAPI.LIB",
+          "object": "PAD.OBJ"
+        },
+        {
+          "name": "InitPAD",
+          "address": "0x800af954",
+          "library": "LIBAPI.LIB",
+          "object": "PAD.OBJ"
+        },
+        {
+          "name": "StartPAD",
+          "address": "0x800af9e4",
+          "library": "LIBAPI.LIB",
+          "object": "PAD.OBJ"
+        },
+        {
+          "name": "StopPAD",
+          "address": "0x800afa14",
+          "library": "LIBAPI.LIB",
+          "object": "PAD.OBJ"
+        },
+        {
+          "name": "EnablePAD",
+          "address": "0x800afbe8",
+          "library": "LIBAPI.LIB",
+          "object": "PATCH.OBJ"
+        },
+        {
+          "name": "DisablePAD",
+          "address": "0x800afbfc",
+          "library": "LIBAPI.LIB",
+          "object": "PATCH.OBJ"
+        },
+        {
+          "name": "_patch_pad",
+          "address": "0x800afc10",
+          "library": "LIBAPI.LIB",
+          "object": "PATCH.OBJ"
+        },
+        {
+          "name": "_remove_ChgclrPAD",
+          "address": "0x800afc88",
+          "library": "LIBAPI.LIB",
+          "object": "CHCLRPAD.OBJ"
+        }
+      ]
+    },
+    {
+      "path": "SLPS_020.20",
+      "sha256": "daddca3ac3299372370a8cf7a046eb066537a39cf53216904009c46f2924b0e5",
+      "is_boot": true,
+      "text_address": "0x80120000",
+      "library_bytes": 69284,
+      "library_range": [
+        "0x801255a4",
+        "0x80136618"
+      ],
+      "objects": [
+        {
+          "library": "2MBYTE.OBJ",
+          "object": "2MBYTE.OBJ",
+          "address": "0x801255a4",
+          "size": 196,
+          "versions": [
+            "260",
+            "300",
+            "330",
+            "340",
+            "350",
+            "3610",
+            "3611",
+            "370",
+            "400",
+            "410",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBGPU.LIB",
+          "object": "EXT.OBJ",
+          "address": "0x801256a8",
+          "size": 672,
+          "versions": [
+            "410",
+            "420",
+            "430"
+          ]
+        },
+        {
+          "library": "LIBGPU.LIB",
+          "object": "SYS.OBJ",
+          "address": "0x80125948",
+          "size": 12304,
+          "versions": [
+            "420",
+            "430"
+          ]
+        },
+        {
+          "library": "LIBC2.LIB",
+          "object": "MEMCPY.OBJ",
+          "address": "0x80128968",
+          "size": 64,
+          "versions": [
+            "300",
+            "410",
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBC2.LIB",
+          "object": "PRINTF.OBJ",
+          "address": "0x801289a8",
+          "size": 64,
+          "versions": [
+            "410",
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBC2.LIB",
+          "object": "PRNT.OBJ",
+          "address": "0x801289e8",
+          "size": 1696,
+          "versions": [
+            "410",
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBC2.LIB",
+          "object": "CTYPE.OBJ",
+          "address": "0x80129088",
+          "size": 112,
+          "versions": [
+            "300",
+            "410",
+            "420",
+            "430",
+            "440",
+            "450"
+          ]
+        },
+        {
+          "library": "LIBC2.LIB",
+          "object": "MEMCHR.OBJ",
+          "address": "0x801290f8",
+          "size": 80,
+          "versions": [
+            "300",
+            "330",
+            "340",
+            "350",
+            "3610",
+            "3611",
+            "370",
+            "400",
+            "410",
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBC2.LIB",
+          "object": "PUTCHAR.OBJ",
+          "address": "0x80129148",
+          "size": 608,
+          "versions": [
+            "410",
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBC2.LIB",
+          "object": "STRLEN.OBJ",
+          "address": "0x801293b8",
+          "size": 64,
+          "versions": [
+            "410",
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBGPU.LIB",
+          "object": "P00.OBJ",
+          "address": "0x801293f8",
+          "size": 64,
+          "versions": [
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBGPU.LIB",
+          "object": "P01.OBJ",
+          "address": "0x80129438",
+          "size": 32,
+          "versions": [
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBCD.LIB",
+          "object": "EVENT.OBJ",
+          "address": "0x80129458",
+          "size": 336,
+          "versions": [
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBCD.LIB",
+          "object": "SYS.OBJ",
+          "address": "0x801295b8",
+          "size": 1936,
+          "versions": [
+            "410",
+            "420",
+            "430",
+            "440"
+          ]
+        },
+        {
+          "library": "LIBCD.LIB",
+          "object": "BIOS.OBJ",
+          "address": "0x80129d48",
+          "size": 5984,
+          "versions": [
+            "410",
+            "420",
+            "430",
+            "440"
+          ]
+        },
+        {
+          "library": "LIBC2.LIB",
+          "object": "PUTS.OBJ",
+          "address": "0x8012b4a8",
+          "size": 96,
+          "versions": [
+            "410",
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBCD.LIB",
+          "object": "ISO9660.OBJ",
+          "address": "0x8012b508",
+          "size": 2416,
+          "versions": [
+            "410",
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBC2.LIB",
+          "object": "STRCMP.OBJ",
+          "address": "0x8012be78",
+          "size": 112,
+          "versions": [
+            "410",
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBC2.LIB",
+          "object": "STRNCMP.OBJ",
+          "address": "0x8012bee8",
+          "size": 128,
+          "versions": [
+            "410",
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBCD.LIB",
+          "object": "CDREAD.OBJ",
+          "address": "0x8012bf68",
+          "size": 1968,
+          "versions": [
+            "430"
+          ]
+        },
+        {
+          "library": "LIBETC.LIB",
+          "object": "VSYNC.OBJ",
+          "address": "0x8012c718",
+          "size": 528,
+          "versions": [
+            "410",
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBETC.LIB",
+          "object": "INTR.OBJ",
+          "address": "0x8012c948",
+          "size": 1728,
+          "versions": [
+            "410",
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBAPI.LIB",
+          "object": "C114.OBJ",
+          "address": "0x8012d008",
+          "size": 32,
+          "versions": [
+            "430"
+          ]
+        },
+        {
+          "library": "LIBC2.LIB",
+          "object": "SETJMP.OBJ",
+          "address": "0x8012d068",
+          "size": 128,
+          "versions": [
+            "300",
+            "330",
+            "340",
+            "350",
+            "3610",
+            "3611",
+            "370",
+            "400",
+            "410",
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBETC.LIB",
+          "object": "INTR_VB.OBJ",
+          "address": "0x8012d0e8",
+          "size": 288,
+          "versions": [
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBETC.LIB",
+          "object": "INTR_DMA.OBJ",
+          "address": "0x8012d208",
+          "size": 672,
+          "versions": [
+            "410",
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBETC.LIB",
+          "object": "VMODE.OBJ",
+          "address": "0x8012d4a8",
+          "size": 48,
+          "versions": [
+            "410",
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBSND.LIB",
+          "object": "SSINIT_C.OBJ",
+          "address": "0x8012d4d8",
+          "size": 64,
+          "versions": [
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBSND.LIB",
+          "object": "SSINIT.OBJ",
+          "address": "0x8012d518",
+          "size": 240,
+          "versions": [
+            "410",
+            "420",
+            "430"
+          ]
+        },
+        {
+          "library": "LIBSND.LIB",
+          "object": "SSSATTR.OBJ",
+          "address": "0x8012d608",
+          "size": 192,
+          "versions": [
+            "410",
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBSND.LIB",
+          "object": "SSSMV.OBJ",
+          "address": "0x8012d6c8",
+          "size": 80,
+          "versions": [
+            "370",
+            "400",
+            "410",
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBSND.LIB",
+          "object": "SSSTART.OBJ",
+          "address": "0x8012d718",
+          "size": 784,
+          "versions": [
+            "410",
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBAPI.LIB",
+          "object": "COUNTER.OBJ",
+          "address": "0x8012da28",
+          "size": 368,
+          "versions": [
+            "410",
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBSND.LIB",
+          "object": "SSCALL.OBJ",
+          "address": "0x8012db98",
+          "size": 624,
+          "versions": [
+            "410",
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBSND.LIB",
+          "object": "CRES.OBJ",
+          "address": "0x8012de08",
+          "size": 528,
+          "versions": [
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBSND.LIB",
+          "object": "PAUSE.OBJ",
+          "address": "0x8012e018",
+          "size": 160,
+          "versions": [
+            "410",
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBSND.LIB",
+          "object": "MIDIREAD.OBJ",
+          "address": "0x8012e0e8",
+          "size": 1776,
+          "versions": [
+            "410",
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBSND.LIB",
+          "object": "MIDITIME.OBJ",
+          "address": "0x8012e7d8",
+          "size": 176,
+          "versions": [
+            "410",
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBSND.LIB",
+          "object": "NEXT.OBJ",
+          "address": "0x8012e888",
+          "size": 256,
+          "versions": [
+            "410",
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBSND.LIB",
+          "object": "REPLAY.OBJ",
+          "address": "0x8012e988",
+          "size": 96,
+          "versions": [
+            "400",
+            "410",
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBSND.LIB",
+          "object": "SSSTOP.OBJ",
+          "address": "0x8012e9e8",
+          "size": 480,
+          "versions": [
+            "410",
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBSND.LIB",
+          "object": "SSSV.OBJ",
+          "address": "0x8012ebc8",
+          "size": 272,
+          "versions": [
+            "410",
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBSND.LIB",
+          "object": "SSTICK.OBJ",
+          "address": "0x8012ecd8",
+          "size": 336,
+          "versions": [
+            "410",
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBSND.LIB",
+          "object": "TEMPO.OBJ",
+          "address": "0x8012ee28",
+          "size": 544,
+          "versions": [
+            "410",
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBSND.LIB",
+          "object": "UT_KEYV.OBJ",
+          "address": "0x8012f048",
+          "size": 960,
+          "versions": [
+            "430"
+          ]
+        },
+        {
+          "library": "LIBSND.LIB",
+          "object": "VM_ALOC2.OBJ",
+          "address": "0x8012f408",
+          "size": 464,
+          "versions": [
+            "430"
+          ]
+        },
+        {
+          "library": "LIBSND.LIB",
+          "object": "VM_F.OBJ",
+          "address": "0x8012f5e8",
+          "size": 1168,
+          "versions": [
+            "410",
+            "420",
+            "430"
+          ]
+        },
+        {
+          "library": "LIBSND.LIB",
+          "object": "VM_INIT.OBJ",
+          "address": "0x8012fa78",
+          "size": 848,
+          "versions": [
+            "410",
+            "420",
+            "430"
+          ]
+        },
+        {
+          "library": "LIBSND.LIB",
+          "object": "VM_N2P.OBJ",
+          "address": "0x8012fdc8",
+          "size": 448,
+          "versions": [
+            "430"
+          ]
+        },
+        {
+          "library": "LIBSND.LIB",
+          "object": "VM_NO1.OBJ",
+          "address": "0x8012ff88",
+          "size": 1408,
+          "versions": [
+            "430"
+          ]
+        },
+        {
+          "library": "LIBSND.LIB",
+          "object": "VM_NOWOF.OBJ",
+          "address": "0x80130508",
+          "size": 208,
+          "versions": [
+            "410",
+            "420",
+            "430"
+          ]
+        },
+        {
+          "library": "LIBSND.LIB",
+          "object": "VM_NOWON.OBJ",
+          "address": "0x801305d8",
+          "size": 1232,
+          "versions": [
+            "430"
+          ]
+        },
+        {
+          "library": "LIBSND.LIB",
+          "object": "VM_SEQ.OBJ",
+          "address": "0x80130aa8",
+          "size": 1840,
+          "versions": [
+            "410",
+            "420",
+            "430"
+          ]
+        },
+        {
+          "library": "LIBSND.LIB",
+          "object": "VM_VSU.OBJ",
+          "address": "0x801311d8",
+          "size": 192,
+          "versions": [
+            "410",
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBSND.LIB",
+          "object": "VS_VAB.OBJ",
+          "address": "0x80131298",
+          "size": 128,
+          "versions": [
+            "410",
+            "420",
+            "430"
+          ]
+        },
+        {
+          "library": "LIBSND.LIB",
+          "object": "VS_VH2.OBJ",
+          "address": "0x80131318",
+          "size": 160,
+          "versions": [
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBSND.LIB",
+          "object": "VS_VH.OBJ",
+          "address": "0x801313b8",
+          "size": 1104,
+          "versions": [
+            "430"
+          ]
+        },
+        {
+          "library": "LIBSND.LIB",
+          "object": "VS_VTB.OBJ",
+          "address": "0x80131808",
+          "size": 192,
+          "versions": [
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBSND.LIB",
+          "object": "VS_VTC.OBJ",
+          "address": "0x801318c8",
+          "size": 48,
+          "versions": [
+            "410",
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBSPU.LIB",
+          "object": "S_INI.OBJ",
+          "address": "0x80131918",
+          "size": 352,
+          "versions": [
+            "410",
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBSPU.LIB",
+          "object": "SPU.OBJ",
+          "address": "0x80131a98",
+          "size": 2880,
+          "versions": [
+            "410",
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBSPU.LIB",
+          "object": "S_DCB.OBJ",
+          "address": "0x801325d8",
+          "size": 48,
+          "versions": [
+            "410",
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBSPU.LIB",
+          "object": "S_Q.OBJ",
+          "address": "0x80132608",
+          "size": 128,
+          "versions": [
+            "410",
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBSPU.LIB",
+          "object": "S_M_INIT.OBJ",
+          "address": "0x801326a8",
+          "size": 96,
+          "versions": [
+            "410",
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBSPU.LIB",
+          "object": "S_M_M.OBJ",
+          "address": "0x80132708",
+          "size": 720,
+          "versions": [
+            "410",
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBSPU.LIB",
+          "object": "S_M_INT.OBJ",
+          "address": "0x801329d8",
+          "size": 768,
+          "versions": [
+            "410",
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBSPU.LIB",
+          "object": "S_M_F.OBJ",
+          "address": "0x80132cd8",
+          "size": 128,
+          "versions": [
+            "410",
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBSPU.LIB",
+          "object": "S_SNV.OBJ",
+          "address": "0x80132d58",
+          "size": 48,
+          "versions": [
+            "410",
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBSPU.LIB",
+          "object": "S_SAV.OBJ",
+          "address": "0x80132d88",
+          "size": 704,
+          "versions": [
+            "410",
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBSPU.LIB",
+          "object": "S_SNC.OBJ",
+          "address": "0x80133048",
+          "size": 80,
+          "versions": [
+            "410",
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBSPU.LIB",
+          "object": "S_SRV.OBJ",
+          "address": "0x80133098",
+          "size": 48,
+          "versions": [
+            "410",
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBSPU.LIB",
+          "object": "S_CRWA.OBJ",
+          "address": "0x801330c8",
+          "size": 416,
+          "versions": [
+            "410",
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBSPU.LIB",
+          "object": "S_M_UTIL.OBJ",
+          "address": "0x80133278",
+          "size": 272,
+          "versions": [
+            "410",
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBSPU.LIB",
+          "object": "S_SK.OBJ",
+          "address": "0x80133388",
+          "size": 448,
+          "versions": [
+            "410",
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBSPU.LIB",
+          "object": "S_R.OBJ",
+          "address": "0x80133548",
+          "size": 96,
+          "versions": [
+            "410",
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBSPU.LIB",
+          "object": "S_W0.OBJ",
+          "address": "0x801335a8",
+          "size": 352,
+          "versions": [
+            "410",
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBSPU.LIB",
+          "object": "S_STSA.OBJ",
+          "address": "0x80133708",
+          "size": 96,
+          "versions": [
+            "410",
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBSPU.LIB",
+          "object": "S_STM.OBJ",
+          "address": "0x80133768",
+          "size": 48,
+          "versions": [
+            "410",
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBSPU.LIB",
+          "object": "S_ITC.OBJ",
+          "address": "0x80133798",
+          "size": 176,
+          "versions": [
+            "410",
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBSPU.LIB",
+          "object": "S_IT.OBJ",
+          "address": "0x80133858",
+          "size": 64,
+          "versions": [
+            "410",
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBSPU.LIB",
+          "object": "S_SCA.OBJ",
+          "address": "0x80133898",
+          "size": 896,
+          "versions": [
+            "410",
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBSPU.LIB",
+          "object": "S_SVA.OBJ",
+          "address": "0x80133c18",
+          "size": 1536,
+          "versions": [
+            "410",
+            "420",
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBSPU.LIB",
+          "object": "S_N2P.OBJ",
+          "address": "0x80134218",
+          "size": 512,
+          "versions": [
+            "430",
+            "440",
+            "450",
+            "460",
+            "470"
+          ]
+        },
+        {
+          "library": "LIBPAD.LIB",
+          "object": "PADENTRY.OBJ",
+          "address": "0x80134438",
+          "size": 1200,
+          "versions": [
+            "420",
+            "430"
+          ]
+        },
+        {
+          "library": "LIBPAD.LIB",
+          "object": "PADMAIN.OBJ",
+          "address": "0x801348e8",
+          "size": 3328,
+          "versions": [
+            "430"
+          ]
+        },
+        {
+          "library": "LIBPAD.LIB",
+          "object": "PADCMD.OBJ",
+          "address": "0x80135608",
+          "size": 2400,
+          "versions": [
+            "420",
+            "430"
+          ]
+        },
+        {
+          "library": "LIBPAD.LIB",
+          "object": "PADIF.OBJ",
+          "address": "0x80135f68",
+          "size": 1520,
+          "versions": [
+            "430"
+          ]
+        },
+        {
+          "library": "LIBPAD.LIB",
+          "object": "WAITRC2.OBJ",
+          "address": "0x80136558",
+          "size": 192,
+          "versions": [
+            "430",
+            "440",
+            "450"
+          ]
+        }
+      ],
+      "labels": [
+        {
+          "name": "__main",
+          "address": "0x801255a4",
+          "library": "2MBYTE.OBJ",
+          "object": "2MBYTE.OBJ"
+        },
+        {
+          "name": "stup2",
+          "address": "0x801255ac",
+          "library": "2MBYTE.OBJ",
+          "object": "2MBYTE.OBJ"
+        },
+        {
+          "name": "__SN_ENTRY_POINT",
+          "address": "0x801255ac",
+          "library": "2MBYTE.OBJ",
+          "object": "2MBYTE.OBJ"
+        },
+        {
+          "name": "stup1",
+          "address": "0x801255d0",
+          "library": "2MBYTE.OBJ",
+          "object": "2MBYTE.OBJ"
+        },
+        {
+          "name": "stup0",
+          "address": "0x8012564c",
+          "library": "2MBYTE.OBJ",
+          "object": "2MBYTE.OBJ"
+        },
+        {
+          "name": "LoadTPage",
+          "address": "0x801256a8",
+          "library": "LIBGPU.LIB",
+          "object": "EXT.OBJ"
+        },
+        {
+          "name": "LoadClut",
+          "address": "0x80125790",
+          "library": "LIBGPU.LIB",
+          "object": "EXT.OBJ"
+        },
+        {
+          "name": "LoadClut2",
+          "address": "0x801257f4",
+          "library": "LIBGPU.LIB",
+          "object": "EXT.OBJ"
+        },
+        {
+          "name": "SetDefDrawEnv",
+          "address": "0x80125858",
+          "library": "LIBGPU.LIB",
+          "object": "EXT.OBJ"
+        },
+        {
+          "name": "SetDefDispEnv",
+          "address": "0x8012590c",
+          "library": "LIBGPU.LIB",
+          "object": "EXT.OBJ"
+        },
+        {
+          "name": "ResetGraph",
+          "address": "0x80125948",
+          "library": "LIBGPU.LIB",
+          "object": "SYS.OBJ"
+        },
+        {
+          "name": "SetGraphDebug",
+          "address": "0x80125abc",
+          "library": "LIBGPU.LIB",
+          "object": "SYS.OBJ"
+        },
+        {
+          "name": "SetGraphQueue",
+          "address": "0x80125b18",
+          "library": "LIBGPU.LIB",
+          "object": "SYS.OBJ"
+        },
+        {
+          "name": "GetGraphDebug",
+          "address": "0x80125bbc",
+          "library": "LIBGPU.LIB",
+          "object": "SYS.OBJ"
+        },
+        {
+          "name": "DrawSyncCallback",
+          "address": "0x80125bcc",
+          "library": "LIBGPU.LIB",
+          "object": "SYS.OBJ"
+        },
+        {
+          "name": "SetDispMask",
+          "address": "0x80125c2c",
+          "library": "LIBGPU.LIB",
+          "object": "SYS.OBJ"
+        },
+        {
+          "name": "DrawSync",
+          "address": "0x80125cc4",
+          "library": "LIBGPU.LIB",
+          "object": "SYS.OBJ"
+        },
+        {
+          "name": "ClearImage",
+          "address": "0x80125e48",
+          "library": "LIBGPU.LIB",
+          "object": "SYS.OBJ"
+        },
+        {
+          "name": "ClearImage2",
+          "address": "0x80125ed8",
+          "library": "LIBGPU.LIB",
+          "object": "SYS.OBJ"
+        },
+        {
+          "name": "LoadImage",
+          "address": "0x80125f70",
+          "library": "LIBGPU.LIB",
+          "object": "SYS.OBJ"
+        },
+        {
+          "name": "StoreImage",
+          "address": "0x80125fd0",
+          "library": "LIBGPU.LIB",
+          "object": "SYS.OBJ"
+        },
+        {
+          "name": "MoveImage",
+          "address": "0x80126030",
+          "library": "LIBGPU.LIB",
+          "object": "SYS.OBJ"
+        },
+        {
+          "name": "ClearOTag",
+          "address": "0x801260e8",
+          "library": "LIBGPU.LIB",
+          "object": "SYS.OBJ"
+        },
+        {
+          "name": "ClearOTagR",
+          "address": "0x801261b0",
+          "library": "LIBGPU.LIB",
+          "object": "SYS.OBJ"
+        },
+        {
+          "name": "DrawPrim",
+          "address": "0x8012625c",
+          "library": "LIBGPU.LIB",
+          "object": "SYS.OBJ"
+        },
+        {
+          "name": "DrawOTag",
+          "address": "0x801262b8",
+          "library": "LIBGPU.LIB",
+          "object": "SYS.OBJ"
+        },
+        {
+          "name": "PutDrawEnv",
+          "address": "0x80126328",
+          "library": "LIBGPU.LIB",
+          "object": "SYS.OBJ"
+        },
+        {
+          "name": "DrawOTagEnv",
+          "address": "0x801263e8",
+          "library": "LIBGPU.LIB",
+          "object": "SYS.OBJ"
+        },
+        {
+          "name": "GetDrawEnv",
+          "address": "0x801264c0",
+          "library": "LIBGPU.LIB",
+          "object": "SYS.OBJ"
+        },
+        {
+          "name": "PutDispEnv",
+          "address": "0x801264f4",
+          "library": "LIBGPU.LIB",
+          "object": "SYS.OBJ"
+        },
+        {
+          "name": "GetDispEnv",
+          "address": "0x801269ec",
+          "library": "LIBGPU.LIB",
+          "object": "SYS.OBJ"
+        },
+        {
+          "name": "GetODE",
+          "address": "0x80126a20",
+          "library": "LIBGPU.LIB",
+          "object": "SYS.OBJ"
+        },
+        {
+          "name": "SetTexWindow",
+          "address": "0x80126a50",
+          "library": "LIBGPU.LIB",
+          "object": "SYS.OBJ"
+        },
+        {
+          "name": "SetDrawArea",
+          "address": "0x80126a88",
+          "library": "LIBGPU.LIB",
+          "object": "SYS.OBJ"
+        },
+        {
+          "name": "SetDrawOffset",
+          "address": "0x80126b08",
+          "library": "LIBGPU.LIB",
+          "object": "SYS.OBJ"
+        },
+        {
+          "name": "SetPriority",
+          "address": "0x80126b48",
+          "library": "LIBGPU.LIB",
+          "object": "SYS.OBJ"
+        },
+        {
+          "name": "SetDrawStp",
+          "address": "0x80126b70",
+          "library": "LIBGPU.LIB",
+          "object": "SYS.OBJ"
+        },
+        {
+          "name": "SetDrawMode",
+          "address": "0x80126b98",
+          "library": "LIBGPU.LIB",
+          "object": "SYS.OBJ"
+        },
+        {
+          "name": "SetDrawEnv",
+          "address": "0x80126bec",
+          "library": "LIBGPU.LIB",
+          "object": "SYS.OBJ"
+        },
+        {
+          "name": "LoadImage2",
+          "address": "0x801284ec",
+          "library": "LIBGPU.LIB",
+          "object": "SYS.OBJ"
+        },
+        {
+          "name": "StoreImage2",
+          "address": "0x801285d8",
+          "library": "LIBGPU.LIB",
+          "object": "SYS.OBJ"
+        },
+        {
+          "name": "MoveImage2",
+          "address": "0x801286c4",
+          "library": "LIBGPU.LIB",
+          "object": "SYS.OBJ"
+        },
+        {
+          "name": "DrawOTag2",
+          "address": "0x80128808",
+          "library": "LIBGPU.LIB",
+          "object": "SYS.OBJ"
+        },
+        {
+          "name": "memcpy",
+          "address": "0x80128968",
+          "library": "LIBC2.LIB",
+          "object": "MEMCPY.OBJ"
+        },
+        {
+          "name": "printf",
+          "address": "0x801289a8",
+          "library": "LIBC2.LIB",
+          "object": "PRINTF.OBJ"
+        },
+        {
+          "name": "prnt",
+          "address": "0x801289e8",
+          "library": "LIBC2.LIB",
+          "object": "PRNT.OBJ"
+        },
+        {
+          "name": "toupper",
+          "address": "0x80129088",
+          "library": "LIBC2.LIB",
+          "object": "CTYPE.OBJ"
+        },
+        {
+          "name": "tolower",
+          "address": "0x801290bc",
+          "library": "LIBC2.LIB",
+          "object": "CTYPE.OBJ"
+        },
+        {
+          "name": "memchr",
+          "address": "0x801290f8",
+          "library": "LIBC2.LIB",
+          "object": "MEMCHR.OBJ"
+        },
+        {
+          "name": "_putchar",
+          "address": "0x80129148",
+          "library": "LIBC2.LIB",
+          "object": "PUTCHAR.OBJ"
+        },
+        {
+          "name": "_putchar_flash",
+          "address": "0x80129244",
+          "library": "LIBC2.LIB",
+          "object": "PUTCHAR.OBJ"
+        },
+        {
+          "name": "putchar",
+          "address": "0x80129280",
+          "library": "LIBC2.LIB",
+          "object": "PUTCHAR.OBJ"
+        },
+        {
+          "name": "strlen",
+          "address": "0x801293b8",
+          "library": "LIBC2.LIB",
+          "object": "STRLEN.OBJ"
+        },
+        {
+          "name": "GetTPage",
+          "address": "0x801293f8",
+          "library": "LIBGPU.LIB",
+          "object": "P00.OBJ"
+        },
+        {
+          "name": "GetClut",
+          "address": "0x80129438",
+          "library": "LIBGPU.LIB",
+          "object": "P01.OBJ"
+        },
+        {
+          "name": "CdInit",
+          "address": "0x80129458",
+          "library": "LIBCD.LIB",
+          "object": "EVENT.OBJ"
+        },
+        {
+          "name": "CdStatus",
+          "address": "0x801295b8",
+          "library": "LIBCD.LIB",
+          "object": "SYS.OBJ"
+        },
+        {
+          "name": "CdMode",
+          "address": "0x801295c8",
+          "library": "LIBCD.LIB",
+          "object": "SYS.OBJ"
+        },
+        {
+          "name": "CdLastCom",
+          "address": "0x801295d8",
+          "library": "LIBCD.LIB",
+          "object": "SYS.OBJ"
+        },
+        {
+          "name": "CdLastPos",
+          "address": "0x801295e8",
+          "library": "LIBCD.LIB",
+          "object": "SYS.OBJ"
+        },
+        {
+          "name": "CdReset",
+          "address": "0x801295f4",
+          "library": "LIBCD.LIB",
+          "object": "SYS.OBJ"
+        },
+        {
+          "name": "CdFlush",
+          "address": "0x80129660",
+          "library": "LIBCD.LIB",
+          "object": "SYS.OBJ"
+        },
+        {
+          "name": "CdSetDebug",
+          "address": "0x80129680",
+          "library": "LIBCD.LIB",
+          "object": "SYS.OBJ"
+        },
+        {
+          "name": "CdComstr",
+          "address": "0x80129694",
+          "library": "LIBCD.LIB",
+          "object": "SYS.OBJ"
+        },
+        {
+          "name": "CdIntstr",
+          "address": "0x801296c8",
+          "library": "LIBCD.LIB",
+          "object": "SYS.OBJ"
+        },
+        {
+          "name": "CdSync",
+          "address": "0x801296fc",
+          "library": "LIBCD.LIB",
+          "object": "SYS.OBJ"
+        },
+        {
+          "name": "CdReady",
+          "address": "0x8012971c",
+          "library": "LIBCD.LIB",
+          "object": "SYS.OBJ"
+        },
+        {
+          "name": "CdSyncCallback",
+          "address": "0x8012973c",
+          "library": "LIBCD.LIB",
+          "object": "SYS.OBJ"
+        },
+        {
+          "name": "CdReadyCallback",
+          "address": "0x80129750",
+          "library": "LIBCD.LIB",
+          "object": "SYS.OBJ"
+        },
+        {
+          "name": "CdControl",
+          "address": "0x80129764",
+          "library": "LIBCD.LIB",
+          "object": "SYS.OBJ"
+        },
+        {
+          "name": "CdControlF",
+          "address": "0x801298a0",
+          "library": "LIBCD.LIB",
+          "object": "SYS.OBJ"
+        },
+        {
+          "name": "CdControlB",
+          "address": "0x801299d4",
+          "library": "LIBCD.LIB",
+          "object": "SYS.OBJ"
+        },
+        {
+          "name": "CdMix",
+          "address": "0x80129b20",
+          "library": "LIBCD.LIB",
+          "object": "SYS.OBJ"
+        },
+        {
+          "name": "CdGetSector",
+          "address": "0x80129b40",
+          "library": "LIBCD.LIB",
+          "object": "SYS.OBJ"
+        },
+        {
+          "name": "CdGetSector2",
+          "address": "0x80129b60",
+          "library": "LIBCD.LIB",
+          "object": "SYS.OBJ"
+        },
+        {
+          "name": "CdDataCallback",
+          "address": "0x80129b80",
+          "library": "LIBCD.LIB",
+          "object": "SYS.OBJ"
+        },
+        {
+          "name": "CdDataSync",
+          "address": "0x80129ba4",
+          "library": "LIBCD.LIB",
+          "object": "SYS.OBJ"
+        },
+        {
+          "name": "CdIntToPos",
+          "address": "0x80129bc4",
+          "library": "LIBCD.LIB",
+          "object": "SYS.OBJ"
+        },
+        {
+          "name": "CdPosToInt",
+          "address": "0x80129cc8",
+          "library": "LIBCD.LIB",
+          "object": "SYS.OBJ"
+        },
+        {
+          "name": "CD_sync",
+          "address": "0x8012a2a4",
+          "library": "LIBCD.LIB",
+          "object": "BIOS.OBJ"
+        },
+        {
+          "name": "CD_ready",
+          "address": "0x8012a524",
+          "library": "LIBCD.LIB",
+          "object": "BIOS.OBJ"
+        },
+        {
+          "name": "CD_cw",
+          "address": "0x8012a7ec",
+          "library": "LIBCD.LIB",
+          "object": "BIOS.OBJ"
+        },
+        {
+          "name": "CD_vol",
+          "address": "0x8012abf8",
+          "library": "LIBCD.LIB",
+          "object": "BIOS.OBJ"
+        },
+        {
+          "name": "CD_flush",
+          "address": "0x8012ac80",
+          "library": "LIBCD.LIB",
+          "object": "BIOS.OBJ"
+        },
+        {
+          "name": "CD_initvol",
+          "address": "0x8012ad54",
+          "library": "LIBCD.LIB",
+          "object": "BIOS.OBJ"
+        },
+        {
+          "name": "CD_initintr",
+          "address": "0x8012ae44",
+          "library": "LIBCD.LIB",
+          "object": "BIOS.OBJ"
+        },
+        {
+          "name": "CD_init",
+          "address": "0x8012ae90",
+          "library": "LIBCD.LIB",
+          "object": "BIOS.OBJ"
+        },
+        {
+          "name": "CD_datasync",
+          "address": "0x8012b070",
+          "library": "LIBCD.LIB",
+          "object": "BIOS.OBJ"
+        },
+        {
+          "name": "CD_getsector",
+          "address": "0x8012b1d8",
+          "library": "LIBCD.LIB",
+          "object": "BIOS.OBJ"
+        },
+        {
+          "name": "CD_getsector2",
+          "address": "0x8012b2d8",
+          "library": "LIBCD.LIB",
+          "object": "BIOS.OBJ"
+        },
+        {
+          "name": "CD_set_test_parmnum",
+          "address": "0x8012b3c4",
+          "library": "LIBCD.LIB",
+          "object": "BIOS.OBJ"
+        },
+        {
+          "name": "puts",
+          "address": "0x8012b4a8",
+          "library": "LIBC2.LIB",
+          "object": "PUTS.OBJ"
+        },
+        {
+          "name": "CdSearchFile",
+          "address": "0x8012b508",
+          "library": "LIBCD.LIB",
+          "object": "ISO9660.OBJ"
+        },
+        {
+          "name": "strcmp",
+          "address": "0x8012be78",
+          "library": "LIBC2.LIB",
+          "object": "STRCMP.OBJ"
+        },
+        {
+          "name": "strncmp",
+          "address": "0x8012bee8",
+          "library": "LIBC2.LIB",
+          "object": "STRNCMP.OBJ"
+        },
+        {
+          "name": "CdReadBreak",
+          "address": "0x8012c49c",
+          "library": "LIBCD.LIB",
+          "object": "CDREAD.OBJ"
+        },
+        {
+          "name": "CdRead",
+          "address": "0x8012c528",
+          "library": "LIBCD.LIB",
+          "object": "CDREAD.OBJ"
+        },
+        {
+          "name": "CdReadSync",
+          "address": "0x8012c628",
+          "library": "LIBCD.LIB",
+          "object": "CDREAD.OBJ"
+        },
+        {
+          "name": "CdReadCallback",
+          "address": "0x8012c6f0",
+          "library": "LIBCD.LIB",
+          "object": "CDREAD.OBJ"
+        },
+        {
+          "name": "CdReadMode",
+          "address": "0x8012c704",
+          "library": "LIBCD.LIB",
+          "object": "CDREAD.OBJ"
+        },
+        {
+          "name": "VSync",
+          "address": "0x8012c718",
+          "library": "LIBETC.LIB",
+          "object": "VSYNC.OBJ"
+        },
+        {
+          "name": "ResetCallback",
+          "address": "0x8012c948",
+          "library": "LIBETC.LIB",
+          "object": "INTR.OBJ"
+        },
+        {
+          "name": "InterruptCallback",
+          "address": "0x8012c978",
+          "library": "LIBETC.LIB",
+          "object": "INTR.OBJ"
+        },
+        {
+          "name": "DMACallback",
+          "address": "0x8012c9a8",
+          "library": "LIBETC.LIB",
+          "object": "INTR.OBJ"
+        },
+        {
+          "name": "VSyncCallback",
+          "address": "0x8012c9d8",
+          "library": "LIBETC.LIB",
+          "object": "INTR.OBJ"
+        },
+        {
+          "name": "VSyncCallbacks",
+          "address": "0x8012ca0c",
+          "library": "LIBETC.LIB",
+          "object": "INTR.OBJ"
+        },
+        {
+          "name": "StopCallback",
+          "address": "0x8012ca3c",
+          "library": "LIBETC.LIB",
+          "object": "INTR.OBJ"
+        },
+        {
+          "name": "RestartCallback",
+          "address": "0x8012ca6c",
+          "library": "LIBETC.LIB",
+          "object": "INTR.OBJ"
+        },
+        {
+          "name": "CheckCallback",
+          "address": "0x8012ca9c",
+          "library": "LIBETC.LIB",
+          "object": "INTR.OBJ"
+        },
+        {
+          "name": "GetIntrMask",
+          "address": "0x8012caac",
+          "library": "LIBETC.LIB",
+          "object": "INTR.OBJ"
+        },
+        {
+          "name": "SetIntrMask",
+          "address": "0x8012cac4",
+          "library": "LIBETC.LIB",
+          "object": "INTR.OBJ"
+        },
+        {
+          "name": "_96_remove",
+          "address": "0x8012d010",
+          "library": "LIBAPI.LIB",
+          "object": "C114.OBJ"
+        },
+        {
+          "name": "setjmp",
+          "address": "0x8012d068",
+          "library": "LIBC2.LIB",
+          "object": "SETJMP.OBJ"
+        },
+        {
+          "name": "longjmp",
+          "address": "0x8012d0a4",
+          "library": "LIBC2.LIB",
+          "object": "SETJMP.OBJ"
+        },
+        {
+          "name": "startIntrVSync",
+          "address": "0x8012d0e8",
+          "library": "LIBETC.LIB",
+          "object": "INTR_VB.OBJ"
+        },
+        {
+          "name": "startIntrDMA",
+          "address": "0x8012d208",
+          "library": "LIBETC.LIB",
+          "object": "INTR_DMA.OBJ"
+        },
+        {
+          "name": "SetVideoMode",
+          "address": "0x8012d4a8",
+          "library": "LIBETC.LIB",
+          "object": "VMODE.OBJ"
+        },
+        {
+          "name": "GetVideoMode",
+          "address": "0x8012d4bc",
+          "library": "LIBETC.LIB",
+          "object": "VMODE.OBJ"
+        },
+        {
+          "name": "SsInit",
+          "address": "0x8012d4d8",
+          "library": "LIBSND.LIB",
+          "object": "SSINIT_C.OBJ"
+        },
+        {
+          "name": "_SsInit",
+          "address": "0x8012d518",
+          "library": "LIBSND.LIB",
+          "object": "SSINIT.OBJ"
+        },
+        {
+          "name": "SsSetSerialAttr",
+          "address": "0x8012d608",
+          "library": "LIBSND.LIB",
+          "object": "SSSATTR.OBJ"
+        },
+        {
+          "name": "SsSetMVol",
+          "address": "0x8012d6c8",
+          "library": "LIBSND.LIB",
+          "object": "SSSMV.OBJ"
+        },
+        {
+          "name": "SsStart",
+          "address": "0x8012d948",
+          "library": "LIBSND.LIB",
+          "object": "SSSTART.OBJ"
+        },
+        {
+          "name": "SsStart2",
+          "address": "0x8012d968",
+          "library": "LIBSND.LIB",
+          "object": "SSSTART.OBJ"
+        },
+        {
+          "name": "SetRCnt",
+          "address": "0x8012da28",
+          "library": "LIBAPI.LIB",
+          "object": "COUNTER.OBJ"
+        },
+        {
+          "name": "GetRCnt",
+          "address": "0x8012dac4",
+          "library": "LIBAPI.LIB",
+          "object": "COUNTER.OBJ"
+        },
+        {
+          "name": "StartRCnt",
+          "address": "0x8012dafc",
+          "library": "LIBAPI.LIB",
+          "object": "COUNTER.OBJ"
+        },
+        {
+          "name": "StopRCnt",
+          "address": "0x8012db2c",
+          "library": "LIBAPI.LIB",
+          "object": "COUNTER.OBJ"
+        },
+        {
+          "name": "ResetRCnt",
+          "address": "0x8012db60",
+          "library": "LIBAPI.LIB",
+          "object": "COUNTER.OBJ"
+        },
+        {
+          "name": "SsSeqCalledTbyT",
+          "address": "0x8012db98",
+          "library": "LIBSND.LIB",
+          "object": "SSCALL.OBJ"
+        },
+        {
+          "name": "_SsSndCrescendo",
+          "address": "0x8012de08",
+          "library": "LIBSND.LIB",
+          "object": "CRES.OBJ"
+        },
+        {
+          "name": "_SsSndPause",
+          "address": "0x8012e018",
+          "library": "LIBSND.LIB",
+          "object": "PAUSE.OBJ"
+        },
+        {
+          "name": "_SsSeqPlay",
+          "address": "0x8012e0e8",
+          "library": "LIBSND.LIB",
+          "object": "MIDIREAD.OBJ"
+        },
+        {
+          "name": "_SsSeqGetEof",
+          "address": "0x8012e1e4",
+          "library": "LIBSND.LIB",
+          "object": "MIDIREAD.OBJ"
+        },
+        {
+          "name": "_SsGetSeqData",
+          "address": "0x8012e428",
+          "library": "LIBSND.LIB",
+          "object": "MIDIREAD.OBJ"
+        },
+        {
+          "name": "_SsReadDeltaValue",
+          "address": "0x8012e7d8",
+          "library": "LIBSND.LIB",
+          "object": "MIDITIME.OBJ"
+        },
+        {
+          "name": "_SsSndNextSep",
+          "address": "0x8012e888",
+          "library": "LIBSND.LIB",
+          "object": "NEXT.OBJ"
+        },
+        {
+          "name": "_SsSndReplay",
+          "address": "0x8012e988",
+          "library": "LIBSND.LIB",
+          "object": "REPLAY.OBJ"
+        },
+        {
+          "name": "_SsSndStop",
+          "address": "0x8012e9e8",
+          "library": "LIBSND.LIB",
+          "object": "SSSTOP.OBJ"
+        },
+        {
+          "name": "SsSeqStop",
+          "address": "0x8012eb68",
+          "library": "LIBSND.LIB",
+          "object": "SSSTOP.OBJ"
+        },
+        {
+          "name": "SsSepStop",
+          "address": "0x8012eb90",
+          "library": "LIBSND.LIB",
+          "object": "SSSTOP.OBJ"
+        },
+        {
+          "name": "SsSetSerialVol",
+          "address": "0x8012ebc8",
+          "library": "LIBSND.LIB",
+          "object": "SSSV.OBJ"
+        },
+        {
+          "name": "SsSetTickMode",
+          "address": "0x8012ecd8",
+          "library": "LIBSND.LIB",
+          "object": "SSTICK.OBJ"
+        },
+        {
+          "name": "_SsSndTempo",
+          "address": "0x8012ee28",
+          "library": "LIBSND.LIB",
+          "object": "TEMPO.OBJ"
+        },
+        {
+          "name": "SsUtKeyOnV",
+          "address": "0x8012f048",
+          "library": "LIBSND.LIB",
+          "object": "UT_KEYV.OBJ"
+        },
+        {
+          "name": "SsUtKeyOffV",
+          "address": "0x8012f390",
+          "library": "LIBSND.LIB",
+          "object": "UT_KEYV.OBJ"
+        },
+        {
+          "name": "_SsVmDoAllocate",
+          "address": "0x8012f408",
+          "library": "LIBSND.LIB",
+          "object": "VM_ALOC2.OBJ"
+        },
+        {
+          "name": "_SsVmFlush",
+          "address": "0x8012f5e8",
+          "library": "LIBSND.LIB",
+          "object": "VM_F.OBJ"
+        },
+        {
+          "name": "_SsVmInit",
+          "address": "0x8012fa78",
+          "library": "LIBSND.LIB",
+          "object": "VM_INIT.OBJ"
+        },
+        {
+          "name": "note2pitch",
+          "address": "0x8012fdc8",
+          "library": "LIBSND.LIB",
+          "object": "VM_N2P.OBJ"
+        },
+        {
+          "name": "note2pitch2",
+          "address": "0x8012fdfc",
+          "library": "LIBSND.LIB",
+          "object": "VM_N2P.OBJ"
+        },
+        {
+          "name": "SsPitchFromNote",
+          "address": "0x8012fe64",
+          "library": "LIBSND.LIB",
+          "object": "VM_N2P.OBJ"
+        },
+        {
+          "name": "vmNoiseOn",
+          "address": "0x8012ff88",
+          "library": "LIBSND.LIB",
+          "object": "VM_NO1.OBJ"
+        },
+        {
+          "name": "_SsVmKeyOffNow",
+          "address": "0x80130508",
+          "library": "LIBSND.LIB",
+          "object": "VM_NOWOF.OBJ"
+        },
+        {
+          "name": "_SsVmKeyOnNow",
+          "address": "0x801305d8",
+          "library": "LIBSND.LIB",
+          "object": "VM_NOWON.OBJ"
+        },
+        {
+          "name": "_SsVmSetSeqVol",
+          "address": "0x80130aa8",
+          "library": "LIBSND.LIB",
+          "object": "VM_SEQ.OBJ"
+        },
+        {
+          "name": "_SsVmGetSeqVol",
+          "address": "0x8013102c",
+          "library": "LIBSND.LIB",
+          "object": "VM_SEQ.OBJ"
+        },
+        {
+          "name": "_SsVmGetSeqLVol",
+          "address": "0x80131090",
+          "library": "LIBSND.LIB",
+          "object": "VM_SEQ.OBJ"
+        },
+        {
+          "name": "_SsVmGetSeqRVol",
+          "address": "0x801310d8",
+          "library": "LIBSND.LIB",
+          "object": "VM_SEQ.OBJ"
+        },
+        {
+          "name": "_SsVmSeqKeyOff",
+          "address": "0x80131120",
+          "library": "LIBSND.LIB",
+          "object": "VM_SEQ.OBJ"
+        },
+        {
+          "name": "_SsVmVSetUp",
+          "address": "0x801311d8",
+          "library": "LIBSND.LIB",
+          "object": "VM_VSU.OBJ"
+        },
+        {
+          "name": "SsVabClose",
+          "address": "0x80131298",
+          "library": "LIBSND.LIB",
+          "object": "VS_VAB.OBJ"
+        },
+        {
+          "name": "SsVabOpenHead",
+          "address": "0x80131318",
+          "library": "LIBSND.LIB",
+          "object": "VS_VH2.OBJ"
+        },
+        {
+          "name": "SsVabOpenHeadSticky",
+          "address": "0x801313b8",
+          "library": "LIBSND.LIB",
+          "object": "VS_VH.OBJ"
+        },
+        {
+          "name": "SsVabFakeHead",
+          "address": "0x801313ec",
+          "library": "LIBSND.LIB",
+          "object": "VS_VH.OBJ"
+        },
+        {
+          "name": "_SsVabOpenHeadWithMode",
+          "address": "0x80131428",
+          "library": "LIBSND.LIB",
+          "object": "VS_VH.OBJ"
+        },
+        {
+          "name": "SsVabTransBody",
+          "address": "0x80131808",
+          "library": "LIBSND.LIB",
+          "object": "VS_VTB.OBJ"
+        },
+        {
+          "name": "SsVabTransCompleted",
+          "address": "0x801318c8",
+          "library": "LIBSND.LIB",
+          "object": "VS_VTC.OBJ"
+        },
+        {
+          "name": "_SpuInit",
+          "address": "0x80131918",
+          "library": "LIBSPU.LIB",
+          "object": "S_INI.OBJ"
+        },
+        {
+          "name": "SpuStart",
+          "address": "0x80131a00",
+          "library": "LIBSPU.LIB",
+          "object": "S_INI.OBJ"
+        },
+        {
+          "name": "_spu_init",
+          "address": "0x80131a98",
+          "library": "LIBSPU.LIB",
+          "object": "SPU.OBJ"
+        },
+        {
+          "name": "_spu_FiDMA",
+          "address": "0x80131ed8",
+          "library": "LIBSPU.LIB",
+          "object": "SPU.OBJ"
+        },
+        {
+          "name": "_spu_Fr_",
+          "address": "0x80131f94",
+          "library": "LIBSPU.LIB",
+          "object": "SPU.OBJ"
+        },
+        {
+          "name": "_spu_t",
+          "address": "0x8013203c",
+          "library": "LIBSPU.LIB",
+          "object": "SPU.OBJ"
+        },
+        {
+          "name": "_spu_Fw",
+          "address": "0x801322bc",
+          "library": "LIBSPU.LIB",
+          "object": "SPU.OBJ"
+        },
+        {
+          "name": "_spu_Fr",
+          "address": "0x80132340",
+          "library": "LIBSPU.LIB",
+          "object": "SPU.OBJ"
+        },
+        {
+          "name": "_spu_FsetRXX",
+          "address": "0x801323a4",
+          "library": "LIBSPU.LIB",
+          "object": "SPU.OBJ"
+        },
+        {
+          "name": "_spu_FsetRXXa",
+          "address": "0x801323e8",
+          "library": "LIBSPU.LIB",
+          "object": "SPU.OBJ"
+        },
+        {
+          "name": "_spu_FgetRXXa",
+          "address": "0x8013248c",
+          "library": "LIBSPU.LIB",
+          "object": "SPU.OBJ"
+        },
+        {
+          "name": "_spu_FsetPCR",
+          "address": "0x801324c8",
+          "library": "LIBSPU.LIB",
+          "object": "SPU.OBJ"
+        },
+        {
+          "name": "_spu_Fw1ts",
+          "address": "0x80132570",
+          "library": "LIBSPU.LIB",
+          "object": "SPU.OBJ"
+        },
+        {
+          "name": "_SpuDataCallback",
+          "address": "0x801325d8",
+          "library": "LIBSPU.LIB",
+          "object": "S_DCB.OBJ"
+        },
+        {
+          "name": "SpuQuit",
+          "address": "0x80132608",
+          "library": "LIBSPU.LIB",
+          "object": "S_Q.OBJ"
+        },
+        {
+          "name": "SpuInitMalloc",
+          "address": "0x801326a8",
+          "library": "LIBSPU.LIB",
+          "object": "S_M_INIT.OBJ"
+        },
+        {
+          "name": "SpuMalloc",
+          "address": "0x80132708",
+          "library": "LIBSPU.LIB",
+          "object": "S_M_M.OBJ"
+        },
+        {
+          "name": "_spu_gcSPU",
+          "address": "0x801329d8",
+          "library": "LIBSPU.LIB",
+          "object": "S_M_INT.OBJ"
+        },
+        {
+          "name": "SpuFree",
+          "address": "0x80132cd8",
+          "library": "LIBSPU.LIB",
+          "object": "S_M_F.OBJ"
+        },
+        {
+          "name": "SpuSetNoiseVoice",
+          "address": "0x80132d58",
+          "library": "LIBSPU.LIB",
+          "object": "S_SNV.OBJ"
+        },
+        {
+          "name": "_SpuSetAnyVoice",
+          "address": "0x80132d88",
+          "library": "LIBSPU.LIB",
+          "object": "S_SAV.OBJ"
+        },
+        {
+          "name": "SpuSetNoiseClock",
+          "address": "0x80133048",
+          "library": "LIBSPU.LIB",
+          "object": "S_SNC.OBJ"
+        },
+        {
+          "name": "SpuSetReverbVoice",
+          "address": "0x80133098",
+          "library": "LIBSPU.LIB",
+          "object": "S_SRV.OBJ"
+        },
+        {
+          "name": "SpuClearReverbWorkArea",
+          "address": "0x801330c8",
+          "library": "LIBSPU.LIB",
+          "object": "S_CRWA.OBJ"
+        },
+        {
+          "name": "_SpuIsInAllocateArea",
+          "address": "0x80133278",
+          "library": "LIBSPU.LIB",
+          "object": "S_M_UTIL.OBJ"
+        },
+        {
+          "name": "_SpuIsInAllocateArea_",
+          "address": "0x801332f8",
+          "library": "LIBSPU.LIB",
+          "object": "S_M_UTIL.OBJ"
+        },
+        {
+          "name": "SpuSetKey",
+          "address": "0x80133388",
+          "library": "LIBSPU.LIB",
+          "object": "S_SK.OBJ"
+        },
+        {
+          "name": "SpuRead",
+          "address": "0x80133548",
+          "library": "LIBSPU.LIB",
+          "object": "S_R.OBJ"
+        },
+        {
+          "name": "SpuWrite0",
+          "address": "0x801335a8",
+          "library": "LIBSPU.LIB",
+          "object": "S_W0.OBJ"
+        },
+        {
+          "name": "SpuSetTransferStartAddr",
+          "address": "0x80133708",
+          "library": "LIBSPU.LIB",
+          "object": "S_STSA.OBJ"
+        },
+        {
+          "name": "SpuSetTransferMode",
+          "address": "0x80133768",
+          "library": "LIBSPU.LIB",
+          "object": "S_STM.OBJ"
+        },
+        {
+          "name": "SpuIsTransferCompleted",
+          "address": "0x80133798",
+          "library": "LIBSPU.LIB",
+          "object": "S_ITC.OBJ"
+        },
+        {
+          "name": "_spu_setInTransfer",
+          "address": "0x80133858",
+          "library": "LIBSPU.LIB",
+          "object": "S_IT.OBJ"
+        },
+        {
+          "name": "_spu_getInTransfer",
+          "address": "0x80133880",
+          "library": "LIBSPU.LIB",
+          "object": "S_IT.OBJ"
+        },
+        {
+          "name": "SpuSetCommonAttr",
+          "address": "0x80133898",
+          "library": "LIBSPU.LIB",
+          "object": "S_SCA.OBJ"
+        },
+        {
+          "name": "SpuSetVoiceAttr",
+          "address": "0x80133c18",
+          "library": "LIBSPU.LIB",
+          "object": "S_SVA.OBJ"
+        },
+        {
+          "name": "_spu_note2pitch",
+          "address": "0x80134218",
+          "library": "LIBSPU.LIB",
+          "object": "S_N2P.OBJ"
+        },
+        {
+          "name": "_spu_pitch2note",
+          "address": "0x801342e8",
+          "library": "LIBSPU.LIB",
+          "object": "S_N2P.OBJ"
+        },
+        {
+          "name": "PadChkVsync",
+          "address": "0x80134438",
+          "library": "LIBPAD.LIB",
+          "object": "PADENTRY.OBJ"
+        },
+        {
+          "name": "PadStartCom",
+          "address": "0x80134458",
+          "library": "LIBPAD.LIB",
+          "object": "PADENTRY.OBJ"
+        },
+        {
+          "name": "PadStopCom",
+          "address": "0x80134478",
+          "library": "LIBPAD.LIB",
+          "object": "PADENTRY.OBJ"
+        },
+        {
+          "name": "PadChkMtap",
+          "address": "0x80134498",
+          "library": "LIBPAD.LIB",
+          "object": "PADENTRY.OBJ"
+        },
+        {
+          "name": "PadGetState",
+          "address": "0x801344e4",
+          "library": "LIBPAD.LIB",
+          "object": "PADENTRY.OBJ"
+        },
+        {
+          "name": "PadInfoMode",
+          "address": "0x801345a4",
+          "library": "LIBPAD.LIB",
+          "object": "PADENTRY.OBJ"
+        },
+        {
+          "name": "PadInfoAct",
+          "address": "0x8013469c",
+          "library": "LIBPAD.LIB",
+          "object": "PADENTRY.OBJ"
+        },
+        {
+          "name": "PadInfoComb",
+          "address": "0x80134770",
+          "library": "LIBPAD.LIB",
+          "object": "PADENTRY.OBJ"
+        },
+        {
+          "name": "PadSetActAlign",
+          "address": "0x80134818",
+          "library": "LIBPAD.LIB",
+          "object": "PADENTRY.OBJ"
+        },
+        {
+          "name": "PadSetMainMode",
+          "address": "0x80134850",
+          "library": "LIBPAD.LIB",
+          "object": "PADENTRY.OBJ"
+        },
+        {
+          "name": "PadSetAct",
+          "address": "0x80134898",
+          "library": "LIBPAD.LIB",
+          "object": "PADENTRY.OBJ"
+        },
+        {
+          "name": "PadEnableCom",
+          "address": "0x801348e8",
+          "library": "LIBPAD.LIB",
+          "object": "PADMAIN.OBJ"
+        },
+        {
+          "name": "_padSetVsyncParam",
+          "address": "0x80134a00",
+          "library": "LIBPAD.LIB",
+          "object": "PADMAIN.OBJ"
+        },
+        {
+          "name": "_padChkVsync",
+          "address": "0x80134c00",
+          "library": "LIBPAD.LIB",
+          "object": "PADMAIN.OBJ"
+        },
+        {
+          "name": "_padStartCom",
+          "address": "0x80134c14",
+          "library": "LIBPAD.LIB",
+          "object": "PADMAIN.OBJ"
+        },
+        {
+          "name": "_padStopCom",
+          "address": "0x80134ce0",
+          "library": "LIBPAD.LIB",
+          "object": "PADMAIN.OBJ"
+        },
+        {
+          "name": "_padInitSioMode",
+          "address": "0x80134d24",
+          "library": "LIBPAD.LIB",
+          "object": "PADMAIN.OBJ"
+        },
+        {
+          "name": "_padSioRW",
+          "address": "0x80135120",
+          "library": "LIBPAD.LIB",
+          "object": "PADMAIN.OBJ"
+        },
+        {
+          "name": "_padSioRW2",
+          "address": "0x801352f8",
+          "library": "LIBPAD.LIB",
+          "object": "PADMAIN.OBJ"
+        },
+        {
+          "name": "_padClrIntSio0",
+          "address": "0x80135530",
+          "library": "LIBPAD.LIB",
+          "object": "PADMAIN.OBJ"
+        },
+        {
+          "name": "_padWaitRXready",
+          "address": "0x801355c0",
+          "library": "LIBPAD.LIB",
+          "object": "PADMAIN.OBJ"
+        },
+        {
+          "name": "_padSetAct",
+          "address": "0x80135608",
+          "library": "LIBPAD.LIB",
+          "object": "PADCMD.OBJ"
+        },
+        {
+          "name": "_padSetCmd",
+          "address": "0x80135614",
+          "library": "LIBPAD.LIB",
+          "object": "PADCMD.OBJ"
+        },
+        {
+          "name": "_padSendAtLoadInfo",
+          "address": "0x80135624",
+          "library": "LIBPAD.LIB",
+          "object": "PADCMD.OBJ"
+        },
+        {
+          "name": "_padRecvAtLoadInfo",
+          "address": "0x801356a8",
+          "library": "LIBPAD.LIB",
+          "object": "PADCMD.OBJ"
+        },
+        {
+          "name": "_padGetActSize",
+          "address": "0x801357f4",
+          "library": "LIBPAD.LIB",
+          "object": "PADCMD.OBJ"
+        },
+        {
+          "name": "_padLoadActInfo",
+          "address": "0x8013582c",
+          "library": "LIBPAD.LIB",
+          "object": "PADCMD.OBJ"
+        },
+        {
+          "name": "_padSetActAlign",
+          "address": "0x80135c1c",
+          "library": "LIBPAD.LIB",
+          "object": "PADCMD.OBJ"
+        },
+        {
+          "name": "_padSetMainMode",
+          "address": "0x80135d68",
+          "library": "LIBPAD.LIB",
+          "object": "PADCMD.OBJ"
+        },
+        {
+          "name": "_padCmdParaMode",
+          "address": "0x80135eb4",
+          "library": "LIBPAD.LIB",
+          "object": "PADCMD.OBJ"
+        },
+        {
+          "name": "setRC2wait",
+          "address": "0x80136558",
+          "library": "LIBPAD.LIB",
+          "object": "WAITRC2.OBJ"
+        },
+        {
+          "name": "chkRC2wait",
+          "address": "0x80136578",
+          "library": "LIBPAD.LIB",
+          "object": "WAITRC2.OBJ"
+        }
+      ]
+    }
+  ]
+}
