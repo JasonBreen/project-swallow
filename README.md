@@ -36,7 +36,7 @@ The game is in development. There is currently no C engine, native renderer, pla
 
 | Area | Working now | Destination |
 |---|---|---|
-| Source discs | Four fingerprinted references; complete archives stored with Git LFS in this private repository | Reproducible inputs for the complete Japanese campaign |
+| Source discs | Four fingerprinted Electrosphere references, plus one supplied ACECOMBAT image; complete archives stored with Git LFS in this private repository | Reproducible inputs for the complete Japanese campaign |
 | Disc access | ISO directory inspection, raw-image hashes, bounded Form 1 reads, logical-file comparison | Reliable access to game resources |
 | `ACE.BPH` | Typed index parser, explicit payload sizes, range checks, metadata reports; validated against all four references | Resource loading for the C runtime |
 | `ACE.BPB` / Ulz | Nested offset-table containers walked; Namco Ulz (v0/v2) decoded in memory with exact stream accounting; other leaf formats still uninterpreted | Decoded resources for the C runtime |
@@ -50,7 +50,7 @@ The game is in development. There is currently no C engine, native renderer, pla
 
 You need Python **3.11 or newer**. On the owner's Windows machine, **everything stays on `G:`**: the checkout, extracted discs, temporary files, and reports. Do not use the `C:` drive for this project.
 
-The repository is private. It contains all four owner-supplied reference archives through Git LFS, about **1.67 GB compressed**. For a source-only checkout:
+The repository is private. It contains the four Electrosphere reference archives and one supplied ACECOMBAT archive through Git LFS, about **2.10 GB compressed**. For a source-only checkout:
 
 ```powershell
 Set-Location G:\

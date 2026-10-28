@@ -14,6 +14,7 @@ discs outside Git.
 | English v0.9b3-labeled Disc 2 | `english-v0.9b3/Ace Combat 3 Electrosphere (English v0.9b3)[Disc 2].tar.bz2` | 459,268,683 |
 | Japanese Disc 1 | `japanese/Ace Combat 3 - Electrosphere (Japan) (Disc 1).7z` | 377,176,022 |
 | Japanese Disc 2 | `japanese/Ace Combat 3 - Electrosphere (Japan) (Disc 2).7z` | 380,185,348 |
+| Supplied ACECOMBAT image | `acecombat/game.tar.bz2` | 430,813,836 |
 
 `manifest.json` records SHA256 for each complete archive and the sizes and
 hashes of its BIN/CUE members. Each archived BIN was streamed and checked
@@ -28,11 +29,16 @@ Redump database certification. The complete original 7z archives include a
 `readme.html` member, preserved without execution. Their CUE descriptors still
 refer to older BIN filenames; read the BIN directly for these tools.
 
+`acecombat/game.tar.bz2` is a separate supplied image. Its volume id is
+`ACECOMBAT`, and it is not one of the four Electrosphere baselines. The archive
+holds the original `game.BIN` and `game.CUE` bytes. The CUE `FILE` entry names
+`ACECOMBAT.BIN`, which is not the archived BIN filename. Read `game.BIN` directly.
+
 ## Retrieve and inspect
 
 Install Git LFS, then run `git lfs pull` in a normal clone. Use `git lfs ls-files`
 to list the tracked archives and `git lfs fsck` to check the local LFS objects.
-The total compressed size of all four archives is 1,667,990,468 bytes.
+The total compressed size of all five archives is 2,098,804,304 bytes.
 
 Extract each archive into a separate local directory, preferably on a drive
 with room for both full BINs. For example, on Windows with the built-in `tar`:

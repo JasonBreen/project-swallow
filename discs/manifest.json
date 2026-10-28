@@ -123,6 +123,34 @@
           "status": "preserved in original archive; not executed"
         }
       ]
+    },
+    {
+      "path": "discs/acecombat/game.tar.bz2",
+      "size_bytes": 430813836,
+      "sha256": "b597d8e629d765d2269d4eac01209bb1bf1de816dc1f6cff5f0edd76b881dd40",
+      "baseline_report": null,
+      "bin_matches_baseline": false,
+      "note": "Supplied image with volume id ACECOMBAT. Not one of the four Electrosphere baselines. The CUE FILE entry names ACECOMBAT.BIN; the archived member is game.BIN. Original member bytes were not modified.",
+      "members": [
+        {
+          "name": "game.BIN",
+          "size_bytes": 609182112,
+          "hashes": {
+            "md5": "3e855676149b87d7adc4cde92485cd42",
+            "sha1": "cc43cd5fa5b02ba95fda0a15a3f6abe5c509fe61",
+            "sha256": "96a667f18a6f070c47f988347352adc87479a8ecc258c19ab1f342f3cf3bd7b3"
+          }
+        },
+        {
+          "name": "game.CUE",
+          "size_bytes": 4041,
+          "hashes": {
+            "md5": "ca7b156161135e8ca97c0ef394395951",
+            "sha1": "6cb530f242feca84a0f437d4cf0443a37b769b41",
+            "sha256": "812f1e248877f7d7ba10cc5609d0ea4c782a35b62946b307567ce938dc4d7dd0"
+          }
+        }
+      ]
     }
   ]
 }

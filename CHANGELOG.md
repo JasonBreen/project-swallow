@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Stored the supplied ACECOMBAT image (`game.BIN` and `game.CUE`) through Git LFS. It is not one of the four Electrosphere baselines. The CUE names `ACECOMBAT.BIN`; the archived member is `game.BIN`.
+
 ## 0.8.0 — 2026-10-27
 
 - Added `swallow_tools.psyq` and the `swallow-psyq` CLI. It finds Sony PsyQ library objects in each disc executable by signature, using a separate, uncommitted copy of the signature data from `lab313ru/psx_psyq_signatures` (pinned commit `e9e46e7`). A signature counts only when it pins at least 32 bytes and matches once, word-aligned, counting overlapping matches. The report holds names, addresses, and sizes, never game bytes.
