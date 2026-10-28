@@ -1,0 +1,5654 @@
+{
+  "source_image": "ACECOMBAT.BIN",
+  "size_bytes": 609182112,
+  "sector_size": 2352,
+  "sector_count": 259006,
+  "volume_id": "ACECOMBAT",
+  "files": [
+    {
+      "path": "COM01.",
+      "size": 11092,
+      "lba": 44952,
+      "is_directory": false,
+      "raw_name": "COM01.;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "cf098612d4c136a28041302f654a6760baf22524a40d0d8cd0f255c546354ca4",
+        "hashed_bytes": 11092
+      }
+    },
+    {
+      "path": "DA",
+      "size": 2048,
+      "lba": 23,
+      "is_directory": true,
+      "raw_name": "DA",
+      "flags": 2
+    },
+    {
+      "path": "DA/BGM1.DA",
+      "size": 31682560,
+      "lba": 45277,
+      "is_directory": false,
+      "raw_name": "BGM1.DA;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "outside_declared_data_track",
+        "sha256": null,
+        "reason": "ISO extent reaches CD-DA area declared by CUE; no Form 1 file hash attempted."
+      }
+    },
+    {
+      "path": "DA/BGM2.DA",
+      "size": 24641536,
+      "lba": 60897,
+      "is_directory": false,
+      "raw_name": "BGM2.DA;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "outside_declared_data_track",
+        "sha256": null,
+        "reason": "ISO extent reaches CD-DA area declared by CUE; no Form 1 file hash attempted."
+      }
+    },
+    {
+      "path": "DA/BGM3.DA",
+      "size": 23224320,
+      "lba": 73079,
+      "is_directory": false,
+      "raw_name": "BGM3.DA;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "outside_declared_data_track",
+        "sha256": null,
+        "reason": "ISO extent reaches CD-DA area declared by CUE; no Form 1 file hash attempted."
+      }
+    },
+    {
+      "path": "DA/BGM4.DA",
+      "size": 24938496,
+      "lba": 84569,
+      "is_directory": false,
+      "raw_name": "BGM4.DA;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "outside_declared_data_track",
+        "sha256": null,
+        "reason": "ISO extent reaches CD-DA area declared by CUE; no Form 1 file hash attempted."
+      }
+    },
+    {
+      "path": "DA/BGM5.DA",
+      "size": 11337728,
+      "lba": 96896,
+      "is_directory": false,
+      "raw_name": "BGM5.DA;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "outside_declared_data_track",
+        "sha256": null,
+        "reason": "ISO extent reaches CD-DA area declared by CUE; no Form 1 file hash attempted."
+      }
+    },
+    {
+      "path": "DA/BGM6.DA",
+      "size": 17987584,
+      "lba": 102582,
+      "is_directory": false,
+      "raw_name": "BGM6.DA;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "outside_declared_data_track",
+        "sha256": null,
+        "reason": "ISO extent reaches CD-DA area declared by CUE; no Form 1 file hash attempted."
+      }
+    },
+    {
+      "path": "DA/BGM7.DA",
+      "size": 25315328,
+      "lba": 111515,
+      "is_directory": false,
+      "raw_name": "BGM7.DA;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "outside_declared_data_track",
+        "sha256": null,
+        "reason": "ISO extent reaches CD-DA area declared by CUE; no Form 1 file hash attempted."
+      }
+    },
+    {
+      "path": "DA/BGM8.DA",
+      "size": 27238400,
+      "lba": 124026,
+      "is_directory": false,
+      "raw_name": "BGM8.DA;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "outside_declared_data_track",
+        "sha256": null,
+        "reason": "ISO extent reaches CD-DA area declared by CUE; no Form 1 file hash attempted."
+      }
+    },
+    {
+      "path": "DA/BGM9.DA",
+      "size": 22673408,
+      "lba": 137476,
+      "is_directory": false,
+      "raw_name": "BGM9.DA;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "outside_declared_data_track",
+        "sha256": null,
+        "reason": "ISO extent reaches CD-DA area declared by CUE; no Form 1 file hash attempted."
+      }
+    },
+    {
+      "path": "DA/BGMA.DA",
+      "size": 18802688,
+      "lba": 148697,
+      "is_directory": false,
+      "raw_name": "BGMA.DA;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "outside_declared_data_track",
+        "sha256": null,
+        "reason": "ISO extent reaches CD-DA area declared by CUE; no Form 1 file hash attempted."
+      }
+    },
+    {
+      "path": "DA/BGMB.DA",
+      "size": 12812288,
+      "lba": 158028,
+      "is_directory": false,
+      "raw_name": "BGMB.DA;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "outside_declared_data_track",
+        "sha256": null,
+        "reason": "ISO extent reaches CD-DA area declared by CUE; no Form 1 file hash attempted."
+      }
+    },
+    {
+      "path": "DA/BGMC.DA",
+      "size": 12904448,
+      "lba": 164434,
+      "is_directory": false,
+      "raw_name": "BGMC.DA;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "outside_declared_data_track",
+        "sha256": null,
+        "reason": "ISO extent reaches CD-DA area declared by CUE; no Form 1 file hash attempted."
+      }
+    },
+    {
+      "path": "DA/BGMD.DA",
+      "size": 1654784,
+      "lba": 170885,
+      "is_directory": false,
+      "raw_name": "BGMD.DA;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "outside_declared_data_track",
+        "sha256": null,
+        "reason": "ISO extent reaches CD-DA area declared by CUE; no Form 1 file hash attempted."
+      }
+    },
+    {
+      "path": "DA/BGME.DA",
+      "size": 10231808,
+      "lba": 171843,
+      "is_directory": false,
+      "raw_name": "BGME.DA;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "outside_declared_data_track",
+        "sha256": null,
+        "reason": "ISO extent reaches CD-DA area declared by CUE; no Form 1 file hash attempted."
+      }
+    },
+    {
+      "path": "DA/BGMF.DA",
+      "size": 1845248,
+      "lba": 176989,
+      "is_directory": false,
+      "raw_name": "BGMF.DA;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "outside_declared_data_track",
+        "sha256": null,
+        "reason": "ISO extent reaches CD-DA area declared by CUE; no Form 1 file hash attempted."
+      }
+    },
+    {
+      "path": "DA/BGMG.DA",
+      "size": 18341888,
+      "lba": 178040,
+      "is_directory": false,
+      "raw_name": "BGMG.DA;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "outside_declared_data_track",
+        "sha256": null,
+        "reason": "ISO extent reaches CD-DA area declared by CUE; no Form 1 file hash attempted."
+      }
+    },
+    {
+      "path": "DA/BGMH.DA",
+      "size": 22949888,
+      "lba": 187146,
+      "is_directory": false,
+      "raw_name": "BGMH.DA;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "outside_declared_data_track",
+        "sha256": null,
+        "reason": "ISO extent reaches CD-DA area declared by CUE; no Form 1 file hash attempted."
+      }
+    },
+    {
+      "path": "DMO",
+      "size": 2048,
+      "lba": 24,
+      "is_directory": true,
+      "raw_name": "DMO",
+      "flags": 2
+    },
+    {
+      "path": "DMO/MIS.DAT",
+      "size": 692256,
+      "lba": 25,
+      "is_directory": false,
+      "raw_name": "MIS.DAT;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "b19d4efc1b43891252467f83d98d2e5180ba222ef4502221d9ed33dcbc691c78",
+        "hashed_bytes": 692256
+      }
+    },
+    {
+      "path": "DMO/MIS.TD",
+      "size": 20380,
+      "lba": 364,
+      "is_directory": false,
+      "raw_name": "MIS.TD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "59e3095e6b68053994edefb83b6424eec7fc1335263c59751dfbad8738a63658",
+        "hashed_bytes": 20380
+      }
+    },
+    {
+      "path": "M00",
+      "size": 2048,
+      "lba": 374,
+      "is_directory": true,
+      "raw_name": "M00",
+      "flags": 2
+    },
+    {
+      "path": "M00/AIR00.MD",
+      "size": 54568,
+      "lba": 375,
+      "is_directory": false,
+      "raw_name": "AIR00.MD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "6f43b7f7645198a193803d72162b6549f61c655e562e21f80604d584ed08aef9",
+        "hashed_bytes": 54568
+      }
+    },
+    {
+      "path": "M00/AIR00.TD",
+      "size": 201856,
+      "lba": 402,
+      "is_directory": false,
+      "raw_name": "AIR00.TD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "735ca167ed3967c5372e7aa24aa4c7a290b0d08a379536b73a030ee3cda59d46",
+        "hashed_bytes": 201856
+      }
+    },
+    {
+      "path": "M00/MAP00.MD",
+      "size": 262654,
+      "lba": 501,
+      "is_directory": false,
+      "raw_name": "MAP00.MD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "9c33930e4b36f7f91761ad6ea3c7344f49b05441fa22e47d992739da49b42f3b",
+        "hashed_bytes": 262654
+      }
+    },
+    {
+      "path": "M00/MAP00.TD",
+      "size": 429320,
+      "lba": 630,
+      "is_directory": false,
+      "raw_name": "MAP00.TD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "688219085baa9f0dace5272bd55ac4b741f2296836d323f305fff44c51cad3eb",
+        "hashed_bytes": 429320
+      }
+    },
+    {
+      "path": "M00/STG00A.",
+      "size": 336,
+      "lba": 840,
+      "is_directory": false,
+      "raw_name": "STG00A.;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "c0e395ce58b8119e10c09e2a05335dad52d18054718de271e18d061cedf30f15",
+        "hashed_bytes": 336
+      }
+    },
+    {
+      "path": "M00/STG00AH.",
+      "size": 384,
+      "lba": 841,
+      "is_directory": false,
+      "raw_name": "STG00AH.;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "9b289ba751bc5802955a6162babf62e2ea97c8cfa6918757eb637d94803a79a0",
+        "hashed_bytes": 384
+      }
+    },
+    {
+      "path": "M01",
+      "size": 2048,
+      "lba": 842,
+      "is_directory": true,
+      "raw_name": "M01",
+      "flags": 2
+    },
+    {
+      "path": "M01/AIR01.MD",
+      "size": 58892,
+      "lba": 843,
+      "is_directory": false,
+      "raw_name": "AIR01.MD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "01ad410817f28b0a571599eec4ec202eac5a542b6e8d491fc338382301b05da8",
+        "hashed_bytes": 58892
+      }
+    },
+    {
+      "path": "M01/AIR01.TD",
+      "size": 201856,
+      "lba": 872,
+      "is_directory": false,
+      "raw_name": "AIR01.TD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "6466426115b52ccc5ee87ddf8c9e82375b50c19a7a3353dd74ef841ca8d3bec5",
+        "hashed_bytes": 201856
+      }
+    },
+    {
+      "path": "M01/MAP01.MD",
+      "size": 297526,
+      "lba": 971,
+      "is_directory": false,
+      "raw_name": "MAP01.MD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "e386227aa2fc36113bd2831baa6f1a95d685c35c40439040487a6c7e8f03eaa5",
+        "hashed_bytes": 297526
+      }
+    },
+    {
+      "path": "M01/MAP01.TD",
+      "size": 286896,
+      "lba": 1117,
+      "is_directory": false,
+      "raw_name": "MAP01.TD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "8cc8240029e12642349b5c3fa8f9036cdbf06b4270e03dc10c5ee06370c1148f",
+        "hashed_bytes": 286896
+      }
+    },
+    {
+      "path": "M01/STG01A.",
+      "size": 314,
+      "lba": 1258,
+      "is_directory": false,
+      "raw_name": "STG01A.;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "b6c27251fc3574134e4bc6bb8b275dabd36ba71ee0a5a217793f50bb168c3315",
+        "hashed_bytes": 314
+      }
+    },
+    {
+      "path": "M01/STG01AH.",
+      "size": 362,
+      "lba": 1259,
+      "is_directory": false,
+      "raw_name": "STG01AH.;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "b5370d3d44ee476b41b3a103829d7f905e35419b1d46805f01b41e9d622abaf5",
+        "hashed_bytes": 362
+      }
+    },
+    {
+      "path": "M02",
+      "size": 2048,
+      "lba": 1260,
+      "is_directory": true,
+      "raw_name": "M02",
+      "flags": 2
+    },
+    {
+      "path": "M02/AIR02.MD",
+      "size": 59136,
+      "lba": 1261,
+      "is_directory": false,
+      "raw_name": "AIR02.MD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "6b37d26aa5793a257dc11e83f08a22894e8c61db4d9150ae6cf526f8d74b8dcb",
+        "hashed_bytes": 59136
+      }
+    },
+    {
+      "path": "M02/AIR02.TD",
+      "size": 201856,
+      "lba": 1290,
+      "is_directory": false,
+      "raw_name": "AIR02.TD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "7e42347c46b60cea66eb2ecb4a8846019b99cb5e934f271a53026ffc67a31f3a",
+        "hashed_bytes": 201856
+      }
+    },
+    {
+      "path": "M02/MAP02.MD",
+      "size": 269598,
+      "lba": 1389,
+      "is_directory": false,
+      "raw_name": "MAP02.MD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "a7c12b758174fd1f0ceee95a78228ceff052a0ccfa698c4ac4b6bc0080ce6170",
+        "hashed_bytes": 269598
+      }
+    },
+    {
+      "path": "M02/MAP02.TD",
+      "size": 156740,
+      "lba": 1521,
+      "is_directory": false,
+      "raw_name": "MAP02.TD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "3564a880f02cf0407839f8b946ade686f8514aa13810168cd373c94b7ce44653",
+        "hashed_bytes": 156740
+      }
+    },
+    {
+      "path": "M02/STG02A.",
+      "size": 336,
+      "lba": 1598,
+      "is_directory": false,
+      "raw_name": "STG02A.;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "ff805c866c2ad6835cfde8d6913d86cc417579a3cabba88fd6142bc801468d35",
+        "hashed_bytes": 336
+      }
+    },
+    {
+      "path": "M02/STG02AH.",
+      "size": 336,
+      "lba": 1599,
+      "is_directory": false,
+      "raw_name": "STG02AH.;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "ce051b7da72a04b59f39adadb3d3df54e239661a5e1b0f4573dcac362f0f5745",
+        "hashed_bytes": 336
+      }
+    },
+    {
+      "path": "M03",
+      "size": 2048,
+      "lba": 1600,
+      "is_directory": true,
+      "raw_name": "M03",
+      "flags": 2
+    },
+    {
+      "path": "M03/AIR03.MD",
+      "size": 67944,
+      "lba": 1601,
+      "is_directory": false,
+      "raw_name": "AIR03.MD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "95eb9777dc0749f714d5883b2da30b3e5da7aace61592b9c8a9a2a3b496a6d4b",
+        "hashed_bytes": 67944
+      }
+    },
+    {
+      "path": "M03/AIR03.TD",
+      "size": 234756,
+      "lba": 1635,
+      "is_directory": false,
+      "raw_name": "AIR03.TD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "f7f4d0a82f1e4969d31cc638b22bcb4539dfe9531a43eec88758b526d04d4bff",
+        "hashed_bytes": 234756
+      }
+    },
+    {
+      "path": "M03/MAP03.MD",
+      "size": 372470,
+      "lba": 1750,
+      "is_directory": false,
+      "raw_name": "MAP03.MD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "f87d43fb75f4af419c3fd2189653495b72d28151c614839f73644e656d6acc19",
+        "hashed_bytes": 372470
+      }
+    },
+    {
+      "path": "M03/MAP03.TD",
+      "size": 401860,
+      "lba": 1932,
+      "is_directory": false,
+      "raw_name": "MAP03.TD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "b9c3aaa05f8e1dcfa5ed3f99818ba0f4a5c4c494b1b8281f5336081544ff72f9",
+        "hashed_bytes": 401860
+      }
+    },
+    {
+      "path": "M03/STG03A.",
+      "size": 619,
+      "lba": 2129,
+      "is_directory": false,
+      "raw_name": "STG03A.;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "26b7eb3e198f0dce7e2517508ac63d680041662e29110ca6b7d0b18e35b47c35",
+        "hashed_bytes": 619
+      }
+    },
+    {
+      "path": "M03/STG03AH.",
+      "size": 746,
+      "lba": 2130,
+      "is_directory": false,
+      "raw_name": "STG03AH.;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "c6821cb0c3fcb62e5fa211b4df6e7e6e26cea74a602e3c2ab023da16a449853c",
+        "hashed_bytes": 746
+      }
+    },
+    {
+      "path": "M05",
+      "size": 2048,
+      "lba": 2131,
+      "is_directory": true,
+      "raw_name": "M05",
+      "flags": 2
+    },
+    {
+      "path": "M05/AIR05.MD",
+      "size": 78052,
+      "lba": 2132,
+      "is_directory": false,
+      "raw_name": "AIR05.MD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "d4a6da12581003848935f75537fdadad7025d9f3c783167a00174e07417f8dad",
+        "hashed_bytes": 78052
+      }
+    },
+    {
+      "path": "M05/AIR05.TD",
+      "size": 201856,
+      "lba": 2171,
+      "is_directory": false,
+      "raw_name": "AIR05.TD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "d53b9a5cd1268c48383f3ab12ca6d775b428f6c84a229eb1550367eef9fb3bfe",
+        "hashed_bytes": 201856
+      }
+    },
+    {
+      "path": "M05/MAP05.MD",
+      "size": 221158,
+      "lba": 2270,
+      "is_directory": false,
+      "raw_name": "MAP05.MD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "226530da797b306cfd0c96524542102ccd6c1856a1347d8abf4120d666bbb621",
+        "hashed_bytes": 221158
+      }
+    },
+    {
+      "path": "M05/MAP05.TD",
+      "size": 232960,
+      "lba": 2378,
+      "is_directory": false,
+      "raw_name": "MAP05.TD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "e30614319c8323948b7d5454e14f8d4d198bf20098f73a7dab3a374689a113f7",
+        "hashed_bytes": 232960
+      }
+    },
+    {
+      "path": "M05/STG05A.",
+      "size": 801,
+      "lba": 2492,
+      "is_directory": false,
+      "raw_name": "STG05A.;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "dae619b0223ee43754b85ef2a7456d7b69325d97fae385164dce5350e92bc05d",
+        "hashed_bytes": 801
+      }
+    },
+    {
+      "path": "M05/STG05AH.",
+      "size": 1129,
+      "lba": 2493,
+      "is_directory": false,
+      "raw_name": "STG05AH.;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "72524eaf3970a9096895d03b8325d970092188cae9276dfa35901d0dc79551fd",
+        "hashed_bytes": 1129
+      }
+    },
+    {
+      "path": "M06",
+      "size": 2048,
+      "lba": 2494,
+      "is_directory": true,
+      "raw_name": "M06",
+      "flags": 2
+    },
+    {
+      "path": "M06/AIR06.MD",
+      "size": 78180,
+      "lba": 2495,
+      "is_directory": false,
+      "raw_name": "AIR06.MD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "787908f60ddfd61c996c02300d5430e1b96313d64a0d5d8ff62b10b59ff78277",
+        "hashed_bytes": 78180
+      }
+    },
+    {
+      "path": "M06/AIR06.TD",
+      "size": 234692,
+      "lba": 2534,
+      "is_directory": false,
+      "raw_name": "AIR06.TD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "a38520af96974bb1df871d9155dd6e71f1929902ae9e96b6ea803b31a6adc1e2",
+        "hashed_bytes": 234692
+      }
+    },
+    {
+      "path": "M06/MAP06.MD",
+      "size": 346826,
+      "lba": 2649,
+      "is_directory": false,
+      "raw_name": "MAP06.MD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "b90103aca6a123a183638830e68ddd2b74ffc303afdd490d9c04b05de46c2058",
+        "hashed_bytes": 346826
+      }
+    },
+    {
+      "path": "M06/MAP06.TD",
+      "size": 373964,
+      "lba": 2819,
+      "is_directory": false,
+      "raw_name": "MAP06.TD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "0ee1009ba7201aae8c7108f9c2a73e10e425543103ea5a417f7688639a940633",
+        "hashed_bytes": 373964
+      }
+    },
+    {
+      "path": "M06/STG06A.",
+      "size": 822,
+      "lba": 3002,
+      "is_directory": false,
+      "raw_name": "STG06A.;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "71c930b589fdf9f038589e3a5ce504fa487a1fb6fdb1d55023916c16d472ae10",
+        "hashed_bytes": 822
+      }
+    },
+    {
+      "path": "M06/STG06AH.",
+      "size": 822,
+      "lba": 3003,
+      "is_directory": false,
+      "raw_name": "STG06AH.;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "8d8578d7a416df08342d895b094b971937eeb0bae020047ea96c33ae2c8b55b3",
+        "hashed_bytes": 822
+      }
+    },
+    {
+      "path": "M07",
+      "size": 2048,
+      "lba": 3004,
+      "is_directory": true,
+      "raw_name": "M07",
+      "flags": 2
+    },
+    {
+      "path": "M07/AIR07.MD",
+      "size": 34992,
+      "lba": 3005,
+      "is_directory": false,
+      "raw_name": "AIR07.MD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "7addd231344ead236aec6a3b501831f32e43320b19e2c861c995031ec66f0272",
+        "hashed_bytes": 34992
+      }
+    },
+    {
+      "path": "M07/AIR07.TD",
+      "size": 103380,
+      "lba": 3023,
+      "is_directory": false,
+      "raw_name": "AIR07.TD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "f44a7dfaa635b01ff3ec93c6cda155ed9f3cbbebab359a717685f555585782ac",
+        "hashed_bytes": 103380
+      }
+    },
+    {
+      "path": "M07/MAP07.MD",
+      "size": 345170,
+      "lba": 3074,
+      "is_directory": false,
+      "raw_name": "MAP07.MD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "5539b6583fd244570ea1216952bff50b2692c86c8b558fb27c7f70f9839688fc",
+        "hashed_bytes": 345170
+      }
+    },
+    {
+      "path": "M07/MAP07.TD",
+      "size": 228208,
+      "lba": 3243,
+      "is_directory": false,
+      "raw_name": "MAP07.TD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "dc274d7ead30500b653c053e0c4dd478643314f1c8c05daa6430db605e8ed7d0",
+        "hashed_bytes": 228208
+      }
+    },
+    {
+      "path": "M07/STG07A.",
+      "size": 214,
+      "lba": 3355,
+      "is_directory": false,
+      "raw_name": "STG07A.;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "fe59a8f1c30c114a9fabc6e147ee9f78d8281177e374985157a6e4ed0c3d526d",
+        "hashed_bytes": 214
+      }
+    },
+    {
+      "path": "M07/STG07AH.",
+      "size": 277,
+      "lba": 3356,
+      "is_directory": false,
+      "raw_name": "STG07AH.;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "9068026d9819c3769533c6bfc6093c3f218b838ce558d512dbf48c64f883cb3f",
+        "hashed_bytes": 277
+      }
+    },
+    {
+      "path": "M08",
+      "size": 2048,
+      "lba": 3357,
+      "is_directory": true,
+      "raw_name": "M08",
+      "flags": 2
+    },
+    {
+      "path": "M08/AIR08.MD",
+      "size": 69212,
+      "lba": 3358,
+      "is_directory": false,
+      "raw_name": "AIR08.MD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "48a7ae84b49f5a91e4bcbd147c457a1229d504c01e964be117b5f0024d04ef39",
+        "hashed_bytes": 69212
+      }
+    },
+    {
+      "path": "M08/AIR08.TD",
+      "size": 234692,
+      "lba": 3392,
+      "is_directory": false,
+      "raw_name": "AIR08.TD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "6ca7730e0e172bb543d0cbdfa7747b3cdad0cff07ccb4892fc4c21b7379e4540",
+        "hashed_bytes": 234692
+      }
+    },
+    {
+      "path": "M08/MAP08.MD",
+      "size": 270938,
+      "lba": 3507,
+      "is_directory": false,
+      "raw_name": "MAP08.MD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "f6ec96fc3043da9ecdf17abf741d169a021dc43971e9f67a5f866fe35e00f243",
+        "hashed_bytes": 270938
+      }
+    },
+    {
+      "path": "M08/MAP08.TD",
+      "size": 199272,
+      "lba": 3640,
+      "is_directory": false,
+      "raw_name": "MAP08.TD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "445ec9aa9ad1ae24263e83838537342145fddf5e1d758acf3671cc994257f3e6",
+        "hashed_bytes": 199272
+      }
+    },
+    {
+      "path": "M08/STG08A.",
+      "size": 612,
+      "lba": 3738,
+      "is_directory": false,
+      "raw_name": "STG08A.;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "6c495b9ef0ac478628303828b79aa82c5b67068f60435f4677e29aada1a2f3df",
+        "hashed_bytes": 612
+      }
+    },
+    {
+      "path": "M08/STG08AH.",
+      "size": 654,
+      "lba": 3739,
+      "is_directory": false,
+      "raw_name": "STG08AH.;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "47dbe09e1db01c7605955038f9dd70871820f702a63f368580e8554559542bcd",
+        "hashed_bytes": 654
+      }
+    },
+    {
+      "path": "M08/STG08B.",
+      "size": 542,
+      "lba": 3740,
+      "is_directory": false,
+      "raw_name": "STG08B.;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "a895976ec19876f7d119c6be73b1a5d774ffda962f3f3b85257c16c2db8d20ab",
+        "hashed_bytes": 542
+      }
+    },
+    {
+      "path": "M08/STG08BH.",
+      "size": 584,
+      "lba": 3741,
+      "is_directory": false,
+      "raw_name": "STG08BH.;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "c6075e6e02c0aaa41c68d6be71078bdd2531ca0ee88c13dd23704cf2d3766540",
+        "hashed_bytes": 584
+      }
+    },
+    {
+      "path": "M09",
+      "size": 2048,
+      "lba": 3742,
+      "is_directory": true,
+      "raw_name": "M09",
+      "flags": 2
+    },
+    {
+      "path": "M09/AIR09.MD",
+      "size": 86100,
+      "lba": 3743,
+      "is_directory": false,
+      "raw_name": "AIR09.MD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "47af2b5f8a7df7dfa3f19f32a295c32802367e9f06f1a5f0ff06751fa7435775",
+        "hashed_bytes": 86100
+      }
+    },
+    {
+      "path": "M09/AIR09.TD",
+      "size": 228836,
+      "lba": 3786,
+      "is_directory": false,
+      "raw_name": "AIR09.TD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "97b832fa86c8ade394807e13e4f75ca448e0cf7630d9ca4e7598e2a9182d6a63",
+        "hashed_bytes": 228836
+      }
+    },
+    {
+      "path": "M09/MAP09.MD",
+      "size": 261778,
+      "lba": 3898,
+      "is_directory": false,
+      "raw_name": "MAP09.MD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "c24b90ade56e367a763f1e0e167f771c6aa7a8a4b73ac715e6b7b2151695bb4e",
+        "hashed_bytes": 261778
+      }
+    },
+    {
+      "path": "M09/MAP09.TD",
+      "size": 360924,
+      "lba": 4026,
+      "is_directory": false,
+      "raw_name": "MAP09.TD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "a057046e1ff2566f897da3df60637ec3a54e67c0aefb55e7aeb16b386f9a2736",
+        "hashed_bytes": 360924
+      }
+    },
+    {
+      "path": "M09/STG09A.",
+      "size": 696,
+      "lba": 4203,
+      "is_directory": false,
+      "raw_name": "STG09A.;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "06d209597cee74255235c1a807f0a4944609d082f9c4d61063f2792cf75f6ad8",
+        "hashed_bytes": 696
+      }
+    },
+    {
+      "path": "M09/STG09AH.",
+      "size": 696,
+      "lba": 4204,
+      "is_directory": false,
+      "raw_name": "STG09AH.;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "ed23d856f5a42777f81c7bcd6fe107e7654b8b7cbeb40ae52d0ac33a48535eaf",
+        "hashed_bytes": 696
+      }
+    },
+    {
+      "path": "M09/STG09B.",
+      "size": 626,
+      "lba": 4205,
+      "is_directory": false,
+      "raw_name": "STG09B.;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "2544260dc926d2f96a258337d04d9d36d391c3d2032e9dc440cb5550afde7219",
+        "hashed_bytes": 626
+      }
+    },
+    {
+      "path": "M09/STG09BH.",
+      "size": 626,
+      "lba": 4206,
+      "is_directory": false,
+      "raw_name": "STG09BH.;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "60ad16769a4e2cf3647c6b670fdaaf835d35d1a7037fd03c236d876c0f4b7ba0",
+        "hashed_bytes": 626
+      }
+    },
+    {
+      "path": "M10",
+      "size": 2048,
+      "lba": 4207,
+      "is_directory": true,
+      "raw_name": "M10",
+      "flags": 2
+    },
+    {
+      "path": "M10/AIR10.MD",
+      "size": 60388,
+      "lba": 4208,
+      "is_directory": false,
+      "raw_name": "AIR10.MD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "aeeee786e82710e58e019945e0bfc290210cda919af9579c25cf94c5cbe68f4e",
+        "hashed_bytes": 60388
+      }
+    },
+    {
+      "path": "M10/AIR10.TD",
+      "size": 201856,
+      "lba": 4238,
+      "is_directory": false,
+      "raw_name": "AIR10.TD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "c70b791df9faaacd0ee4d212ecac92b89ae738a989b1169b723fc3b9f1f1ebec",
+        "hashed_bytes": 201856
+      }
+    },
+    {
+      "path": "M10/MAP10.MD",
+      "size": 322218,
+      "lba": 4337,
+      "is_directory": false,
+      "raw_name": "MAP10.MD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "ad8071f178e22cae4c5ae18970b84c0e3469bd03ba2fba5b9d03a397f4d4b502",
+        "hashed_bytes": 322218
+      }
+    },
+    {
+      "path": "M10/MAP10.TD",
+      "size": 207316,
+      "lba": 4495,
+      "is_directory": false,
+      "raw_name": "MAP10.TD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "53071225d371d4f25a64b5f273a6d14b80bd29ddfeb3b2169fab5ded4e10e51c",
+        "hashed_bytes": 207316
+      }
+    },
+    {
+      "path": "M10/STG10A.",
+      "size": 278,
+      "lba": 4597,
+      "is_directory": false,
+      "raw_name": "STG10A.;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "afcddfedfb7a2f160cacb3fdb4020edba228fd3cd90fb09677712932e728a24e",
+        "hashed_bytes": 278
+      }
+    },
+    {
+      "path": "M10/STG10AH.",
+      "size": 326,
+      "lba": 4598,
+      "is_directory": false,
+      "raw_name": "STG10AH.;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "a0a7432cf2513f0c825f82c6be93247e85e7e3e30d68dac1bc3b90701e61072c",
+        "hashed_bytes": 326
+      }
+    },
+    {
+      "path": "M12",
+      "size": 2048,
+      "lba": 4599,
+      "is_directory": true,
+      "raw_name": "M12",
+      "flags": 2
+    },
+    {
+      "path": "M12/AIR12.MD",
+      "size": 75168,
+      "lba": 4600,
+      "is_directory": false,
+      "raw_name": "AIR12.MD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "15c6b1c912e80d80240c86d0d167b0861e05bbbc03895ede240dce6fc9e6aa47",
+        "hashed_bytes": 75168
+      }
+    },
+    {
+      "path": "M12/AIR12.TD",
+      "size": 228836,
+      "lba": 4637,
+      "is_directory": false,
+      "raw_name": "AIR12.TD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "df92238af754df67d2a106cfdb5ea1b6a5ac2308ab7d9bcd5ed5f60f7baa24bd",
+        "hashed_bytes": 228836
+      }
+    },
+    {
+      "path": "M12/MAP12.MD",
+      "size": 253638,
+      "lba": 4749,
+      "is_directory": false,
+      "raw_name": "MAP12.MD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "3aa1ec964c49f1f796ce185517648a6025c955a875b29abe0c2ddd37ef37ec99",
+        "hashed_bytes": 253638
+      }
+    },
+    {
+      "path": "M12/MAP12.TD",
+      "size": 304400,
+      "lba": 4873,
+      "is_directory": false,
+      "raw_name": "MAP12.TD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "1f293567947f43251c07be4f8d62cc5ea6ccf502663b23bd9e078122a7b818f6",
+        "hashed_bytes": 304400
+      }
+    },
+    {
+      "path": "M12/STG12A.",
+      "size": 337,
+      "lba": 5022,
+      "is_directory": false,
+      "raw_name": "STG12A.;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "745a2210543256a0627dbd5c414195f54f7daf8e110ef309fbb5c2b202a022f7",
+        "hashed_bytes": 337
+      }
+    },
+    {
+      "path": "M12/STG12AH.",
+      "size": 420,
+      "lba": 5023,
+      "is_directory": false,
+      "raw_name": "STG12AH.;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "ba6ff7d779f0fff32bf6b533d918c270b497e920435fa819a1db6ad34f32c2b7",
+        "hashed_bytes": 420
+      }
+    },
+    {
+      "path": "M13",
+      "size": 2048,
+      "lba": 5024,
+      "is_directory": true,
+      "raw_name": "M13",
+      "flags": 2
+    },
+    {
+      "path": "M13/AIR13.MD",
+      "size": 67820,
+      "lba": 5025,
+      "is_directory": false,
+      "raw_name": "AIR13.MD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "8a6f582fedd75235704db74b088e98f7714f8aa4a70543c028f4c5810322c84d",
+        "hashed_bytes": 67820
+      }
+    },
+    {
+      "path": "M13/AIR13.TD",
+      "size": 234692,
+      "lba": 5059,
+      "is_directory": false,
+      "raw_name": "AIR13.TD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "525b0e70d36246f7ba5f5467c9f9eacd657d071959d9b48cff4c47ea1197b587",
+        "hashed_bytes": 234692
+      }
+    },
+    {
+      "path": "M13/MAP13.MD",
+      "size": 152990,
+      "lba": 5174,
+      "is_directory": false,
+      "raw_name": "MAP13.MD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "5af7833d1ab05ca37538e217cdcecae33a74d6ff41df9dea6fc9fcb5f4724f57",
+        "hashed_bytes": 152990
+      }
+    },
+    {
+      "path": "M13/MAP13.TD",
+      "size": 208828,
+      "lba": 5249,
+      "is_directory": false,
+      "raw_name": "MAP13.TD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "0f928543be0343da0baf531ab8b629d51b9fb9af4bec5b9772904e81ae76e8e4",
+        "hashed_bytes": 208828
+      }
+    },
+    {
+      "path": "M13/STG13A.",
+      "size": 647,
+      "lba": 5351,
+      "is_directory": false,
+      "raw_name": "STG13A.;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "0375b5843eba4338fa9800cc08e1fe5b39364a16e6a7ff676f949382239a1ef5",
+        "hashed_bytes": 647
+      }
+    },
+    {
+      "path": "M13/STG13AH.",
+      "size": 731,
+      "lba": 5352,
+      "is_directory": false,
+      "raw_name": "STG13AH.;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "3555cff766779ffc1f69f697cbd84e0894e13aeaad8d42b77e8ab4f338369901",
+        "hashed_bytes": 731
+      }
+    },
+    {
+      "path": "M13/STG13B.",
+      "size": 577,
+      "lba": 5353,
+      "is_directory": false,
+      "raw_name": "STG13B.;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "f20547206ea1fb5c3b0f0be5fbc9b29411cd343e0f24e522b53040238151ea26",
+        "hashed_bytes": 577
+      }
+    },
+    {
+      "path": "M13/STG13BH.",
+      "size": 661,
+      "lba": 5354,
+      "is_directory": false,
+      "raw_name": "STG13BH.;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "950117deebfeccad38d30a26d81456b92f20ed987595a4f3e2637de15b09b97d",
+        "hashed_bytes": 661
+      }
+    },
+    {
+      "path": "M14",
+      "size": 2048,
+      "lba": 5355,
+      "is_directory": true,
+      "raw_name": "M14",
+      "flags": 2
+    },
+    {
+      "path": "M14/AIR14.MD",
+      "size": 65548,
+      "lba": 5356,
+      "is_directory": false,
+      "raw_name": "AIR14.MD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "95b3fc659e2201b98d67e67ab7f0fc9fe4fde7734c724c148aed25a9078d2b3a",
+        "hashed_bytes": 65548
+      }
+    },
+    {
+      "path": "M14/AIR14.TD",
+      "size": 234724,
+      "lba": 5389,
+      "is_directory": false,
+      "raw_name": "AIR14.TD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "3fb86363c4533e4a954318c31a4258179e8bf5e280da533ec1e752702bd914a9",
+        "hashed_bytes": 234724
+      }
+    },
+    {
+      "path": "M14/MAP14.MD",
+      "size": 303686,
+      "lba": 5504,
+      "is_directory": false,
+      "raw_name": "MAP14.MD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "26f7e5405a1a78af657194bbe3066fadda93dfafd86f2a16b4c41f79ecf6d8b2",
+        "hashed_bytes": 303686
+      }
+    },
+    {
+      "path": "M14/MAP14.TD",
+      "size": 312184,
+      "lba": 5653,
+      "is_directory": false,
+      "raw_name": "MAP14.TD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "98ab329b13e5248ba9524523b199f434168d2c6f568b988c34998eb83028a823",
+        "hashed_bytes": 312184
+      }
+    },
+    {
+      "path": "M14/STG14A.",
+      "size": 332,
+      "lba": 5806,
+      "is_directory": false,
+      "raw_name": "STG14A.;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "e7fd5802c3a8f679360278bf4bf88cf26f423927ca1c696e91bcffa3646d8cb0",
+        "hashed_bytes": 332
+      }
+    },
+    {
+      "path": "M14/STG14AH.",
+      "size": 424,
+      "lba": 5807,
+      "is_directory": false,
+      "raw_name": "STG14AH.;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "67853df3d33ec35d862bb3ebe8f4ffc6813792da18252b383a4d1c575c30e07e",
+        "hashed_bytes": 424
+      }
+    },
+    {
+      "path": "M14/STG14B.",
+      "size": 240,
+      "lba": 5808,
+      "is_directory": false,
+      "raw_name": "STG14B.;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "0c100f363f5f43064aa500dcea546b52679ec263a0911dbc84cd30c7bf93e8bf",
+        "hashed_bytes": 240
+      }
+    },
+    {
+      "path": "M14/STG14BH.",
+      "size": 332,
+      "lba": 5809,
+      "is_directory": false,
+      "raw_name": "STG14BH.;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "3479cfd45f5fedc906b4f4354ba3395e7e0ab24b559aa33e64cc91e434bf3ce0",
+        "hashed_bytes": 332
+      }
+    },
+    {
+      "path": "M16",
+      "size": 2048,
+      "lba": 5810,
+      "is_directory": true,
+      "raw_name": "M16",
+      "flags": 2
+    },
+    {
+      "path": "M16/AIR16.MD",
+      "size": 92852,
+      "lba": 5811,
+      "is_directory": false,
+      "raw_name": "AIR16.MD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "dc71a6357eff77688d20a18493294f5da14a4e234b50e2e5cf5b1865df6fe61a",
+        "hashed_bytes": 92852
+      }
+    },
+    {
+      "path": "M16/AIR16.TD",
+      "size": 234724,
+      "lba": 5857,
+      "is_directory": false,
+      "raw_name": "AIR16.TD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "40f512761fed3f9422edb9fd981173aeaf7e1927b2d06f37c6a22022e8e29daa",
+        "hashed_bytes": 234724
+      }
+    },
+    {
+      "path": "M16/MAP16.MD",
+      "size": 376478,
+      "lba": 5972,
+      "is_directory": false,
+      "raw_name": "MAP16.MD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "382751acaecb5624f7f745dbd7fb7440f319df0085f83bbb764b55e522ab780b",
+        "hashed_bytes": 376478
+      }
+    },
+    {
+      "path": "M16/MAP16.TD",
+      "size": 420700,
+      "lba": 6156,
+      "is_directory": false,
+      "raw_name": "MAP16.TD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "db46471d97ccf77423c8b9bcba05fdd6ebba190b70d9c93a87a15b9c12c83dbf",
+        "hashed_bytes": 420700
+      }
+    },
+    {
+      "path": "M16/STG16A.",
+      "size": 981,
+      "lba": 6362,
+      "is_directory": false,
+      "raw_name": "STG16A.;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "f4a06c81a60e8131b2ca99d4f37dfc40b0fa53a85b56318e588ebcb4ad72c272",
+        "hashed_bytes": 981
+      }
+    },
+    {
+      "path": "M16/STG16AH.",
+      "size": 1023,
+      "lba": 6363,
+      "is_directory": false,
+      "raw_name": "STG16AH.;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "841e466e40d0ca84320c91496b1fdf73621cfddcb43e2f5e6ecd16ed0c635efb",
+        "hashed_bytes": 1023
+      }
+    },
+    {
+      "path": "M17",
+      "size": 2048,
+      "lba": 6364,
+      "is_directory": true,
+      "raw_name": "M17",
+      "flags": 2
+    },
+    {
+      "path": "M17/AIR17.MD",
+      "size": 100572,
+      "lba": 6365,
+      "is_directory": false,
+      "raw_name": "AIR17.MD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "248c9a5a381c06f4aef6ea6779a7f571965c9521d50f4f034c005eb57242d926",
+        "hashed_bytes": 100572
+      }
+    },
+    {
+      "path": "M17/AIR17.TD",
+      "size": 234692,
+      "lba": 6415,
+      "is_directory": false,
+      "raw_name": "AIR17.TD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "75a3f4d49c55a8fb88664552ea38756837632781cd9b703e88aa76d2de0c28d1",
+        "hashed_bytes": 234692
+      }
+    },
+    {
+      "path": "M17/MAP17.MD",
+      "size": 398702,
+      "lba": 6530,
+      "is_directory": false,
+      "raw_name": "MAP17.MD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "358ef90cc9883b1eadbd805c2d890fe0ddfa46b7d470fa8942a7023bb457c430",
+        "hashed_bytes": 398702
+      }
+    },
+    {
+      "path": "M17/MAP17.TD",
+      "size": 371852,
+      "lba": 6725,
+      "is_directory": false,
+      "raw_name": "MAP17.TD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "977dbe7326c83cab5317e93efe4f7469bd771ddcc8f532d9245881ee8ac8fd54",
+        "hashed_bytes": 371852
+      }
+    },
+    {
+      "path": "M17/STG17A.",
+      "size": 808,
+      "lba": 6907,
+      "is_directory": false,
+      "raw_name": "STG17A.;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "be69bde8a3f0e63842555728fbba9c6ac6fc2cdeda72045638d52dcbf2b94022",
+        "hashed_bytes": 808
+      }
+    },
+    {
+      "path": "M17/STG17AH.",
+      "size": 808,
+      "lba": 6908,
+      "is_directory": false,
+      "raw_name": "STG17AH.;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "d18541d84fe410c2aced0efad1e8fc779287bbf53376d2f5e6f00bc8f5014d62",
+        "hashed_bytes": 808
+      }
+    },
+    {
+      "path": "M17/STG17B.",
+      "size": 738,
+      "lba": 6909,
+      "is_directory": false,
+      "raw_name": "STG17B.;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "785807b38eede6f67f827df83e45159a576122881d601c7425d0a1c464bc9be9",
+        "hashed_bytes": 738
+      }
+    },
+    {
+      "path": "M17/STG17BH.",
+      "size": 738,
+      "lba": 6910,
+      "is_directory": false,
+      "raw_name": "STG17BH.;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "ded8321449ec744e6d4b25cf3bf3e19cd10a7f2f6c9759ebb9f7509beca5257a",
+        "hashed_bytes": 738
+      }
+    },
+    {
+      "path": "M18",
+      "size": 2048,
+      "lba": 6911,
+      "is_directory": true,
+      "raw_name": "M18",
+      "flags": 2
+    },
+    {
+      "path": "M18/AIR18.MD",
+      "size": 28404,
+      "lba": 6912,
+      "is_directory": false,
+      "raw_name": "AIR18.MD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "d3a844f4f7bb86a9dc5add703fa9b17ab53c1875bb0d9d97ce35fff52e361aa4",
+        "hashed_bytes": 28404
+      }
+    },
+    {
+      "path": "M18/AIR18.TD",
+      "size": 103380,
+      "lba": 6926,
+      "is_directory": false,
+      "raw_name": "AIR18.TD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "f44a7dfaa635b01ff3ec93c6cda155ed9f3cbbebab359a717685f555585782ac",
+        "hashed_bytes": 103380
+      }
+    },
+    {
+      "path": "M18/MAP18.MD",
+      "size": 271390,
+      "lba": 6977,
+      "is_directory": false,
+      "raw_name": "MAP18.MD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "9f111a293177f33f78763c5c5e617158dc1a7f9959b2f91be55bafdfac9fb816",
+        "hashed_bytes": 271390
+      }
+    },
+    {
+      "path": "M18/MAP18.TD",
+      "size": 328364,
+      "lba": 7110,
+      "is_directory": false,
+      "raw_name": "MAP18.TD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "22af0713fa76849b17f2d90bd260e3dcc0332ccf87b135c4d8c2b0f5157c2b95",
+        "hashed_bytes": 328364
+      }
+    },
+    {
+      "path": "M18/STG18A.",
+      "size": 193,
+      "lba": 7271,
+      "is_directory": false,
+      "raw_name": "STG18A.;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "f60200a0952305b1f182a0853340e09ef5e343370846bd19ca04f4d8b5108e09",
+        "hashed_bytes": 193
+      }
+    },
+    {
+      "path": "M18/STG18AH.",
+      "size": 340,
+      "lba": 7272,
+      "is_directory": false,
+      "raw_name": "STG18AH.;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "3657aeb314e54022c663e2acb2b3e3467d9942f6edd1dad594430bd60edf7b67",
+        "hashed_bytes": 340
+      }
+    },
+    {
+      "path": "M19",
+      "size": 2048,
+      "lba": 7273,
+      "is_directory": true,
+      "raw_name": "M19",
+      "flags": 2
+    },
+    {
+      "path": "M19/AIR19.MD",
+      "size": 91328,
+      "lba": 7274,
+      "is_directory": false,
+      "raw_name": "AIR19.MD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "17fe7c80159968287f0aec2c1301f3df6af7a9fb084fff196e501c6f9efdef71",
+        "hashed_bytes": 91328
+      }
+    },
+    {
+      "path": "M19/AIR19.TD",
+      "size": 201856,
+      "lba": 7319,
+      "is_directory": false,
+      "raw_name": "AIR19.TD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "eb5bf870334d8f612415a306d12674b6e728ceb905dad2a2330976571b8cc0fe",
+        "hashed_bytes": 201856
+      }
+    },
+    {
+      "path": "M19/MAP19.MD",
+      "size": 2766,
+      "lba": 7418,
+      "is_directory": false,
+      "raw_name": "MAP19.MD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "68826d463612d4584aaf7bafc9c215650a86a299f9ee1510308613aeebd94f83",
+        "hashed_bytes": 2766
+      }
+    },
+    {
+      "path": "M19/MAP19.TD",
+      "size": 144924,
+      "lba": 7420,
+      "is_directory": false,
+      "raw_name": "MAP19.TD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "6018123f2a7e9630d3fa7f54052b30099afdb2ba36860fc902cb6f8c36b148a4",
+        "hashed_bytes": 144924
+      }
+    },
+    {
+      "path": "M19/STG19A.",
+      "size": 122,
+      "lba": 7491,
+      "is_directory": false,
+      "raw_name": "STG19A.;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "aa68f867505a67f9b9d479bbbaa29115d6047250288069a94415be1e6b945eaa",
+        "hashed_bytes": 122
+      }
+    },
+    {
+      "path": "M19/STG19AH.",
+      "size": 122,
+      "lba": 7492,
+      "is_directory": false,
+      "raw_name": "STG19AH.;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "aa68f867505a67f9b9d479bbbaa29115d6047250288069a94415be1e6b945eaa",
+        "hashed_bytes": 122
+      }
+    },
+    {
+      "path": "M21",
+      "size": 2048,
+      "lba": 7493,
+      "is_directory": true,
+      "raw_name": "M21",
+      "flags": 2
+    },
+    {
+      "path": "M21/AIR21.MD",
+      "size": 367435,
+      "lba": 7494,
+      "is_directory": false,
+      "raw_name": "AIR21.MD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "c725ee6a2f34627504c2b229e6fcabaea1980942e5059aa5a593dc535a679c64",
+        "hashed_bytes": 367435
+      }
+    },
+    {
+      "path": "M21/AIR21.TD",
+      "size": 141816,
+      "lba": 7674,
+      "is_directory": false,
+      "raw_name": "AIR21.TD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "1169ee1bcb74ed7dca7b15ac29e8d0073f5acd09f4acae5cad4902cf88858958",
+        "hashed_bytes": 141816
+      }
+    },
+    {
+      "path": "M21/MAP21.MD",
+      "size": 233694,
+      "lba": 7744,
+      "is_directory": false,
+      "raw_name": "MAP21.MD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "c8e33d5e001ef23ab805b5d911b3f7d841192912d7b5d4969929db5ce1ae6391",
+        "hashed_bytes": 233694
+      }
+    },
+    {
+      "path": "M21/MAP21.TD",
+      "size": 131348,
+      "lba": 7859,
+      "is_directory": false,
+      "raw_name": "MAP21.TD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "579a356246e0729bee897bc750c719b1c40d0907d18aa0001c186d701b4e2e47",
+        "hashed_bytes": 131348
+      }
+    },
+    {
+      "path": "P1",
+      "size": 2048,
+      "lba": 7924,
+      "is_directory": true,
+      "raw_name": "P1",
+      "flags": 2
+    },
+    {
+      "path": "P1/M",
+      "size": 2048,
+      "lba": 7925,
+      "is_directory": true,
+      "raw_name": "M",
+      "flags": 2
+    },
+    {
+      "path": "P1/M/A10.MD",
+      "size": 10448,
+      "lba": 7926,
+      "is_directory": false,
+      "raw_name": "A10.MD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "f7794e56c4e2a57d7f53171fd55ef13cb1a4d2dc7a23f7b3dfa439784827be13",
+        "hashed_bytes": 10448
+      }
+    },
+    {
+      "path": "P1/M/EF2.MD",
+      "size": 8624,
+      "lba": 7932,
+      "is_directory": false,
+      "raw_name": "EF2.MD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "b98af71b3fc284b6ee7772c03889ac2db9d8aa708bbb40b593bfc512012b84c7",
+        "hashed_bytes": 8624
+      }
+    },
+    {
+      "path": "P1/M/F117.MD",
+      "size": 6960,
+      "lba": 7937,
+      "is_directory": false,
+      "raw_name": "F117.MD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "7534465e017e636f95e20f1fb9cb6e94340fbe9331534374197978a387065de4",
+        "hashed_bytes": 6960
+      }
+    },
+    {
+      "path": "P1/M/F14.MD",
+      "size": 10792,
+      "lba": 7941,
+      "is_directory": false,
+      "raw_name": "F14.MD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "8a84a6e9f325991355e93b6e4a3c90e70a7453b7b1c76e0fc785323bcca4faad",
+        "hashed_bytes": 10792
+      }
+    },
+    {
+      "path": "P1/M/F15.MD",
+      "size": 9768,
+      "lba": 7947,
+      "is_directory": false,
+      "raw_name": "F15.MD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "0c535889fe3c48bb4b2f35bea911b29f37b526926b06fa835928c15c42915591",
+        "hashed_bytes": 9768
+      }
+    },
+    {
+      "path": "P1/M/F16.MD",
+      "size": 8908,
+      "lba": 7952,
+      "is_directory": false,
+      "raw_name": "F16.MD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "9698aec35aeebcb057fce0d0b9a5b93557c1c3df393a76f4700063fa224dc0e4",
+        "hashed_bytes": 8908
+      }
+    },
+    {
+      "path": "P1/M/F18.MD",
+      "size": 9988,
+      "lba": 7957,
+      "is_directory": false,
+      "raw_name": "F18.MD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "32f6da194e39f4115a773d1d305a5bda6849971e426ad71dea0e1d96e4241304",
+        "hashed_bytes": 9988
+      }
+    },
+    {
+      "path": "P1/M/F22.MD",
+      "size": 9096,
+      "lba": 7962,
+      "is_directory": false,
+      "raw_name": "F22.MD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "278d063b3e12b840d187555b286d64879889d35ea27eb019d2b8137f76902d9c",
+        "hashed_bytes": 9096
+      }
+    },
+    {
+      "path": "P1/M/F23.MD",
+      "size": 8172,
+      "lba": 7967,
+      "is_directory": false,
+      "raw_name": "F23.MD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "627955f44e056ba7456962ef2a8414c2f43d2939657bbb9e88fc8199c783b15b",
+        "hashed_bytes": 8172
+      }
+    },
+    {
+      "path": "P1/M/F4.MD",
+      "size": 8680,
+      "lba": 7971,
+      "is_directory": false,
+      "raw_name": "F4.MD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "8d1249b6631a72c916099a554fc255429d6901d5e0f09e18bea756e95c07c504",
+        "hashed_bytes": 8680
+      }
+    },
+    {
+      "path": "P1/M/IDS.MD",
+      "size": 11052,
+      "lba": 7976,
+      "is_directory": false,
+      "raw_name": "IDS.MD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "9b6f30d5d8c2eb76fa1c8a595c23782011b073af3a6190986eb4237b0ab24a51",
+        "hashed_bytes": 11052
+      }
+    },
+    {
+      "path": "P1/M/MG29.MD",
+      "size": 11440,
+      "lba": 7982,
+      "is_directory": false,
+      "raw_name": "MG29.MD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "5f784e85a75b6836de164405d944a02978bc8baede9dffecea472591dc5d7b43",
+        "hashed_bytes": 11440
+      }
+    },
+    {
+      "path": "P1/M/MG31.MD",
+      "size": 10544,
+      "lba": 7988,
+      "is_directory": false,
+      "raw_name": "MG31.MD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "07dae130a1ad27428b83f96235e4381454a38de189da58d3e61ab0f61fbc8a12",
+        "hashed_bytes": 10544
+      }
+    },
+    {
+      "path": "P1/M/RAFL.MD",
+      "size": 9780,
+      "lba": 7994,
+      "is_directory": false,
+      "raw_name": "RAFL.MD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "ab52d2cd6b365b12898d890b8e442ba05cc925cf4e8d4e6019b99b710b789ea2",
+        "hashed_bytes": 9780
+      }
+    },
+    {
+      "path": "P1/M/SF39.MD",
+      "size": 8856,
+      "lba": 7999,
+      "is_directory": false,
+      "raw_name": "SF39.MD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "0cb67ee2ecdc98c160abd32b3151e97f219c7f7042ea71726c057df74b30bf0f",
+        "hashed_bytes": 8856
+      }
+    },
+    {
+      "path": "P1/M/SU27.MD",
+      "size": 10920,
+      "lba": 8004,
+      "is_directory": false,
+      "raw_name": "SU27.MD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "b883869ff8feb66bae676fc15d8c03050f6deb04b031100dde14913280162abe",
+        "hashed_bytes": 10920
+      }
+    },
+    {
+      "path": "P1/T",
+      "size": 2048,
+      "lba": 8010,
+      "is_directory": true,
+      "raw_name": "T",
+      "flags": 2
+    },
+    {
+      "path": "P1/T/A10.TD",
+      "size": 32840,
+      "lba": 8011,
+      "is_directory": false,
+      "raw_name": "A10.TD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "a7b41168f88a5b815ab40d2ebe45336600c0d60118d56d11fa302a17726dd157",
+        "hashed_bytes": 32840
+      }
+    },
+    {
+      "path": "P1/T/EF2.TD",
+      "size": 32840,
+      "lba": 8028,
+      "is_directory": false,
+      "raw_name": "EF2.TD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "f4885554f935e17c315dccadfa47f4a8536176fb3aee3933b3bb9048bc126f58",
+        "hashed_bytes": 32840
+      }
+    },
+    {
+      "path": "P1/T/F117.TD",
+      "size": 32840,
+      "lba": 8045,
+      "is_directory": false,
+      "raw_name": "F117.TD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "f46ec0cf1505182124a539bd9eaeb9e712924915f2e879691a2d866ed22d932d",
+        "hashed_bytes": 32840
+      }
+    },
+    {
+      "path": "P1/T/F14.TD",
+      "size": 32840,
+      "lba": 8062,
+      "is_directory": false,
+      "raw_name": "F14.TD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "ff1fbe6e6dd8511796a04ae9ce4b1ef1a4a27421b42f1fa1180c475c96b08da5",
+        "hashed_bytes": 32840
+      }
+    },
+    {
+      "path": "P1/T/F15.TD",
+      "size": 32840,
+      "lba": 8079,
+      "is_directory": false,
+      "raw_name": "F15.TD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "44e605ddafa7075732a6923afae70839052d2f323b35ce246660c747a8cc2045",
+        "hashed_bytes": 32840
+      }
+    },
+    {
+      "path": "P1/T/F16.TD",
+      "size": 32840,
+      "lba": 8096,
+      "is_directory": false,
+      "raw_name": "F16.TD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "6b0b5125415a3436fbe4695cd1e8a5ab4c578dbdf82a3763c58acdb6caf19c20",
+        "hashed_bytes": 32840
+      }
+    },
+    {
+      "path": "P1/T/F18.TD",
+      "size": 32840,
+      "lba": 8113,
+      "is_directory": false,
+      "raw_name": "F18.TD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "f13fe6e8112d1abcdad61aaa8e1cd9e0f28f06b77e0408583835a5350a90f8fd",
+        "hashed_bytes": 32840
+      }
+    },
+    {
+      "path": "P1/T/F22.TD",
+      "size": 32840,
+      "lba": 8130,
+      "is_directory": false,
+      "raw_name": "F22.TD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "6b4e95680fb09030270cf5f575c8525d4224dbd9fe3f29fa10bf9a6189f00154",
+        "hashed_bytes": 32840
+      }
+    },
+    {
+      "path": "P1/T/F23.TD",
+      "size": 32840,
+      "lba": 8147,
+      "is_directory": false,
+      "raw_name": "F23.TD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "de7e50a2bcc9313b4e1bfa25154637537684c1ec2dc2eba2627d80320449b586",
+        "hashed_bytes": 32840
+      }
+    },
+    {
+      "path": "P1/T/F4.TD",
+      "size": 32840,
+      "lba": 8164,
+      "is_directory": false,
+      "raw_name": "F4.TD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "b8e6044874b3f64b4f22e9f78bd6bc000b2bb3a428bce38726c77c418d63ba83",
+        "hashed_bytes": 32840
+      }
+    },
+    {
+      "path": "P1/T/IDS.TD",
+      "size": 32840,
+      "lba": 8181,
+      "is_directory": false,
+      "raw_name": "IDS.TD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "0fa622fef9f7ba38bfc6b4b52feceb1242572078c7d4ded4f51112a1d5d520c4",
+        "hashed_bytes": 32840
+      }
+    },
+    {
+      "path": "P1/T/MG29.TD",
+      "size": 32840,
+      "lba": 8198,
+      "is_directory": false,
+      "raw_name": "MG29.TD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "84af3f5c34420a87a1665dbc0edd0a846df8e072c87f041cc5b27e709d9d75af",
+        "hashed_bytes": 32840
+      }
+    },
+    {
+      "path": "P1/T/MG31.TD",
+      "size": 32840,
+      "lba": 8215,
+      "is_directory": false,
+      "raw_name": "MG31.TD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "d9be968b2f6d795f697dcf40114aca00e1c428dd30dcf777ba739ae6e75821cb",
+        "hashed_bytes": 32840
+      }
+    },
+    {
+      "path": "P1/T/RAFL.TD",
+      "size": 26984,
+      "lba": 8232,
+      "is_directory": false,
+      "raw_name": "RAFL.TD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "8a5156c70ea27add0f64d565f833bdc0050f99ab2b65af996b3e1183bc3b23a0",
+        "hashed_bytes": 26984
+      }
+    },
+    {
+      "path": "P1/T/SF39.TD",
+      "size": 32840,
+      "lba": 8246,
+      "is_directory": false,
+      "raw_name": "SF39.TD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "8e70f3a4e0bfbdef05f5729f66fd6ff25d9b0a0edabf2fd43a9bd29cc0f14ec4",
+        "hashed_bytes": 32840
+      }
+    },
+    {
+      "path": "P1/T/SU27.TD",
+      "size": 32840,
+      "lba": 8263,
+      "is_directory": false,
+      "raw_name": "SU27.TD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "1cdbdc80e74c684b7819240e0ce9af6bce776f1b34bc0930b3f4b4b63355a05c",
+        "hashed_bytes": 32840
+      }
+    },
+    {
+      "path": "P2",
+      "size": 2048,
+      "lba": 8280,
+      "is_directory": true,
+      "raw_name": "P2",
+      "flags": 2
+    },
+    {
+      "path": "P2/M",
+      "size": 2048,
+      "lba": 8281,
+      "is_directory": true,
+      "raw_name": "M",
+      "flags": 2
+    },
+    {
+      "path": "P2/M/A10.MD",
+      "size": 10448,
+      "lba": 8282,
+      "is_directory": false,
+      "raw_name": "A10.MD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "b86b7a54699826b50250af571975a909744097a488c28f834808039854d289b3",
+        "hashed_bytes": 10448
+      }
+    },
+    {
+      "path": "P2/M/EF2.MD",
+      "size": 8624,
+      "lba": 8288,
+      "is_directory": false,
+      "raw_name": "EF2.MD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "650bfa83b4e83aa1eb4f16d042f59c35ce697d0ee571444929ffb28676d832fd",
+        "hashed_bytes": 8624
+      }
+    },
+    {
+      "path": "P2/M/F117.MD",
+      "size": 6960,
+      "lba": 8293,
+      "is_directory": false,
+      "raw_name": "F117.MD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "151fa99df8d4e1862cbe7a97f507406ec48b9a3f528ef24e09d3fb1f141566aa",
+        "hashed_bytes": 6960
+      }
+    },
+    {
+      "path": "P2/M/F14.MD",
+      "size": 10792,
+      "lba": 8297,
+      "is_directory": false,
+      "raw_name": "F14.MD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "4f15d3a3a4ebb4ddc880bab6c597f757ba7af4c5dc67bc76dfcd92f65ecd1bff",
+        "hashed_bytes": 10792
+      }
+    },
+    {
+      "path": "P2/M/F15.MD",
+      "size": 9768,
+      "lba": 8303,
+      "is_directory": false,
+      "raw_name": "F15.MD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "c0f618893bbaf74b489925b1879d31ca36fe755d98ce09d7f5fce59ad42da2cf",
+        "hashed_bytes": 9768
+      }
+    },
+    {
+      "path": "P2/M/F16.MD",
+      "size": 8908,
+      "lba": 8308,
+      "is_directory": false,
+      "raw_name": "F16.MD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "11cd36161e60f7b7174193177ff366dc39bbdbd7e6c43fe9a2b5397414b1393d",
+        "hashed_bytes": 8908
+      }
+    },
+    {
+      "path": "P2/M/F18.MD",
+      "size": 9988,
+      "lba": 8313,
+      "is_directory": false,
+      "raw_name": "F18.MD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "a5bc37ccdf38f52d1783820ff223122a155306ca81c545910027d991a2d1eaf5",
+        "hashed_bytes": 9988
+      }
+    },
+    {
+      "path": "P2/M/F22.MD",
+      "size": 9096,
+      "lba": 8318,
+      "is_directory": false,
+      "raw_name": "F22.MD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "5fc944a9519422d61fc05e5efaa4611ad71ee603cabbf57fc60778f6b52f67a7",
+        "hashed_bytes": 9096
+      }
+    },
+    {
+      "path": "P2/M/F23.MD",
+      "size": 8172,
+      "lba": 8323,
+      "is_directory": false,
+      "raw_name": "F23.MD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "bac62fd025acfd796faf3aa505b559b25df2dcef988c4abb8c9d635a32c44bde",
+        "hashed_bytes": 8172
+      }
+    },
+    {
+      "path": "P2/M/F4.MD",
+      "size": 8680,
+      "lba": 8327,
+      "is_directory": false,
+      "raw_name": "F4.MD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "92eb432f6c5ab165239170002256dc9fa5dac206cda37dca0d1ccea5488de904",
+        "hashed_bytes": 8680
+      }
+    },
+    {
+      "path": "P2/M/IDS.MD",
+      "size": 11052,
+      "lba": 8332,
+      "is_directory": false,
+      "raw_name": "IDS.MD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "b2feeb306a0b16047252fa46137e423c53256a7647d24b79b00c1611e0786d83",
+        "hashed_bytes": 11052
+      }
+    },
+    {
+      "path": "P2/M/MG29.MD",
+      "size": 11440,
+      "lba": 8338,
+      "is_directory": false,
+      "raw_name": "MG29.MD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "9506dd04d51864a2fbff914d409a83ba66f257363484fd6148af4a52466c3906",
+        "hashed_bytes": 11440
+      }
+    },
+    {
+      "path": "P2/M/MG31.MD",
+      "size": 10544,
+      "lba": 8344,
+      "is_directory": false,
+      "raw_name": "MG31.MD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "d4079030f8967463d858e62af5a145d9d7d6217ae46cf85cc1cb78baec916f5a",
+        "hashed_bytes": 10544
+      }
+    },
+    {
+      "path": "P2/M/RAFL.MD",
+      "size": 9780,
+      "lba": 8350,
+      "is_directory": false,
+      "raw_name": "RAFL.MD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "cb0a85592c1f2f9cc11dc3b6621de437d29ac64bfb1fc5209e754bbf9a80a3e6",
+        "hashed_bytes": 9780
+      }
+    },
+    {
+      "path": "P2/M/SF39.MD",
+      "size": 8856,
+      "lba": 8355,
+      "is_directory": false,
+      "raw_name": "SF39.MD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "858fb9a0107944509545678fb1825171c22483fd8013c4f3b4e429b4410f1fa9",
+        "hashed_bytes": 8856
+      }
+    },
+    {
+      "path": "P2/M/SU27.MD",
+      "size": 10920,
+      "lba": 8360,
+      "is_directory": false,
+      "raw_name": "SU27.MD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "a649257a857c7ad9a488520a602ef9c0b4fb7d535e59105a96c9e0e09cc44f54",
+        "hashed_bytes": 10920
+      }
+    },
+    {
+      "path": "P2/T",
+      "size": 2048,
+      "lba": 8366,
+      "is_directory": true,
+      "raw_name": "T",
+      "flags": 2
+    },
+    {
+      "path": "P2/T/A10.TD",
+      "size": 32840,
+      "lba": 8367,
+      "is_directory": false,
+      "raw_name": "A10.TD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "9f3a3585b2ef4e2cdb4813bcbe2afd4bc8a2a16b07b3d838876de69ad6839eab",
+        "hashed_bytes": 32840
+      }
+    },
+    {
+      "path": "P2/T/EF2.TD",
+      "size": 32840,
+      "lba": 8384,
+      "is_directory": false,
+      "raw_name": "EF2.TD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "2d87dc47dcc8e7950e5892f123cb99727014e9b6f4f91ced92d9963851e76813",
+        "hashed_bytes": 32840
+      }
+    },
+    {
+      "path": "P2/T/F117.TD",
+      "size": 32840,
+      "lba": 8401,
+      "is_directory": false,
+      "raw_name": "F117.TD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "7d9a33321a72b0aedabbf710bbbaef140228bd534d2ff65d92b161423c8d6f83",
+        "hashed_bytes": 32840
+      }
+    },
+    {
+      "path": "P2/T/F14.TD",
+      "size": 32840,
+      "lba": 8418,
+      "is_directory": false,
+      "raw_name": "F14.TD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "561fc129f4b6e271806147b43f6249e23a48d30944e44c4fac616659489532ea",
+        "hashed_bytes": 32840
+      }
+    },
+    {
+      "path": "P2/T/F15.TD",
+      "size": 32840,
+      "lba": 8435,
+      "is_directory": false,
+      "raw_name": "F15.TD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "39d7bbb660e58e3889aa2f55ae76d4099d16bbc9cd05726aceda749fc60e355b",
+        "hashed_bytes": 32840
+      }
+    },
+    {
+      "path": "P2/T/F16.TD",
+      "size": 32840,
+      "lba": 8452,
+      "is_directory": false,
+      "raw_name": "F16.TD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "f86e6e4d65867b9ce2602d52f749d730073e7605a75860ce7c65238cc962a152",
+        "hashed_bytes": 32840
+      }
+    },
+    {
+      "path": "P2/T/F18.TD",
+      "size": 32840,
+      "lba": 8469,
+      "is_directory": false,
+      "raw_name": "F18.TD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "1a81f19d99ba5021dd40da7f4b0f6fc121a60cef2f622f2182f8513dfb75a87b",
+        "hashed_bytes": 32840
+      }
+    },
+    {
+      "path": "P2/T/F22.TD",
+      "size": 32840,
+      "lba": 8486,
+      "is_directory": false,
+      "raw_name": "F22.TD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "ae2b5592c3730fd28a50acd196741af754ef4ef9182a4aa1ecaeedf5df488440",
+        "hashed_bytes": 32840
+      }
+    },
+    {
+      "path": "P2/T/F23.TD",
+      "size": 32840,
+      "lba": 8503,
+      "is_directory": false,
+      "raw_name": "F23.TD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "cc816c824af7365cc21b026c844409bbfa309867b8a02aba172ba135f494e126",
+        "hashed_bytes": 32840
+      }
+    },
+    {
+      "path": "P2/T/F4.TD",
+      "size": 32840,
+      "lba": 8520,
+      "is_directory": false,
+      "raw_name": "F4.TD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "7851c0766243301e2be198b0d6cbd7b42e189801dcebb4414143976367ef77b4",
+        "hashed_bytes": 32840
+      }
+    },
+    {
+      "path": "P2/T/IDS.TD",
+      "size": 32840,
+      "lba": 8537,
+      "is_directory": false,
+      "raw_name": "IDS.TD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "67e76bf21b74c77cac63c1a13ab1e57387cd8e1f2672304763340b8aca293ee7",
+        "hashed_bytes": 32840
+      }
+    },
+    {
+      "path": "P2/T/MG29.TD",
+      "size": 32840,
+      "lba": 8554,
+      "is_directory": false,
+      "raw_name": "MG29.TD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "8eb07392b8a70f715dc67b9924a20d1cc1a9f33511c36c4e0d987252ae1e82b8",
+        "hashed_bytes": 32840
+      }
+    },
+    {
+      "path": "P2/T/MG31.TD",
+      "size": 32840,
+      "lba": 8571,
+      "is_directory": false,
+      "raw_name": "MG31.TD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "334a10573a6bf3867df27da65b281cbcad909db2b6411637750ed8e79564257e",
+        "hashed_bytes": 32840
+      }
+    },
+    {
+      "path": "P2/T/RAFL.TD",
+      "size": 26984,
+      "lba": 8588,
+      "is_directory": false,
+      "raw_name": "RAFL.TD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "2e65ee58a5c59efa7cff43da00205313a898e3cba2291be61a97629a91096e8b",
+        "hashed_bytes": 26984
+      }
+    },
+    {
+      "path": "P2/T/SF39.TD",
+      "size": 32840,
+      "lba": 8602,
+      "is_directory": false,
+      "raw_name": "SF39.TD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "0888909bd377a17e710a28a9d14ce7fe385c99f027f20d45529f89ee93b8f792",
+        "hashed_bytes": 32840
+      }
+    },
+    {
+      "path": "P2/T/SU27.TD",
+      "size": 32840,
+      "lba": 8619,
+      "is_directory": false,
+      "raw_name": "SU27.TD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "b1d6f4534a3a3fc870fd07f2931e4746cd6350234bb656347efe0d8a2a03abff",
+        "hashed_bytes": 32840
+      }
+    },
+    {
+      "path": "P3",
+      "size": 2048,
+      "lba": 8636,
+      "is_directory": true,
+      "raw_name": "P3",
+      "flags": 2
+    },
+    {
+      "path": "P3/M",
+      "size": 2048,
+      "lba": 8637,
+      "is_directory": true,
+      "raw_name": "M",
+      "flags": 2
+    },
+    {
+      "path": "P3/M/A10.MD",
+      "size": 10464,
+      "lba": 8638,
+      "is_directory": false,
+      "raw_name": "A10.MD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "ef99cbe47d6389cb551482f0365e2e64f648a0d834e54d592718afcce67a19ab",
+        "hashed_bytes": 10464
+      }
+    },
+    {
+      "path": "P3/M/EF2.MD",
+      "size": 8544,
+      "lba": 8644,
+      "is_directory": false,
+      "raw_name": "EF2.MD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "b2acf9de3a0f673b7fc40500ce2793467872faef785b4acd2940ce78acc95abe",
+        "hashed_bytes": 8544
+      }
+    },
+    {
+      "path": "P3/M/F117.MD",
+      "size": 6960,
+      "lba": 8649,
+      "is_directory": false,
+      "raw_name": "F117.MD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "9bd143727c2fc3ca78aadd560f159cf65278e47ef863aef95765f0ca8b5dfed1",
+        "hashed_bytes": 6960
+      }
+    },
+    {
+      "path": "P3/M/F14.MD",
+      "size": 10764,
+      "lba": 8653,
+      "is_directory": false,
+      "raw_name": "F14.MD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "db90c80b09410b2d1699e84ece25cc7d355330c9f512c418aaddebf189557ab5",
+        "hashed_bytes": 10764
+      }
+    },
+    {
+      "path": "P3/M/F15.MD",
+      "size": 9384,
+      "lba": 8659,
+      "is_directory": false,
+      "raw_name": "F15.MD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "847d185096e2c9e70629d171a1aa38ae2cb690b44715b297c8d527be6a30860a",
+        "hashed_bytes": 9384
+      }
+    },
+    {
+      "path": "P3/M/F16.MD",
+      "size": 9212,
+      "lba": 8664,
+      "is_directory": false,
+      "raw_name": "F16.MD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "940a5ce2dcf312e560dd9677df22db80d1de67032cf90d8b3d27c852e15c2615",
+        "hashed_bytes": 9212
+      }
+    },
+    {
+      "path": "P3/M/F18.MD",
+      "size": 9956,
+      "lba": 8669,
+      "is_directory": false,
+      "raw_name": "F18.MD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "4ec2c30ad5211df174e76cf38126ff719c8c11646a9896e999c56aba2a367054",
+        "hashed_bytes": 9956
+      }
+    },
+    {
+      "path": "P3/M/F22.MD",
+      "size": 9112,
+      "lba": 8674,
+      "is_directory": false,
+      "raw_name": "F22.MD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "0175802a58529b034392d01533565031fc104b55d84e5a858a308e45069a054b",
+        "hashed_bytes": 9112
+      }
+    },
+    {
+      "path": "P3/M/F23.MD",
+      "size": 8164,
+      "lba": 8679,
+      "is_directory": false,
+      "raw_name": "F23.MD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "333ccd72134d3eb3cd3b8ac67d256d88308b47657aec6a5b0a09b5dfe28820a8",
+        "hashed_bytes": 8164
+      }
+    },
+    {
+      "path": "P3/M/F4.MD",
+      "size": 8648,
+      "lba": 8683,
+      "is_directory": false,
+      "raw_name": "F4.MD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "078db7f61b39911825606bcab5c898fceb29ec7e68b242dcfde79648a3f464d4",
+        "hashed_bytes": 8648
+      }
+    },
+    {
+      "path": "P3/M/IDS.MD",
+      "size": 11868,
+      "lba": 8688,
+      "is_directory": false,
+      "raw_name": "IDS.MD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "d908b5599109bf19c8ce7325407327ed9b1a2dc3e48fe9baaeafab7ae59b404b",
+        "hashed_bytes": 11868
+      }
+    },
+    {
+      "path": "P3/M/MG29.MD",
+      "size": 10872,
+      "lba": 8694,
+      "is_directory": false,
+      "raw_name": "MG29.MD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "af973e0f5284bfbefc931bb526209c9900ae3963775ca3723587b4deff11e089",
+        "hashed_bytes": 10872
+      }
+    },
+    {
+      "path": "P3/M/MG31.MD",
+      "size": 10560,
+      "lba": 8700,
+      "is_directory": false,
+      "raw_name": "MG31.MD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "42960735e5b7b5696e566e87c75224ff936473a34c05b477a2227ec583e15798",
+        "hashed_bytes": 10560
+      }
+    },
+    {
+      "path": "P3/M/RAFL.MD",
+      "size": 9980,
+      "lba": 8706,
+      "is_directory": false,
+      "raw_name": "RAFL.MD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "fb1806a3ddb36c29dd3c77dc2bb2a6fcc017c1733acb74a4e4ba2286fafbf425",
+        "hashed_bytes": 9980
+      }
+    },
+    {
+      "path": "P3/M/SF39.MD",
+      "size": 8848,
+      "lba": 8711,
+      "is_directory": false,
+      "raw_name": "SF39.MD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "2183bbd1532d420b6dd7b27240124e670bdbc5d75895df89f444f4f79f5cdfd2",
+        "hashed_bytes": 8848
+      }
+    },
+    {
+      "path": "P3/M/SU27.MD",
+      "size": 10920,
+      "lba": 8716,
+      "is_directory": false,
+      "raw_name": "SU27.MD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "2fe895ff0dfc03d535829cc6812439dd2c801f06804d2a6ec0720694f9b05385",
+        "hashed_bytes": 10920
+      }
+    },
+    {
+      "path": "P3/T",
+      "size": 2048,
+      "lba": 8722,
+      "is_directory": true,
+      "raw_name": "T",
+      "flags": 2
+    },
+    {
+      "path": "P3/T/A10.TD",
+      "size": 32840,
+      "lba": 8723,
+      "is_directory": false,
+      "raw_name": "A10.TD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "6ce94adc1279ff4ce359ae5b4f1b0dc17fb19dc8c6c9c30b3e2bee9677012e41",
+        "hashed_bytes": 32840
+      }
+    },
+    {
+      "path": "P3/T/EF2.TD",
+      "size": 32840,
+      "lba": 8740,
+      "is_directory": false,
+      "raw_name": "EF2.TD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "33a82da562c028a28c6e72f2e31df644e3a12554d1c9d53ee313bd28c9f405cc",
+        "hashed_bytes": 32840
+      }
+    },
+    {
+      "path": "P3/T/F117.TD",
+      "size": 32840,
+      "lba": 8757,
+      "is_directory": false,
+      "raw_name": "F117.TD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "7033bf103e791a2cf7b4b5cca3aa93225cb11f7d750f6d840e26ceccd3f5babf",
+        "hashed_bytes": 32840
+      }
+    },
+    {
+      "path": "P3/T/F14.TD",
+      "size": 32840,
+      "lba": 8774,
+      "is_directory": false,
+      "raw_name": "F14.TD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "19dba41be7f99a75b31fb4a5e5d6b720e5f2a15193909d2647afb298cb7bd47f",
+        "hashed_bytes": 32840
+      }
+    },
+    {
+      "path": "P3/T/F15.TD",
+      "size": 32840,
+      "lba": 8791,
+      "is_directory": false,
+      "raw_name": "F15.TD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "fd68d528459a6a288b0ae522afb03e7279d9d2f57083ca302d8db9ffd87ca307",
+        "hashed_bytes": 32840
+      }
+    },
+    {
+      "path": "P3/T/F16.TD",
+      "size": 32840,
+      "lba": 8808,
+      "is_directory": false,
+      "raw_name": "F16.TD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "76a07186135d8bce77a1524252493d82b0beadccca8b41311712a4ecadd20123",
+        "hashed_bytes": 32840
+      }
+    },
+    {
+      "path": "P3/T/F18.TD",
+      "size": 32840,
+      "lba": 8825,
+      "is_directory": false,
+      "raw_name": "F18.TD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "fd870f55a7eb51e97b632c355dabd2e177c55ec5803bc5d3b9cba2bca9ddb033",
+        "hashed_bytes": 32840
+      }
+    },
+    {
+      "path": "P3/T/F22.TD",
+      "size": 32840,
+      "lba": 8842,
+      "is_directory": false,
+      "raw_name": "F22.TD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "ff02eaf3b02e22a1e7bf615f2645df7ed39162a4c0ad720b23f57bf965cd4a1b",
+        "hashed_bytes": 32840
+      }
+    },
+    {
+      "path": "P3/T/F23.TD",
+      "size": 32840,
+      "lba": 8859,
+      "is_directory": false,
+      "raw_name": "F23.TD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "4e94accf0fc0b0c0fd595dc425b48d7384b3245451765fc49ac561fe95e7c413",
+        "hashed_bytes": 32840
+      }
+    },
+    {
+      "path": "P3/T/F4.TD",
+      "size": 32840,
+      "lba": 8876,
+      "is_directory": false,
+      "raw_name": "F4.TD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "4dd44968aef81dce1c5f36d6ccbdfed212b5f9f41d9fbce8e69e679e0771f9e7",
+        "hashed_bytes": 32840
+      }
+    },
+    {
+      "path": "P3/T/IDS.TD",
+      "size": 32840,
+      "lba": 8893,
+      "is_directory": false,
+      "raw_name": "IDS.TD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "bfffda700e2e866e1c9fce0d17e9dd264063b1e8ccb974e1eb2d513ade3a5167",
+        "hashed_bytes": 32840
+      }
+    },
+    {
+      "path": "P3/T/MG29.TD",
+      "size": 32840,
+      "lba": 8910,
+      "is_directory": false,
+      "raw_name": "MG29.TD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "5c93ff73e1db38f2482254154793fd93f4b0fa197fced45d52ff1ea2a5a5ccc8",
+        "hashed_bytes": 32840
+      }
+    },
+    {
+      "path": "P3/T/MG31.TD",
+      "size": 32840,
+      "lba": 8927,
+      "is_directory": false,
+      "raw_name": "MG31.TD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "3bd64173d2099aa297f08536b465a2ecddc29f8ac6494cb7ff938bee6401b703",
+        "hashed_bytes": 32840
+      }
+    },
+    {
+      "path": "P3/T/RAFL.TD",
+      "size": 26984,
+      "lba": 8944,
+      "is_directory": false,
+      "raw_name": "RAFL.TD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "bfc019c951485cc13cd8b3c7fea67ec05eee16b911a6306bb599556292d43179",
+        "hashed_bytes": 26984
+      }
+    },
+    {
+      "path": "P3/T/SF39.TD",
+      "size": 32840,
+      "lba": 8958,
+      "is_directory": false,
+      "raw_name": "SF39.TD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "77664ca6534963c56364cc32e50d60e74ee8b665ead2259a52c136c662fca08e",
+        "hashed_bytes": 32840
+      }
+    },
+    {
+      "path": "P3/T/SU27.TD",
+      "size": 32840,
+      "lba": 8975,
+      "is_directory": false,
+      "raw_name": "SU27.TD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "1f9597b8413a6ea307a3cc6529c80d6a66aaaf591499120e81bd5f3ccb9b46ca",
+        "hashed_bytes": 32840
+      }
+    },
+    {
+      "path": "P4",
+      "size": 2048,
+      "lba": 8992,
+      "is_directory": true,
+      "raw_name": "P4",
+      "flags": 2
+    },
+    {
+      "path": "P4/M",
+      "size": 2048,
+      "lba": 8993,
+      "is_directory": true,
+      "raw_name": "M",
+      "flags": 2
+    },
+    {
+      "path": "P4/M/A10.MD",
+      "size": 10464,
+      "lba": 8994,
+      "is_directory": false,
+      "raw_name": "A10.MD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "73253493fe82046770b010c0baaa1de15cb850621a01581813a7033abafcb323",
+        "hashed_bytes": 10464
+      }
+    },
+    {
+      "path": "P4/M/EF2.MD",
+      "size": 8544,
+      "lba": 9000,
+      "is_directory": false,
+      "raw_name": "EF2.MD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "4f7c345b9dcfa5a493de5316d8e2340c2992a626c8041a33cb4ea9856f3bd00f",
+        "hashed_bytes": 8544
+      }
+    },
+    {
+      "path": "P4/M/F117.MD",
+      "size": 6960,
+      "lba": 9005,
+      "is_directory": false,
+      "raw_name": "F117.MD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "e7d384e364d45a57275857e7c82cc2524f37d7d3686f44415bfbf0c98537713d",
+        "hashed_bytes": 6960
+      }
+    },
+    {
+      "path": "P4/M/F14.MD",
+      "size": 10764,
+      "lba": 9009,
+      "is_directory": false,
+      "raw_name": "F14.MD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "d36e7ebaf142c1f26be884444ba7ad206443abced696f0085204f4b5d6426623",
+        "hashed_bytes": 10764
+      }
+    },
+    {
+      "path": "P4/M/F15.MD",
+      "size": 9384,
+      "lba": 9015,
+      "is_directory": false,
+      "raw_name": "F15.MD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "afa4293b1188735a0b7cff4dcbf2b0a9ba161c6fa624d8be930064fd078d3a8a",
+        "hashed_bytes": 9384
+      }
+    },
+    {
+      "path": "P4/M/F16.MD",
+      "size": 9212,
+      "lba": 9020,
+      "is_directory": false,
+      "raw_name": "F16.MD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "ab430ff10babb9364f13e9fe64e312bd445516b0f291863b0c4b8cb2c4cbbc7f",
+        "hashed_bytes": 9212
+      }
+    },
+    {
+      "path": "P4/M/F18.MD",
+      "size": 9956,
+      "lba": 9025,
+      "is_directory": false,
+      "raw_name": "F18.MD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "bc057d665331c252ceb41790d0dac2e9fee863b270347a98317fb4c512558d52",
+        "hashed_bytes": 9956
+      }
+    },
+    {
+      "path": "P4/M/F22.MD",
+      "size": 9112,
+      "lba": 9030,
+      "is_directory": false,
+      "raw_name": "F22.MD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "0f8e1d9e96aa6149e50694d3bb4301ca8e90d4461f1e11b4c19032af8dfaf7ae",
+        "hashed_bytes": 9112
+      }
+    },
+    {
+      "path": "P4/M/F23.MD",
+      "size": 8164,
+      "lba": 9035,
+      "is_directory": false,
+      "raw_name": "F23.MD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "0eef5ec39a25fef6379189c5e1a920ae08db0573663c00b8cf9c5082d42c20e5",
+        "hashed_bytes": 8164
+      }
+    },
+    {
+      "path": "P4/M/F4.MD",
+      "size": 8648,
+      "lba": 9039,
+      "is_directory": false,
+      "raw_name": "F4.MD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "46aec8088aa7a702132abf8a7a38b5c2ab41d51be7625aea79032e40b46b4ee3",
+        "hashed_bytes": 8648
+      }
+    },
+    {
+      "path": "P4/M/IDS.MD",
+      "size": 11868,
+      "lba": 9044,
+      "is_directory": false,
+      "raw_name": "IDS.MD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "ea928b50a5ad3805a8e549341722a2d2d85c2eea895d87795f80f33d155b0a8e",
+        "hashed_bytes": 11868
+      }
+    },
+    {
+      "path": "P4/M/MG29.MD",
+      "size": 10872,
+      "lba": 9050,
+      "is_directory": false,
+      "raw_name": "MG29.MD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "14e1b6ce3191bdd99096c22149a0bd256760a716d88759b1dc605a8a3568483d",
+        "hashed_bytes": 10872
+      }
+    },
+    {
+      "path": "P4/M/MG31.MD",
+      "size": 10560,
+      "lba": 9056,
+      "is_directory": false,
+      "raw_name": "MG31.MD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "44130973c016bbe17d0839224b90c472e43b886f276640745aee7570bd6d705d",
+        "hashed_bytes": 10560
+      }
+    },
+    {
+      "path": "P4/M/RAFL.MD",
+      "size": 9980,
+      "lba": 9062,
+      "is_directory": false,
+      "raw_name": "RAFL.MD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "844654741e90d7b46d913ffedc37888e2b0bbefaeb971c441d77774143d333ed",
+        "hashed_bytes": 9980
+      }
+    },
+    {
+      "path": "P4/M/SF39.MD",
+      "size": 8848,
+      "lba": 9067,
+      "is_directory": false,
+      "raw_name": "SF39.MD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "661bd6879a09968204e851718d85a499311a1f0a5578c06af7887ec0c956d9be",
+        "hashed_bytes": 8848
+      }
+    },
+    {
+      "path": "P4/M/SU27.MD",
+      "size": 10920,
+      "lba": 9072,
+      "is_directory": false,
+      "raw_name": "SU27.MD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "370ff970fe6ed123c2db62cb3021f023cec5c06d08697e92e4b14e912e6bd6ed",
+        "hashed_bytes": 10920
+      }
+    },
+    {
+      "path": "P4/T",
+      "size": 2048,
+      "lba": 9078,
+      "is_directory": true,
+      "raw_name": "T",
+      "flags": 2
+    },
+    {
+      "path": "P4/T/A10.TD",
+      "size": 32840,
+      "lba": 9079,
+      "is_directory": false,
+      "raw_name": "A10.TD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "8a1fd4e3504f1669197be35168a701f850fe217b0bdfe51179f1348b35d3eec0",
+        "hashed_bytes": 32840
+      }
+    },
+    {
+      "path": "P4/T/EF2.TD",
+      "size": 32840,
+      "lba": 9096,
+      "is_directory": false,
+      "raw_name": "EF2.TD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "6b4fb91a7b504ed2051ffd3e5b65b5b4645e37e85c4ee833f7008820d19e8c49",
+        "hashed_bytes": 32840
+      }
+    },
+    {
+      "path": "P4/T/F117.TD",
+      "size": 32840,
+      "lba": 9113,
+      "is_directory": false,
+      "raw_name": "F117.TD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "84acfb1a2dba16e35eafbdfc0744715a8baa961be9f4218b91410ef144c130d4",
+        "hashed_bytes": 32840
+      }
+    },
+    {
+      "path": "P4/T/F14.TD",
+      "size": 32840,
+      "lba": 9130,
+      "is_directory": false,
+      "raw_name": "F14.TD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "12574eb547a774c5ea18f5d10f39f2cb20c9cc92a8c097f39d52121e0d854ec3",
+        "hashed_bytes": 32840
+      }
+    },
+    {
+      "path": "P4/T/F15.TD",
+      "size": 32840,
+      "lba": 9147,
+      "is_directory": false,
+      "raw_name": "F15.TD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "44876bfb07983cc99cae612498baf03db737a15fbdf69b0660c7be1eee8fcf90",
+        "hashed_bytes": 32840
+      }
+    },
+    {
+      "path": "P4/T/F16.TD",
+      "size": 32840,
+      "lba": 9164,
+      "is_directory": false,
+      "raw_name": "F16.TD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "c2ed62f88728fcfde599909d02713b8d8a14de701692c4ae3529c1a035427032",
+        "hashed_bytes": 32840
+      }
+    },
+    {
+      "path": "P4/T/F18.TD",
+      "size": 32840,
+      "lba": 9181,
+      "is_directory": false,
+      "raw_name": "F18.TD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "f0b1fd35346e81640e20ca12186d17f266b7a4c8062b696b0f338234aad55569",
+        "hashed_bytes": 32840
+      }
+    },
+    {
+      "path": "P4/T/F22.TD",
+      "size": 32840,
+      "lba": 9198,
+      "is_directory": false,
+      "raw_name": "F22.TD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "b7f2ed6d0915c3034ece15db3b165b65c5a16a35a7162f496ff2e98bfc8d61b1",
+        "hashed_bytes": 32840
+      }
+    },
+    {
+      "path": "P4/T/F23.TD",
+      "size": 32840,
+      "lba": 9215,
+      "is_directory": false,
+      "raw_name": "F23.TD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "41732d18e441a6982221d3c8413294589bfe60113774abe5ddad197e6713f50b",
+        "hashed_bytes": 32840
+      }
+    },
+    {
+      "path": "P4/T/F4.TD",
+      "size": 32840,
+      "lba": 9232,
+      "is_directory": false,
+      "raw_name": "F4.TD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "1de020024877cf2439f0844843d52fcef532c0b5b971565703f203ff625cc275",
+        "hashed_bytes": 32840
+      }
+    },
+    {
+      "path": "P4/T/IDS.TD",
+      "size": 32840,
+      "lba": 9249,
+      "is_directory": false,
+      "raw_name": "IDS.TD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "92aae3869a672d3d809d39132b7f7512d6830205b6a5d398f3ba86974b2fa7b4",
+        "hashed_bytes": 32840
+      }
+    },
+    {
+      "path": "P4/T/MG29.TD",
+      "size": 32840,
+      "lba": 9266,
+      "is_directory": false,
+      "raw_name": "MG29.TD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "fd34f4da882465d238dd1494512a459cc2a3dc05b438283667163e565bfa8245",
+        "hashed_bytes": 32840
+      }
+    },
+    {
+      "path": "P4/T/MG31.TD",
+      "size": 32840,
+      "lba": 9283,
+      "is_directory": false,
+      "raw_name": "MG31.TD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "f25237904e7f70fece6fe7328c4e1f7d0ca02c0ea5b2ab3c5c4545442eaca38e",
+        "hashed_bytes": 32840
+      }
+    },
+    {
+      "path": "P4/T/RAFL.TD",
+      "size": 26984,
+      "lba": 9300,
+      "is_directory": false,
+      "raw_name": "RAFL.TD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "f386f42b4915be98b4ce7f85b43b9fac7b00856877c35bf97a4e3458bd2ce575",
+        "hashed_bytes": 26984
+      }
+    },
+    {
+      "path": "P4/T/SF39.TD",
+      "size": 32840,
+      "lba": 9314,
+      "is_directory": false,
+      "raw_name": "SF39.TD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "5d47bfa5b2960c6379384805dc0662e730f1cf26bc758788df3ad04b0af8c810",
+        "hashed_bytes": 32840
+      }
+    },
+    {
+      "path": "P4/T/SU27.TD",
+      "size": 32840,
+      "lba": 9331,
+      "is_directory": false,
+      "raw_name": "SU27.TD;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "2e8ef348a4b31a94f7dd0a097c17c69530f67d88c55d3fe614c10818c9ea9590",
+        "hashed_bytes": 32840
+      }
+    },
+    {
+      "path": "PSX.EXE",
+      "size": 38912,
+      "lba": 44958,
+      "is_directory": false,
+      "raw_name": "PSX.EXE;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "ed36a6f28f8eaec5f9f1ac8fdd08105e926d450029e6e5b88cb8c8acfc218a52",
+        "hashed_bytes": 38912
+      }
+    },
+    {
+      "path": "SND",
+      "size": 2048,
+      "lba": 9348,
+      "is_directory": true,
+      "raw_name": "SND",
+      "flags": 2
+    },
+    {
+      "path": "SND/AIR.VB",
+      "size": 509200,
+      "lba": 9349,
+      "is_directory": false,
+      "raw_name": "AIR.VB;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "b18c957aec7b0b0abecaf74b7fd56fdb54b0282b20b78d36431b1802ce03d4eb",
+        "hashed_bytes": 509200
+      }
+    },
+    {
+      "path": "SND/AIR.VH",
+      "size": 6176,
+      "lba": 9598,
+      "is_directory": false,
+      "raw_name": "AIR.VH;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "e87f88c1cde69571527e792f6c098a870512c7a4f11438b4da8bc71eda9d5f36",
+        "hashed_bytes": 6176
+      }
+    },
+    {
+      "path": "SND/MIS.VB",
+      "size": 489504,
+      "lba": 9602,
+      "is_directory": false,
+      "raw_name": "MIS.VB;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "4fb44510c3a92165b499fab3f673fcf3c60b244016b9269fcc48ce58636033f1",
+        "hashed_bytes": 489504
+      }
+    },
+    {
+      "path": "SND/MIS.VH",
+      "size": 7200,
+      "lba": 9842,
+      "is_directory": false,
+      "raw_name": "MIS.VH;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "6ca2508d57313cee3d898e94e8ac9773ab741d01464e43735c27a70e889d22a5",
+        "hashed_bytes": 7200
+      }
+    },
+    {
+      "path": "STR",
+      "size": 2048,
+      "lba": 9846,
+      "is_directory": true,
+      "raw_name": "STR",
+      "flags": 2
+    },
+    {
+      "path": "STR/ENDI.STR",
+      "size": 46080000,
+      "lba": 9847,
+      "is_directory": false,
+      "raw_name": "ENDI.STR;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "unsupported_form2",
+        "sha256": null,
+        "reason": "MODE2 Form 2 sector at LBA 9854; XA-aware hashing is not implemented"
+      }
+    },
+    {
+      "path": "STR/LOGO.STR",
+      "size": 1589248,
+      "lba": 32347,
+      "is_directory": false,
+      "raw_name": "LOGO.STR;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "unsupported_form2",
+        "sha256": null,
+        "reason": "MODE2 Form 2 sector at LBA 32354; XA-aware hashing is not implemented"
+      }
+    },
+    {
+      "path": "STR/OPEN.STR",
+      "size": 21196800,
+      "lba": 33123,
+      "is_directory": false,
+      "raw_name": "OPEN.STR;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "unsupported_form2",
+        "sha256": null,
+        "reason": "MODE2 Form 2 sector at LBA 33130; XA-aware hashing is not implemented"
+      }
+    },
+    {
+      "path": "VO",
+      "size": 2048,
+      "lba": 43473,
+      "is_directory": true,
+      "raw_name": "VO",
+      "flags": 2
+    },
+    {
+      "path": "VO/A",
+      "size": 2048,
+      "lba": 43474,
+      "is_directory": true,
+      "raw_name": "A",
+      "flags": 2
+    },
+    {
+      "path": "VO/A/M00.DA",
+      "size": 7682048,
+      "lba": 198502,
+      "is_directory": false,
+      "raw_name": "M00.DA;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "outside_declared_data_track",
+        "sha256": null,
+        "reason": "ISO extent reaches CD-DA area declared by CUE; no Form 1 file hash attempted."
+      }
+    },
+    {
+      "path": "VO/A/M01.DA",
+      "size": 13678592,
+      "lba": 202403,
+      "is_directory": false,
+      "raw_name": "M01.DA;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "outside_declared_data_track",
+        "sha256": null,
+        "reason": "ISO extent reaches CD-DA area declared by CUE; no Form 1 file hash attempted."
+      }
+    },
+    {
+      "path": "VO/A/M12.DA",
+      "size": 2109440,
+      "lba": 209232,
+      "is_directory": false,
+      "raw_name": "M12.DA;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "outside_declared_data_track",
+        "sha256": null,
+        "reason": "ISO extent reaches CD-DA area declared by CUE; no Form 1 file hash attempted."
+      }
+    },
+    {
+      "path": "VO/A/M13.DA",
+      "size": 692224,
+      "lba": 210412,
+      "is_directory": false,
+      "raw_name": "M13.DA;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "outside_declared_data_track",
+        "sha256": null,
+        "reason": "ISO extent reaches CD-DA area declared by CUE; no Form 1 file hash attempted."
+      }
+    },
+    {
+      "path": "VO/A/M22.DA",
+      "size": 1525760,
+      "lba": 210900,
+      "is_directory": false,
+      "raw_name": "M22.DA;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "outside_declared_data_track",
+        "sha256": null,
+        "reason": "ISO extent reaches CD-DA area declared by CUE; no Form 1 file hash attempted."
+      }
+    },
+    {
+      "path": "VO/A/M23.DA",
+      "size": 692224,
+      "lba": 211795,
+      "is_directory": false,
+      "raw_name": "M23.DA;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "outside_declared_data_track",
+        "sha256": null,
+        "reason": "ISO extent reaches CD-DA area declared by CUE; no Form 1 file hash attempted."
+      }
+    },
+    {
+      "path": "VO/A/M32.DA",
+      "size": 1300480,
+      "lba": 212283,
+      "is_directory": false,
+      "raw_name": "M32.DA;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "outside_declared_data_track",
+        "sha256": null,
+        "reason": "ISO extent reaches CD-DA area declared by CUE; no Form 1 file hash attempted."
+      }
+    },
+    {
+      "path": "VO/A/M33.DA",
+      "size": 731136,
+      "lba": 213068,
+      "is_directory": false,
+      "raw_name": "M33.DA;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "outside_declared_data_track",
+        "sha256": null,
+        "reason": "ISO extent reaches CD-DA area declared by CUE; no Form 1 file hash attempted."
+      }
+    },
+    {
+      "path": "VO/A/M35.DA",
+      "size": 694272,
+      "lba": 213575,
+      "is_directory": false,
+      "raw_name": "M35.DA;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "outside_declared_data_track",
+        "sha256": null,
+        "reason": "ISO extent reaches CD-DA area declared by CUE; no Form 1 file hash attempted."
+      }
+    },
+    {
+      "path": "VO/A/M42.DA",
+      "size": 1646592,
+      "lba": 214064,
+      "is_directory": false,
+      "raw_name": "M42.DA;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "outside_declared_data_track",
+        "sha256": null,
+        "reason": "ISO extent reaches CD-DA area declared by CUE; no Form 1 file hash attempted."
+      }
+    },
+    {
+      "path": "VO/A/M43.DA",
+      "size": 1011712,
+      "lba": 215018,
+      "is_directory": false,
+      "raw_name": "M43.DA;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "outside_declared_data_track",
+        "sha256": null,
+        "reason": "ISO extent reaches CD-DA area declared by CUE; no Form 1 file hash attempted."
+      }
+    },
+    {
+      "path": "VO/A/M44.DA",
+      "size": 2224128,
+      "lba": 215662,
+      "is_directory": false,
+      "raw_name": "M44.DA;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "outside_declared_data_track",
+        "sha256": null,
+        "reason": "ISO extent reaches CD-DA area declared by CUE; no Form 1 file hash attempted."
+      }
+    },
+    {
+      "path": "VO/A/M62.DA",
+      "size": 1560576,
+      "lba": 216898,
+      "is_directory": false,
+      "raw_name": "M62.DA;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "outside_declared_data_track",
+        "sha256": null,
+        "reason": "ISO extent reaches CD-DA area declared by CUE; no Form 1 file hash attempted."
+      }
+    },
+    {
+      "path": "VO/A/M63.DA",
+      "size": 692224,
+      "lba": 217810,
+      "is_directory": false,
+      "raw_name": "M63.DA;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "outside_declared_data_track",
+        "sha256": null,
+        "reason": "ISO extent reaches CD-DA area declared by CUE; no Form 1 file hash attempted."
+      }
+    },
+    {
+      "path": "VO/A/M64.DA",
+      "size": 704512,
+      "lba": 218298,
+      "is_directory": false,
+      "raw_name": "M64.DA;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "outside_declared_data_track",
+        "sha256": null,
+        "reason": "ISO extent reaches CD-DA area declared by CUE; no Form 1 file hash attempted."
+      }
+    },
+    {
+      "path": "VO/B",
+      "size": 2048,
+      "lba": 43475,
+      "is_directory": true,
+      "raw_name": "B",
+      "flags": 2
+    },
+    {
+      "path": "VO/B/M72.DA",
+      "size": 1466368,
+      "lba": 218792,
+      "is_directory": false,
+      "raw_name": "M72.DA;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "outside_declared_data_track",
+        "sha256": null,
+        "reason": "ISO extent reaches CD-DA area declared by CUE; no Form 1 file hash attempted."
+      }
+    },
+    {
+      "path": "VO/B/M73.DA",
+      "size": 729088,
+      "lba": 219658,
+      "is_directory": false,
+      "raw_name": "M73.DA;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "outside_declared_data_track",
+        "sha256": null,
+        "reason": "ISO extent reaches CD-DA area declared by CUE; no Form 1 file hash attempted."
+      }
+    },
+    {
+      "path": "VO/B/M74.DA",
+      "size": 1171456,
+      "lba": 220164,
+      "is_directory": false,
+      "raw_name": "M74.DA;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "outside_declared_data_track",
+        "sha256": null,
+        "reason": "ISO extent reaches CD-DA area declared by CUE; no Form 1 file hash attempted."
+      }
+    },
+    {
+      "path": "VO/B/M82.DA",
+      "size": 3497984,
+      "lba": 220886,
+      "is_directory": false,
+      "raw_name": "M82.DA;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "outside_declared_data_track",
+        "sha256": null,
+        "reason": "ISO extent reaches CD-DA area declared by CUE; no Form 1 file hash attempted."
+      }
+    },
+    {
+      "path": "VO/B/M83.DA",
+      "size": 692224,
+      "lba": 222744,
+      "is_directory": false,
+      "raw_name": "M83.DA;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "outside_declared_data_track",
+        "sha256": null,
+        "reason": "ISO extent reaches CD-DA area declared by CUE; no Form 1 file hash attempted."
+      }
+    },
+    {
+      "path": "VO/B/M84.DA",
+      "size": 854016,
+      "lba": 223232,
+      "is_directory": false,
+      "raw_name": "M84.DA;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "outside_declared_data_track",
+        "sha256": null,
+        "reason": "ISO extent reaches CD-DA area declared by CUE; no Form 1 file hash attempted."
+      }
+    },
+    {
+      "path": "VO/B/M92.DA",
+      "size": 1304576,
+      "lba": 223799,
+      "is_directory": false,
+      "raw_name": "M92.DA;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "outside_declared_data_track",
+        "sha256": null,
+        "reason": "ISO extent reaches CD-DA area declared by CUE; no Form 1 file hash attempted."
+      }
+    },
+    {
+      "path": "VO/B/M93.DA",
+      "size": 692224,
+      "lba": 224586,
+      "is_directory": false,
+      "raw_name": "M93.DA;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "outside_declared_data_track",
+        "sha256": null,
+        "reason": "ISO extent reaches CD-DA area declared by CUE; no Form 1 file hash attempted."
+      }
+    },
+    {
+      "path": "VO/B/M94.DA",
+      "size": 692224,
+      "lba": 225074,
+      "is_directory": false,
+      "raw_name": "M94.DA;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "outside_declared_data_track",
+        "sha256": null,
+        "reason": "ISO extent reaches CD-DA area declared by CUE; no Form 1 file hash attempted."
+      }
+    },
+    {
+      "path": "VO/B/MA2.DA",
+      "size": 3381248,
+      "lba": 225562,
+      "is_directory": false,
+      "raw_name": "MA2.DA;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "outside_declared_data_track",
+        "sha256": null,
+        "reason": "ISO extent reaches CD-DA area declared by CUE; no Form 1 file hash attempted."
+      }
+    },
+    {
+      "path": "VO/B/MB2.DA",
+      "size": 1722368,
+      "lba": 227363,
+      "is_directory": false,
+      "raw_name": "MB2.DA;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "outside_declared_data_track",
+        "sha256": null,
+        "reason": "ISO extent reaches CD-DA area declared by CUE; no Form 1 file hash attempted."
+      }
+    },
+    {
+      "path": "VO/B/MB3.DA",
+      "size": 692224,
+      "lba": 228354,
+      "is_directory": false,
+      "raw_name": "MB3.DA;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "outside_declared_data_track",
+        "sha256": null,
+        "reason": "ISO extent reaches CD-DA area declared by CUE; no Form 1 file hash attempted."
+      }
+    },
+    {
+      "path": "VO/B/MB4.DA",
+      "size": 722944,
+      "lba": 228842,
+      "is_directory": false,
+      "raw_name": "MB4.DA;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "outside_declared_data_track",
+        "sha256": null,
+        "reason": "ISO extent reaches CD-DA area declared by CUE; no Form 1 file hash attempted."
+      }
+    },
+    {
+      "path": "VO/B/MD2.DA",
+      "size": 2504704,
+      "lba": 229345,
+      "is_directory": false,
+      "raw_name": "MD2.DA;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "outside_declared_data_track",
+        "sha256": null,
+        "reason": "ISO extent reaches CD-DA area declared by CUE; no Form 1 file hash attempted."
+      }
+    },
+    {
+      "path": "VO/B/MD3.DA",
+      "size": 692224,
+      "lba": 230718,
+      "is_directory": false,
+      "raw_name": "MD3.DA;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "outside_declared_data_track",
+        "sha256": null,
+        "reason": "ISO extent reaches CD-DA area declared by CUE; no Form 1 file hash attempted."
+      }
+    },
+    {
+      "path": "VO/B/ME2.DA",
+      "size": 1968128,
+      "lba": 231206,
+      "is_directory": false,
+      "raw_name": "ME2.DA;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "outside_declared_data_track",
+        "sha256": null,
+        "reason": "ISO extent reaches CD-DA area declared by CUE; no Form 1 file hash attempted."
+      }
+    },
+    {
+      "path": "VO/B/ME3.DA",
+      "size": 692224,
+      "lba": 232317,
+      "is_directory": false,
+      "raw_name": "ME3.DA;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "outside_declared_data_track",
+        "sha256": null,
+        "reason": "ISO extent reaches CD-DA area declared by CUE; no Form 1 file hash attempted."
+      }
+    },
+    {
+      "path": "VO/C",
+      "size": 2048,
+      "lba": 43476,
+      "is_directory": true,
+      "raw_name": "C",
+      "flags": 2
+    },
+    {
+      "path": "VO/C/MF2.DA",
+      "size": 1351680,
+      "lba": 232805,
+      "is_directory": false,
+      "raw_name": "MF2.DA;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "outside_declared_data_track",
+        "sha256": null,
+        "reason": "ISO extent reaches CD-DA area declared by CUE; no Form 1 file hash attempted."
+      }
+    },
+    {
+      "path": "VO/C/MF4.DA",
+      "size": 868352,
+      "lba": 233615,
+      "is_directory": false,
+      "raw_name": "MF4.DA;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "outside_declared_data_track",
+        "sha256": null,
+        "reason": "ISO extent reaches CD-DA area declared by CUE; no Form 1 file hash attempted."
+      }
+    },
+    {
+      "path": "VO/C/MG1.DA",
+      "size": 692224,
+      "lba": 234189,
+      "is_directory": false,
+      "raw_name": "MG1.DA;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "outside_declared_data_track",
+        "sha256": null,
+        "reason": "ISO extent reaches CD-DA area declared by CUE; no Form 1 file hash attempted."
+      }
+    },
+    {
+      "path": "VO/C/MG2.DA",
+      "size": 692224,
+      "lba": 234677,
+      "is_directory": false,
+      "raw_name": "MG2.DA;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "outside_declared_data_track",
+        "sha256": null,
+        "reason": "ISO extent reaches CD-DA area declared by CUE; no Form 1 file hash attempted."
+      }
+    },
+    {
+      "path": "VO/C/MH2.DA",
+      "size": 694272,
+      "lba": 235165,
+      "is_directory": false,
+      "raw_name": "MH2.DA;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "outside_declared_data_track",
+        "sha256": null,
+        "reason": "ISO extent reaches CD-DA area declared by CUE; no Form 1 file hash attempted."
+      }
+    },
+    {
+      "path": "VO/C/MH3.DA",
+      "size": 694272,
+      "lba": 235654,
+      "is_directory": false,
+      "raw_name": "MH3.DA;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "outside_declared_data_track",
+        "sha256": null,
+        "reason": "ISO extent reaches CD-DA area declared by CUE; no Form 1 file hash attempted."
+      }
+    },
+    {
+      "path": "VO/C/MH4.DA",
+      "size": 718848,
+      "lba": 236143,
+      "is_directory": false,
+      "raw_name": "MH4.DA;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "outside_declared_data_track",
+        "sha256": null,
+        "reason": "ISO extent reaches CD-DA area declared by CUE; no Form 1 file hash attempted."
+      }
+    },
+    {
+      "path": "VO/C/MI2.DA",
+      "size": 1605632,
+      "lba": 236644,
+      "is_directory": false,
+      "raw_name": "MI2.DA;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "outside_declared_data_track",
+        "sha256": null,
+        "reason": "ISO extent reaches CD-DA area declared by CUE; no Form 1 file hash attempted."
+      }
+    },
+    {
+      "path": "VO/C/MI3.DA",
+      "size": 729088,
+      "lba": 237578,
+      "is_directory": false,
+      "raw_name": "MI3.DA;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "outside_declared_data_track",
+        "sha256": null,
+        "reason": "ISO extent reaches CD-DA area declared by CUE; no Form 1 file hash attempted."
+      }
+    },
+    {
+      "path": "VO/C/MI4.DA",
+      "size": 985088,
+      "lba": 238084,
+      "is_directory": false,
+      "raw_name": "MI4.DA;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "outside_declared_data_track",
+        "sha256": null,
+        "reason": "ISO extent reaches CD-DA area declared by CUE; no Form 1 file hash attempted."
+      }
+    },
+    {
+      "path": "VO/C/MJ2.DA",
+      "size": 2768896,
+      "lba": 238715,
+      "is_directory": false,
+      "raw_name": "MJ2.DA;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "outside_declared_data_track",
+        "sha256": null,
+        "reason": "ISO extent reaches CD-DA area declared by CUE; no Form 1 file hash attempted."
+      }
+    },
+    {
+      "path": "VO/C/MK2.DA",
+      "size": 1521664,
+      "lba": 240217,
+      "is_directory": false,
+      "raw_name": "MK2.DA;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "outside_declared_data_track",
+        "sha256": null,
+        "reason": "ISO extent reaches CD-DA area declared by CUE; no Form 1 file hash attempted."
+      }
+    },
+    {
+      "path": "VO/C/MZZ.DA",
+      "size": 36958208,
+      "lba": 241110,
+      "is_directory": false,
+      "raw_name": "MZZ.DA;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "outside_declared_data_track",
+        "sha256": null,
+        "reason": "ISO extent reaches CD-DA area declared by CUE; no Form 1 file hash attempted."
+      }
+    },
+    {
+      "path": "X",
+      "size": 2048,
+      "lba": 43477,
+      "is_directory": true,
+      "raw_name": "X",
+      "flags": 2
+    },
+    {
+      "path": "X/GAME.EXE",
+      "size": 430080,
+      "lba": 43478,
+      "is_directory": false,
+      "raw_name": "GAME.EXE;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "133c60045408a25d7121b6cec74ebf02bc02911130b95229cf0313da0b56d2e9",
+        "hashed_bytes": 430080
+      }
+    },
+    {
+      "path": "X/GAMEVS.EXE",
+      "size": 327680,
+      "lba": 43688,
+      "is_directory": false,
+      "raw_name": "GAMEVS.EXE;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "f0f9dc349d6dee31bf699720adf210568777c6ddf1dcd7baed18f4c76d854fe4",
+        "hashed_bytes": 327680
+      }
+    },
+    {
+      "path": "X/LOADER.EXE",
+      "size": 249856,
+      "lba": 43848,
+      "is_directory": false,
+      "raw_name": "LOADER.EXE;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "fdbb6698ba1cf56b2e9a899e7af44bb901c548abcd81cc514eba5dd7ddf8ddf7",
+        "hashed_bytes": 249856
+      }
+    },
+    {
+      "path": "X/MISSEL.EXE",
+      "size": 425984,
+      "lba": 43970,
+      "is_directory": false,
+      "raw_name": "MISSEL.EXE;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "31170299388f516ec6ce3502e621045281116ea3c413b83703e40041740d69d4",
+        "hashed_bytes": 425984
+      }
+    },
+    {
+      "path": "X/MOVIE.EXE",
+      "size": 172032,
+      "lba": 44178,
+      "is_directory": false,
+      "raw_name": "MOVIE.EXE;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "21ce3bb244aaac5b46df236175cda26034e4569be240bf392d4392ebf1c5584d",
+        "hashed_bytes": 172032
+      }
+    },
+    {
+      "path": "X/STOP.EXE",
+      "size": 387072,
+      "lba": 44262,
+      "is_directory": false,
+      "raw_name": "STOP.EXE;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "ea33c351cd1e43b50db2008cd7b952394db6e1261dca922f1ff67e0e11deb855",
+        "hashed_bytes": 387072
+      }
+    },
+    {
+      "path": "X/TITTLE.EXE",
+      "size": 1026048,
+      "lba": 44451,
+      "is_directory": false,
+      "raw_name": "TITTLE.EXE;1",
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_form1",
+        "sha256": "35a564c1f4a770c412f72c9ee3826b98dd3ced7107771a393634a75eefd8f9a7",
+        "hashed_bytes": 1026048
+      }
+    }
+  ],
+  "hashes": {
+    "md5": "3e855676149b87d7adc4cde92485cd42",
+    "sha1": "cc43cd5fa5b02ba95fda0a15a3f6abe5c509fe61",
+    "sha256": "96a667f18a6f070c47f988347352adc87479a8ecc258c19ab1f342f3cf3bd7b3"
+  },
+  "cue": {
+    "filename": "ACECOMBAT.CUE",
+    "references": [
+      {
+        "filename": "ACECOMBAT.BIN",
+        "present": true
+      }
+    ],
+    "references_ok": true,
+    "tracks": [
+      {
+        "number": 1,
+        "mode": "MODE2/2352",
+        "indexes": [
+          {
+            "index": 1,
+            "file_sector": 0,
+            "time": "00:00:00"
+          }
+        ],
+        "pregap": []
+      },
+      {
+        "number": 2,
+        "mode": "AUDIO",
+        "indexes": [
+          {
+            "index": 1,
+            "file_sector": 45127,
+            "time": "10:01:52"
+          }
+        ],
+        "pregap": [
+          "00:02:00"
+        ]
+      },
+      {
+        "number": 3,
+        "mode": "AUDIO",
+        "indexes": [
+          {
+            "index": 0,
+            "file_sector": 60597,
+            "time": "13:27:72"
+          },
+          {
+            "index": 1,
+            "file_sector": 60747,
+            "time": "13:29:72"
+          }
+        ],
+        "pregap": []
+      },
+      {
+        "number": 4,
+        "mode": "AUDIO",
+        "indexes": [
+          {
+            "index": 0,
+            "file_sector": 72779,
+            "time": "16:10:29"
+          },
+          {
+            "index": 1,
+            "file_sector": 72929,
+            "time": "16:12:29"
+          }
+        ],
+        "pregap": []
+      },
+      {
+        "number": 5,
+        "mode": "AUDIO",
+        "indexes": [
+          {
+            "index": 0,
+            "file_sector": 84269,
+            "time": "18:43:44"
+          },
+          {
+            "index": 1,
+            "file_sector": 84419,
+            "time": "18:45:44"
+          }
+        ],
+        "pregap": []
+      },
+      {
+        "number": 6,
+        "mode": "AUDIO",
+        "indexes": [
+          {
+            "index": 0,
+            "file_sector": 96596,
+            "time": "21:27:71"
+          },
+          {
+            "index": 1,
+            "file_sector": 96746,
+            "time": "21:29:71"
+          }
+        ],
+        "pregap": []
+      },
+      {
+        "number": 7,
+        "mode": "AUDIO",
+        "indexes": [
+          {
+            "index": 0,
+            "file_sector": 102282,
+            "time": "22:43:57"
+          },
+          {
+            "index": 1,
+            "file_sector": 102432,
+            "time": "22:45:57"
+          }
+        ],
+        "pregap": []
+      },
+      {
+        "number": 8,
+        "mode": "AUDIO",
+        "indexes": [
+          {
+            "index": 0,
+            "file_sector": 111215,
+            "time": "24:42:65"
+          },
+          {
+            "index": 1,
+            "file_sector": 111365,
+            "time": "24:44:65"
+          }
+        ],
+        "pregap": []
+      },
+      {
+        "number": 9,
+        "mode": "AUDIO",
+        "indexes": [
+          {
+            "index": 0,
+            "file_sector": 123726,
+            "time": "27:29:51"
+          },
+          {
+            "index": 1,
+            "file_sector": 123876,
+            "time": "27:31:51"
+          }
+        ],
+        "pregap": []
+      },
+      {
+        "number": 10,
+        "mode": "AUDIO",
+        "indexes": [
+          {
+            "index": 0,
+            "file_sector": 137176,
+            "time": "30:29:01"
+          },
+          {
+            "index": 1,
+            "file_sector": 137326,
+            "time": "30:31:01"
+          }
+        ],
+        "pregap": []
+      },
+      {
+        "number": 11,
+        "mode": "AUDIO",
+        "indexes": [
+          {
+            "index": 0,
+            "file_sector": 148397,
+            "time": "32:58:47"
+          },
+          {
+            "index": 1,
+            "file_sector": 148547,
+            "time": "33:00:47"
+          }
+        ],
+        "pregap": []
+      },
+      {
+        "number": 12,
+        "mode": "AUDIO",
+        "indexes": [
+          {
+            "index": 0,
+            "file_sector": 157728,
+            "time": "35:03:03"
+          },
+          {
+            "index": 1,
+            "file_sector": 157878,
+            "time": "35:05:03"
+          }
+        ],
+        "pregap": []
+      },
+      {
+        "number": 13,
+        "mode": "AUDIO",
+        "indexes": [
+          {
+            "index": 0,
+            "file_sector": 164134,
+            "time": "36:28:34"
+          },
+          {
+            "index": 1,
+            "file_sector": 164284,
+            "time": "36:30:34"
+          }
+        ],
+        "pregap": []
+      },
+      {
+        "number": 14,
+        "mode": "AUDIO",
+        "indexes": [
+          {
+            "index": 0,
+            "file_sector": 170585,
+            "time": "37:54:35"
+          },
+          {
+            "index": 1,
+            "file_sector": 170735,
+            "time": "37:56:35"
+          }
+        ],
+        "pregap": []
+      },
+      {
+        "number": 15,
+        "mode": "AUDIO",
+        "indexes": [
+          {
+            "index": 0,
+            "file_sector": 171543,
+            "time": "38:07:18"
+          },
+          {
+            "index": 1,
+            "file_sector": 171693,
+            "time": "38:09:18"
+          }
+        ],
+        "pregap": []
+      },
+      {
+        "number": 16,
+        "mode": "AUDIO",
+        "indexes": [
+          {
+            "index": 0,
+            "file_sector": 176689,
+            "time": "39:15:64"
+          },
+          {
+            "index": 1,
+            "file_sector": 176839,
+            "time": "39:17:64"
+          }
+        ],
+        "pregap": []
+      },
+      {
+        "number": 17,
+        "mode": "AUDIO",
+        "indexes": [
+          {
+            "index": 0,
+            "file_sector": 177740,
+            "time": "39:29:65"
+          },
+          {
+            "index": 1,
+            "file_sector": 177890,
+            "time": "39:31:65"
+          }
+        ],
+        "pregap": []
+      },
+      {
+        "number": 18,
+        "mode": "AUDIO",
+        "indexes": [
+          {
+            "index": 0,
+            "file_sector": 186846,
+            "time": "41:31:21"
+          },
+          {
+            "index": 1,
+            "file_sector": 186996,
+            "time": "41:33:21"
+          }
+        ],
+        "pregap": []
+      },
+      {
+        "number": 19,
+        "mode": "AUDIO",
+        "indexes": [
+          {
+            "index": 0,
+            "file_sector": 198202,
+            "time": "44:02:52"
+          },
+          {
+            "index": 1,
+            "file_sector": 198352,
+            "time": "44:04:52"
+          }
+        ],
+        "pregap": []
+      },
+      {
+        "number": 20,
+        "mode": "AUDIO",
+        "indexes": [
+          {
+            "index": 0,
+            "file_sector": 202103,
+            "time": "44:54:53"
+          },
+          {
+            "index": 1,
+            "file_sector": 202253,
+            "time": "44:56:53"
+          }
+        ],
+        "pregap": []
+      },
+      {
+        "number": 21,
+        "mode": "AUDIO",
+        "indexes": [
+          {
+            "index": 0,
+            "file_sector": 208932,
+            "time": "46:25:57"
+          },
+          {
+            "index": 1,
+            "file_sector": 209082,
+            "time": "46:27:57"
+          }
+        ],
+        "pregap": []
+      },
+      {
+        "number": 22,
+        "mode": "AUDIO",
+        "indexes": [
+          {
+            "index": 0,
+            "file_sector": 210112,
+            "time": "46:41:37"
+          },
+          {
+            "index": 1,
+            "file_sector": 210262,
+            "time": "46:43:37"
+          }
+        ],
+        "pregap": []
+      },
+      {
+        "number": 23,
+        "mode": "AUDIO",
+        "indexes": [
+          {
+            "index": 0,
+            "file_sector": 210600,
+            "time": "46:48:00"
+          },
+          {
+            "index": 1,
+            "file_sector": 210750,
+            "time": "46:50:00"
+          }
+        ],
+        "pregap": []
+      },
+      {
+        "number": 24,
+        "mode": "AUDIO",
+        "indexes": [
+          {
+            "index": 0,
+            "file_sector": 211495,
+            "time": "46:59:70"
+          },
+          {
+            "index": 1,
+            "file_sector": 211645,
+            "time": "47:01:70"
+          }
+        ],
+        "pregap": []
+      },
+      {
+        "number": 25,
+        "mode": "AUDIO",
+        "indexes": [
+          {
+            "index": 0,
+            "file_sector": 211983,
+            "time": "47:06:33"
+          },
+          {
+            "index": 1,
+            "file_sector": 212133,
+            "time": "47:08:33"
+          }
+        ],
+        "pregap": []
+      },
+      {
+        "number": 26,
+        "mode": "AUDIO",
+        "indexes": [
+          {
+            "index": 0,
+            "file_sector": 212768,
+            "time": "47:16:68"
+          },
+          {
+            "index": 1,
+            "file_sector": 212918,
+            "time": "47:18:68"
+          }
+        ],
+        "pregap": []
+      },
+      {
+        "number": 27,
+        "mode": "AUDIO",
+        "indexes": [
+          {
+            "index": 0,
+            "file_sector": 213275,
+            "time": "47:23:50"
+          },
+          {
+            "index": 1,
+            "file_sector": 213425,
+            "time": "47:25:50"
+          }
+        ],
+        "pregap": []
+      },
+      {
+        "number": 28,
+        "mode": "AUDIO",
+        "indexes": [
+          {
+            "index": 0,
+            "file_sector": 213764,
+            "time": "47:30:14"
+          },
+          {
+            "index": 1,
+            "file_sector": 213914,
+            "time": "47:32:14"
+          }
+        ],
+        "pregap": []
+      },
+      {
+        "number": 29,
+        "mode": "AUDIO",
+        "indexes": [
+          {
+            "index": 0,
+            "file_sector": 214718,
+            "time": "47:42:68"
+          },
+          {
+            "index": 1,
+            "file_sector": 214868,
+            "time": "47:44:68"
+          }
+        ],
+        "pregap": []
+      },
+      {
+        "number": 30,
+        "mode": "AUDIO",
+        "indexes": [
+          {
+            "index": 0,
+            "file_sector": 215362,
+            "time": "47:51:37"
+          },
+          {
+            "index": 1,
+            "file_sector": 215512,
+            "time": "47:53:37"
+          }
+        ],
+        "pregap": []
+      },
+      {
+        "number": 31,
+        "mode": "AUDIO",
+        "indexes": [
+          {
+            "index": 0,
+            "file_sector": 216598,
+            "time": "48:07:73"
+          },
+          {
+            "index": 1,
+            "file_sector": 216748,
+            "time": "48:09:73"
+          }
+        ],
+        "pregap": []
+      },
+      {
+        "number": 32,
+        "mode": "AUDIO",
+        "indexes": [
+          {
+            "index": 0,
+            "file_sector": 217510,
+            "time": "48:20:10"
+          },
+          {
+            "index": 1,
+            "file_sector": 217660,
+            "time": "48:22:10"
+          }
+        ],
+        "pregap": []
+      },
+      {
+        "number": 33,
+        "mode": "AUDIO",
+        "indexes": [
+          {
+            "index": 0,
+            "file_sector": 217998,
+            "time": "48:26:48"
+          },
+          {
+            "index": 1,
+            "file_sector": 218148,
+            "time": "48:28:48"
+          }
+        ],
+        "pregap": []
+      },
+      {
+        "number": 34,
+        "mode": "AUDIO",
+        "indexes": [
+          {
+            "index": 0,
+            "file_sector": 218492,
+            "time": "48:33:17"
+          },
+          {
+            "index": 1,
+            "file_sector": 218642,
+            "time": "48:35:17"
+          }
+        ],
+        "pregap": []
+      },
+      {
+        "number": 35,
+        "mode": "AUDIO",
+        "indexes": [
+          {
+            "index": 0,
+            "file_sector": 219358,
+            "time": "48:44:58"
+          },
+          {
+            "index": 1,
+            "file_sector": 219508,
+            "time": "48:46:58"
+          }
+        ],
+        "pregap": []
+      },
+      {
+        "number": 36,
+        "mode": "AUDIO",
+        "indexes": [
+          {
+            "index": 0,
+            "file_sector": 219864,
+            "time": "48:51:39"
+          },
+          {
+            "index": 1,
+            "file_sector": 220014,
+            "time": "48:53:39"
+          }
+        ],
+        "pregap": []
+      },
+      {
+        "number": 37,
+        "mode": "AUDIO",
+        "indexes": [
+          {
+            "index": 0,
+            "file_sector": 220586,
+            "time": "49:01:11"
+          },
+          {
+            "index": 1,
+            "file_sector": 220736,
+            "time": "49:03:11"
+          }
+        ],
+        "pregap": []
+      },
+      {
+        "number": 38,
+        "mode": "AUDIO",
+        "indexes": [
+          {
+            "index": 0,
+            "file_sector": 222444,
+            "time": "49:25:69"
+          },
+          {
+            "index": 1,
+            "file_sector": 222594,
+            "time": "49:27:69"
+          }
+        ],
+        "pregap": []
+      },
+      {
+        "number": 39,
+        "mode": "AUDIO",
+        "indexes": [
+          {
+            "index": 0,
+            "file_sector": 222932,
+            "time": "49:32:32"
+          },
+          {
+            "index": 1,
+            "file_sector": 223082,
+            "time": "49:34:32"
+          }
+        ],
+        "pregap": []
+      },
+      {
+        "number": 40,
+        "mode": "AUDIO",
+        "indexes": [
+          {
+            "index": 0,
+            "file_sector": 223499,
+            "time": "49:39:74"
+          },
+          {
+            "index": 1,
+            "file_sector": 223649,
+            "time": "49:41:74"
+          }
+        ],
+        "pregap": []
+      },
+      {
+        "number": 41,
+        "mode": "AUDIO",
+        "indexes": [
+          {
+            "index": 0,
+            "file_sector": 224286,
+            "time": "49:50:36"
+          },
+          {
+            "index": 1,
+            "file_sector": 224436,
+            "time": "49:52:36"
+          }
+        ],
+        "pregap": []
+      },
+      {
+        "number": 42,
+        "mode": "AUDIO",
+        "indexes": [
+          {
+            "index": 0,
+            "file_sector": 224774,
+            "time": "49:56:74"
+          },
+          {
+            "index": 1,
+            "file_sector": 224924,
+            "time": "49:58:74"
+          }
+        ],
+        "pregap": []
+      },
+      {
+        "number": 43,
+        "mode": "AUDIO",
+        "indexes": [
+          {
+            "index": 0,
+            "file_sector": 225262,
+            "time": "50:03:37"
+          },
+          {
+            "index": 1,
+            "file_sector": 225412,
+            "time": "50:05:37"
+          }
+        ],
+        "pregap": []
+      },
+      {
+        "number": 44,
+        "mode": "AUDIO",
+        "indexes": [
+          {
+            "index": 0,
+            "file_sector": 227063,
+            "time": "50:27:38"
+          },
+          {
+            "index": 1,
+            "file_sector": 227213,
+            "time": "50:29:38"
+          }
+        ],
+        "pregap": []
+      },
+      {
+        "number": 45,
+        "mode": "AUDIO",
+        "indexes": [
+          {
+            "index": 0,
+            "file_sector": 228054,
+            "time": "50:40:54"
+          },
+          {
+            "index": 1,
+            "file_sector": 228204,
+            "time": "50:42:54"
+          }
+        ],
+        "pregap": []
+      },
+      {
+        "number": 46,
+        "mode": "AUDIO",
+        "indexes": [
+          {
+            "index": 0,
+            "file_sector": 228542,
+            "time": "50:47:17"
+          },
+          {
+            "index": 1,
+            "file_sector": 228692,
+            "time": "50:49:17"
+          }
+        ],
+        "pregap": []
+      },
+      {
+        "number": 47,
+        "mode": "AUDIO",
+        "indexes": [
+          {
+            "index": 0,
+            "file_sector": 229045,
+            "time": "50:53:70"
+          },
+          {
+            "index": 1,
+            "file_sector": 229195,
+            "time": "50:55:70"
+          }
+        ],
+        "pregap": []
+      },
+      {
+        "number": 48,
+        "mode": "AUDIO",
+        "indexes": [
+          {
+            "index": 0,
+            "file_sector": 230418,
+            "time": "51:12:18"
+          },
+          {
+            "index": 1,
+            "file_sector": 230568,
+            "time": "51:14:18"
+          }
+        ],
+        "pregap": []
+      },
+      {
+        "number": 49,
+        "mode": "AUDIO",
+        "indexes": [
+          {
+            "index": 0,
+            "file_sector": 230906,
+            "time": "51:18:56"
+          },
+          {
+            "index": 1,
+            "file_sector": 231056,
+            "time": "51:20:56"
+          }
+        ],
+        "pregap": []
+      },
+      {
+        "number": 50,
+        "mode": "AUDIO",
+        "indexes": [
+          {
+            "index": 0,
+            "file_sector": 232017,
+            "time": "51:33:42"
+          },
+          {
+            "index": 1,
+            "file_sector": 232167,
+            "time": "51:35:42"
+          }
+        ],
+        "pregap": []
+      },
+      {
+        "number": 51,
+        "mode": "AUDIO",
+        "indexes": [
+          {
+            "index": 0,
+            "file_sector": 232505,
+            "time": "51:40:05"
+          },
+          {
+            "index": 1,
+            "file_sector": 232655,
+            "time": "51:42:05"
+          }
+        ],
+        "pregap": []
+      },
+      {
+        "number": 52,
+        "mode": "AUDIO",
+        "indexes": [
+          {
+            "index": 0,
+            "file_sector": 233315,
+            "time": "51:50:65"
+          },
+          {
+            "index": 1,
+            "file_sector": 233465,
+            "time": "51:52:65"
+          }
+        ],
+        "pregap": []
+      },
+      {
+        "number": 53,
+        "mode": "AUDIO",
+        "indexes": [
+          {
+            "index": 0,
+            "file_sector": 233889,
+            "time": "51:58:39"
+          },
+          {
+            "index": 1,
+            "file_sector": 234039,
+            "time": "52:00:39"
+          }
+        ],
+        "pregap": []
+      },
+      {
+        "number": 54,
+        "mode": "AUDIO",
+        "indexes": [
+          {
+            "index": 0,
+            "file_sector": 234377,
+            "time": "52:05:02"
+          },
+          {
+            "index": 1,
+            "file_sector": 234527,
+            "time": "52:07:02"
+          }
+        ],
+        "pregap": []
+      },
+      {
+        "number": 55,
+        "mode": "AUDIO",
+        "indexes": [
+          {
+            "index": 0,
+            "file_sector": 234865,
+            "time": "52:11:40"
+          },
+          {
+            "index": 1,
+            "file_sector": 235015,
+            "time": "52:13:40"
+          }
+        ],
+        "pregap": []
+      },
+      {
+        "number": 56,
+        "mode": "AUDIO",
+        "indexes": [
+          {
+            "index": 0,
+            "file_sector": 235354,
+            "time": "52:18:04"
+          },
+          {
+            "index": 1,
+            "file_sector": 235504,
+            "time": "52:20:04"
+          }
+        ],
+        "pregap": []
+      },
+      {
+        "number": 57,
+        "mode": "AUDIO",
+        "indexes": [
+          {
+            "index": 0,
+            "file_sector": 235843,
+            "time": "52:24:43"
+          },
+          {
+            "index": 1,
+            "file_sector": 235993,
+            "time": "52:26:43"
+          }
+        ],
+        "pregap": []
+      },
+      {
+        "number": 58,
+        "mode": "AUDIO",
+        "indexes": [
+          {
+            "index": 0,
+            "file_sector": 236344,
+            "time": "52:31:19"
+          },
+          {
+            "index": 1,
+            "file_sector": 236494,
+            "time": "52:33:19"
+          }
+        ],
+        "pregap": []
+      },
+      {
+        "number": 59,
+        "mode": "AUDIO",
+        "indexes": [
+          {
+            "index": 0,
+            "file_sector": 237278,
+            "time": "52:43:53"
+          },
+          {
+            "index": 1,
+            "file_sector": 237428,
+            "time": "52:45:53"
+          }
+        ],
+        "pregap": []
+      },
+      {
+        "number": 60,
+        "mode": "AUDIO",
+        "indexes": [
+          {
+            "index": 0,
+            "file_sector": 237784,
+            "time": "52:50:34"
+          },
+          {
+            "index": 1,
+            "file_sector": 237934,
+            "time": "52:52:34"
+          }
+        ],
+        "pregap": []
+      },
+      {
+        "number": 61,
+        "mode": "AUDIO",
+        "indexes": [
+          {
+            "index": 0,
+            "file_sector": 238415,
+            "time": "52:58:65"
+          },
+          {
+            "index": 1,
+            "file_sector": 238565,
+            "time": "53:00:65"
+          }
+        ],
+        "pregap": []
+      },
+      {
+        "number": 62,
+        "mode": "AUDIO",
+        "indexes": [
+          {
+            "index": 0,
+            "file_sector": 239917,
+            "time": "53:18:67"
+          },
+          {
+            "index": 1,
+            "file_sector": 240067,
+            "time": "53:20:67"
+          }
+        ],
+        "pregap": []
+      },
+      {
+        "number": 63,
+        "mode": "AUDIO",
+        "indexes": [
+          {
+            "index": 0,
+            "file_sector": 240810,
+            "time": "53:30:60"
+          },
+          {
+            "index": 1,
+            "file_sector": 240960,
+            "time": "53:32:60"
+          }
+        ],
+        "pregap": []
+      }
+    ],
+    "track_count": 63,
+    "data_track_count": 1,
+    "audio_track_count": 62,
+    "declared_indexes_in_image": true,
+    "timing_validated_against_physical_disc": false,
+    "track_count_validation": {
+      "reference_track_count": 63,
+      "reference": "docs/reports/supplementary-ps1-track-validation.json",
+      "source_data_track_matches": true,
+      "source_audio_needs_read_offset_correction": true,
+      "all_corrected_tracks_match": true
+    }
+  },
+  "observed_identity": {
+    "title_inference": "Ace Combat (original PlayStation game), Japanese identifier",
+    "volume_id": "ACECOMBAT",
+    "identifier": "SLPS-00061",
+    "evidence": [
+      {
+        "path": "PSX.EXE",
+        "strings": [
+          "Sony Computer Entertainment Inc. for Japan area"
+        ]
+      },
+      {
+        "path": "X/TITTLE.EXE",
+        "strings": [
+          "Sony Computer Entertainment Inc. for Japan area",
+          "BISLPS-00061ACECOMB"
+        ]
+      }
+    ],
+    "revision_certified": false,
+    "ac3_baseline_match": false
+  },
+  "inspection_scope": {
+    "whole_image_hashed": true,
+    "source_opened_read_only": true,
+    "emulator_boot_tested": false,
+    "audio_decoded": false,
+    "form1_hash_scope": "Files entirely before the first CUE-declared AUDIO INDEX 01; CD-DA extents skipped."
+  }
+}
