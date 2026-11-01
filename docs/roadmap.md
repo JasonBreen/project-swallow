@@ -22,6 +22,8 @@ Separately investigate `ACE.SPH` plus the Form 2 media in `ACE.SPB`. Preserve fi
 
 The executable/MIPS recovery track has started: [next task](next-task-executable.md). The boot EXE and `ACE3.BIN` are disassembled with splat, their library code is identified, and the game's Ulz routine is located and checked by execution; next, document the original loaders and gameplay routines, using emulation as a reference. The flight model and gameplay will be recovered from the original code, never rebuilt or approximated with generic physics. The planned game runtime will be written in C; no engine or playable mission exists yet. The form of recovered code and the runtime boundary remain decisions to make from measured evidence.
 
+The [reconstruction plan](reconstruction-plan.md) proposes how the recovered code becomes the C engine: a static recompiler, a runtime that replaces the 159 PsyQ library functions the game calls, and readable C that replaces translated functions once tests prove it equal. Its decisions D1–D9 need owner approval before an engine stack is chosen.
+
 ## 3. One end-to-end mission
 
 One aircraft, a verified level, original-behavior reference captures, controls, camera, objectives, weapons, results, and representative dialogue. Add the artist's first enhanced asset and team-recorded voice samples. Track unresolved mismatches; a screenshot or moving aircraft is not a completed mission.
@@ -33,3 +35,7 @@ Validate mission transitions, campaign branching, disc-specific data, saves, sub
 ## 5. Platform and release validation
 
 Windows and Linux are target platforms. Controller/TV presentation and SteamOS testing follow a stable playable build. Steam Frame/VR integration is a later experiment, not an initial dependency. Publish reproducible tooling builds and test evidence with clear implemented-versus-planned status.
+
+## Later: other Ace Combat titles
+
+Owner direction (2026-11-01): after AC3, reconstruct Ace Combat Zero, Ace Combat (1995), and Ace Combat 2 the same way. Ace Combat 04 may not be needed if Sal's work on it is completed. A survey of each title can happen at any time; runtime work waits until AC3 has one native mission. See [other titles](reconstruction-plan.md#other-titles).

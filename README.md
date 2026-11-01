@@ -96,7 +96,7 @@ The executable reader resolves `BOOT` from `SYSTEM.CNF`, finds other PS-X EXEs b
 6. **One complete mission in the C runtime.** Aircraft, level, recovered flight model, controls, weapons, objectives, dialogue, and results working together with runtime evidence.
 7. **The full Electrosphere.** Branching campaign, disc-specific content, saves, enhanced presentation, human English dialogue, and platform validation.
 
-The [roadmap](docs/roadmap.md) tracks these stages. Passing tests establishes tool behavior; a playable mission needs its own runtime evidence.
+The [roadmap](docs/roadmap.md) tracks these stages, and the [reconstruction plan](docs/reconstruction-plan.md) proposes how the recovered code becomes the C engine, with the decisions it still needs. Passing tests establishes tool behavior; a playable mission needs its own runtime evidence.
 
 ## Evidence, people, and provenance
 

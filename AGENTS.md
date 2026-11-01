@@ -1,7 +1,7 @@
 # Project Swallow: coding-agent instructions
 
 ## Goal and current state
-Build a complete, playable, open-source reconstruction of Ace Combat 3: Electrosphere for modern PCs. Preserve the Japanese gameplay and branching campaign, with enhanced artwork and a human-performed English dub. The current implementation is the read-only disc and archive toolchain; a playable game build does not exist yet. Describe the game as the project goal and tooling as its present development stage.
+Build a complete, playable, open-source reconstruction of Ace Combat 3: Electrosphere for modern PCs. Preserve the Japanese gameplay and branching campaign, with enhanced artwork and a human-performed English dub. The current implementation is the read-only disc and archive toolchain; a playable game build does not exist yet. Describe the game as the project goal and tooling as its present development stage. The plan for the C engine, and for the other Ace Combat titles that come after AC3, is `docs/reconstruction-plan.md`. Its decisions are open until the owner approves them, and other titles are surveyed only, not reconstructed, until AC3 has one native mission.
 
 ## Work contract
 - Work in the current local workspace. Do not spawn cloud sessions or parallel agents without an explicit request.

@@ -27,12 +27,16 @@ header evidence updated after the PS-X EXE reader. Read `AGENTS.md` first.
 4. **First game routine: the Ulz decompressor — implemented.** `ulz_decompress` is at `0x800AFD08`, hand-written assembly after the libraries, not in the range above. It never compares the magic, so it was found by its decoder shape. Its version paths are documented and named in the symbol file. `swallow_tools.ulzcheck` runs it, unmodified, in a strict MIPS interpreter on every Ulz blob, and it matches [`ulz.py`](../src/swallow_tools/ulz.py) byte for byte and in stream consumption on all 2,256 blobs on Japanese Disc 1. No emulator RAM capture has been compared yet. See [the Ulz routine](ulz-routine.md).
 5. **BPB loading path.** Trace how the code indexes BPH, reads BPB entries, and walks DOT1 slots. Confirm or refute the DOT1 and overlay hypotheses from the code. Entries 1–4 now hold direct evidence of code linked against `ACE3.BIN`; find their load addresses and the code that loads them, starting from the `ulz_decompress` callers.
 
-## Decision needed before step 2
+## Decision still needed: the form of recovered code
 
-C is now permitted, so the recovered-code form needs an owner choice:
+C is now permitted, so the recovered-code form needs an owner choice. The
+options, with a recommendation (static recompilation first, then readable C
+proven equal to it), are decision D1 in the
+[reconstruction plan](reconstruction-plan.md#decisions-needed):
 
 - **Annotated assembly as the reference**, with engine C written to match measured behavior.
 - **Matching decompilation**: C that recompiles to byte-identical instructions. This needs a period-appropriate compiler setup. Its licensing and provenance need review before any adoption.
+- **Static recompilation**: every function translated mechanically to C that runs against guest RAM, then replaced by readable C one function at a time.
 
 Either way, the engine's behavior is judged against the original code and
 reference captures, not against intuition.

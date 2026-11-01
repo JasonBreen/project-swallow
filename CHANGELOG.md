@@ -3,6 +3,8 @@
 ## Unreleased
 
 - Stored the supplied ACECOMBAT image (`game.BIN` and `game.CUE`) through Git LFS. It is not one of the four Electrosphere baselines. The CUE names `ACECOMBAT.BIN`; the archived member is `game.BIN`.
+- Added `docs/reconstruction-plan.md`. It plans how the recovered code becomes the C engine: a static recompiler, a runtime that replaces the PsyQ library API, and readable C proven equal to the translated code. It lists decisions D1–D9, all still open for the owner, and milestones M1–M8. It records the owner's direction to reconstruct Ace Combat Zero, Ace Combat (1995), and Ace Combat 2 after AC3; Ace Combat 04 depends on Sal's work. Nothing in the plan is implemented.
+- Measured for the plan, on Japanese Disc 1: game code and BPB entries 1–4 call 159 distinct PsyQ functions and use 3,485 inline GTE instructions across 15 commands, with 26 indirect calls and 42 computed jumps. A survey of the stored Ace Combat (1995) image found no `SYSTEM.CNF`, a `PSX.EXE` that boots seven module executables loaded at `0x80023000`, no Ulz or BPB data, and 62 CD-DA tracks.
 
 ## 0.9.0 — 2026-11-01
 
