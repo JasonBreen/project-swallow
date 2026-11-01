@@ -4,6 +4,16 @@
 
 - Stored the supplied ACECOMBAT image (`game.BIN` and `game.CUE`) through Git LFS. It is not one of the four Electrosphere baselines. The CUE names `ACECOMBAT.BIN`; the archived member is `game.BIN`.
 
+## 0.9.0 — 2026-11-01
+
+- Located the game's own Ulz decompressor, `ulz_decompress` at `0x800AFD08` in `ACE3.BIN`. It is hand-written assembly after the PsyQ libraries, outside the v0.8.0 game code range, and never compares the `Ulz` magic, so it was found by its decoder shape. Named it, its version jump table, its version 0, 1 and 2 paths, and two unreferenced stream entry points in the hand-written section of `splat/symbol_addrs.ace3.txt`; splat's function counts are unchanged.
+- Added `swallow_tools.mips`, a strict interpreter for the MIPS I integer instructions with R3000 branch and load delay slots. It stops on anything it does not model: unknown instructions, unmapped or misaligned access, writes to read-only memory, overflow traps, branches in delay slots, and load-delay hazards.
+- Added `swallow_tools.ulzcheck` and the `swallow-ulzcheck` CLI. It runs the routine from the disc's `ACE3.BIN`, found through the splat manifest and symbol file, on every Ulz blob the BPB walker reaches. It maps only the text, the blob, and a guarded destination, and compares the output bytes, end pointer, write extent, and flag, literal, and pair consumption with `ulz.py`. It exits `0` when all match, `1` on any disagreement, and `2` on input errors.
+- Measured on Japanese Disc 1: all 2,256 Ulz blobs (1,167 version 0, 1,089 version 2) match, with no mismatches or errors on either side, in 643,716,825 interpreted instructions. Recorded in `docs/reports/ulz-routine-jp1.json`. The other three references were not run.
+- The routine settles open Ulz questions. Version 0 stops at the zero flag word and never reads the declared size. A `0x80000000` word carries no flags and is skipped. Version 2 reads literals as aligned words and finishes a copy that crosses the size. A version 1 path in 16-bit units exists, and no blob uses it. `ulz.py` is unchanged. The English-labeled version 0 blobs with spare flag bits are predicted to overrun; this is not yet measured.
+- BPB entries 1–4 hold 280, 981, 47, and 50 `jal` words that land on `ACE3.BIN` function starts, against 16 in all other stored entries, and entries 1 and 2 call `ulz_decompress` 13 times after comparing the magic. This is the first direct evidence that they contain code linked against `ACE3.BIN`; no load address or layout is decoded.
+- Added 37 synthetic tests (199 total), using only project-written MIPS programs. Documented the routine, the check, and the results in `docs/ulz-routine.md`.
+
 ## 0.8.0 — 2026-10-27
 
 - Added `swallow_tools.psyq` and the `swallow-psyq` CLI. It finds Sony PsyQ library objects in each disc executable by signature, using a separate, uncommitted copy of the signature data from `lab313ru/psx_psyq_signatures` (pinned commit `e9e46e7`). A signature counts only when it pins at least 32 bytes and matches once, word-aligned, counting overlapping matches. The report holds names, addresses, and sizes, never game bytes.

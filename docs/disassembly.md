@@ -103,4 +103,4 @@ current directory. It writes
 - PsyQ library identification is done; see [library identification](psyq-libraries.md).
 - Reassemble the output with a MIPS assembler and compare it byte for byte
   with the input. That needs a toolchain choice, which is not made here.
-- Locate the Ulz decompressor in `ace3_text.s`.
+- The Ulz decompressor is located and checked; see [the Ulz routine](ulz-routine.md).

@@ -100,5 +100,5 @@ or validation errors.
 ## Next
 
 The disassembly pipeline is implemented; see [disassembly](disassembly.md).
-Next come PsyQ library identification, then the Ulz decompressor and the BPB
-loader inside `ACE3.BIN`.
+PsyQ library identification and the [Ulz routine](ulz-routine.md) followed;
+the BPB loader inside `ACE3.BIN` is next.

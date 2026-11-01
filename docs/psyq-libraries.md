@@ -66,7 +66,10 @@ which hold 23 of splat's 364 functions.
 The game's own code is the 483,624 bytes from `0x800257e8`, after crt0, to
 `0x8009b910`, where the libraries start. That range holds `ace3_main`
 (`0x800261a8`) and 1,284 of splat's 1,715 functions. It is the target
-for the rest of the track.
+for the rest of the track. Game code also follows the libraries: the
+[Ulz routine](ulz-routine.md) occupies `0x800afd08–0x800b0130`. The 16-byte
+function at `0x800afcf8` before it is below the signature minimum and stays
+unclassified.
 
 After a re-run of `swallow-split` with the generated symbols, splat names
 237 of 364 boot functions and 286 of 1,715 `ACE3.BIN` functions. The
@@ -148,5 +151,5 @@ bytes.
 
 ## Next
 
-- Locate the Ulz decompressor in `ACE3.BIN`'s game code range
-  (`0x800257e8–0x8009b910`), now that library calls in it carry names.
+- The Ulz decompressor is located at `0x800AFD08`, after the libraries;
+  see [the Ulz routine](ulz-routine.md).
