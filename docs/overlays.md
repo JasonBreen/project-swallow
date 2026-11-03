@@ -1,6 +1,7 @@
 # Overlays and the module loader
 
-Traced in tooling v0.10.0, measured on 2026-11-03 against Japanese Disc 1.
+Traced in tooling v0.10.0, measured on 2026-11-03 against Japanese Disc 1;
+all four references were split with the same configs.
 This is step 5 of the [executable track](next-task-executable.md) and the
 first task of milestone M1 in the [reconstruction plan](reconstruction-plan.md).
 [`swallow_tools.split`](../src/swallow_tools/split.py) now also disassembles
@@ -67,7 +68,7 @@ Offsets are from the entry start, which loads at `0x800CBFE8`.
 |---|---:|---:|---|---|---|---:|---:|
 | `ovl1` | 1 | 72,340 | `f9c4ae47…` | `0x5F0` | `0x10B18` | 4 | 271 |
 | `ovl2` | 2 | 290,380 | `beb4377c…` | `0x17D8` | `0x3D7C0` | 0 | 645 |
-| `ovl3` | 3 | 338,656 | `5f049da9…` | `0x4F340` | `0x5286C` | 0 | 20 |
+| `ovl3` | 3 | 338,656 | `5f049da9…` (Japanese), `707deead…` (English-labeled) | `0x4F340` | `0x5286C` | 0 | 20 |
 | `ovl4` | 4 | 21,860 | `e5f73492…` | `0x174C` | `0x32C0` | 4 | 20 |
 
 The code starts after the last string or pointer table. In `ovl1` and
@@ -137,11 +138,29 @@ python -m swallow_tools.split <BIN> --work-dir G:\ProjectSwallow-data\splat\jp1 
 The report, `split-report.json`, is schema 2. It adds an `overlays` list
 with each entry's BPH index, size, SHA256, config, and text files.
 
+## On all four references
+
+All four references were split with these configs, with the same function
+and undecodable-word counts: 1,715 and 8 for `ACE3.BIN`, 364 and 5 for the
+boot program, and 271, 645, 20, and 20 functions with no undecodable words
+for the overlays.
+
+Entries 1, 2, and 4 are byte-identical on all four. Entry 3 is the same on
+both Japanese discs, and the same on both English-labeled discs, but differs
+between the two. That corrects the earlier record in
+[bpb-format.md](bpb-format.md) that all four entries were identical.
+
+- 117,943 bytes differ, all before entry 3's code; the last is at
+  `+0x4DE2C`, and the code starts at `+0x4F340`.
+- The code and data regions are byte-identical, and splat's `ovl3` code
+  output is the same for both. So `ovl3.yaml` accepts both SHA256 values,
+  as `ace3.yaml` does for `ACE3.BIN`.
+- **Hypothesis:** the changed bytes are 4-bit image data, such as replaced
+  graphics or glyphs. The nibble patterns suggest it; nothing has decoded
+  them.
+
 ## Limits
 
-- Only Japanese Disc 1 was split. [bpb-format.md](bpb-format.md) records
-  entries 1–4 as identical on all four references, so the same hashes should
-  match; the other images were not run here.
 - The request ring, the CD driver, and `func_800273FC` were read only as far
   as described. Nothing in this trace was executed.
 - Which screens the modules drive is not claimed. Entry 1 holds menu strings

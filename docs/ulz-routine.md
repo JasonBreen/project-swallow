@@ -1,7 +1,8 @@
 # The game's Ulz routine
 
 Located and checked in tooling v0.9.0, measured on 2026-11-01 against
-Japanese Disc 1. This is step 4 of the
+Japanese Disc 1 and on 2026-11-03 against the other three references. This
+is step 4 of the
 [executable track](next-task-executable.md). It names the routine
 `ACE3.BIN` uses to decompress Ulz data, documents what it does, and runs it,
 unmodified, on every Ulz blob on the disc to compare it with
@@ -79,15 +80,16 @@ repeats data.
 These answer open questions in [bpb-format.md](bpb-format.md):
 
 - **Version 0 stops on the zero word, not on the size.** Every version 0
-  blob on Japanese Disc 1 places that word exactly where the declared size
-  is reached, so the two rules agree there. `ulz.py` requires both.
+  blob on both Japanese discs places that word exactly where the declared
+  size is reached, so the two rules agree there. `ulz.py` requires both.
 - **A version 0 word of `0x80000000` holds only the stop bit.** The routine
   takes no flag from it and loads the next word. `ulz.py` rejects that word
   as unvalidated. It occurs in no reference, so the decoder is unchanged.
-- **English-labeled version 0 blobs** leave zero flag bits above the stop
-  bit after the declared size. **Prediction, not measured:** the routine
-  would read each as a copy and write past the declared size. The English
-  images were not run here.
+- **English-labeled version 0 blobs with spare flag bits make the game
+  overrun.** They leave zero flag bits above the stop bit after the declared
+  size, and the routine reads each one as a copy. Measured under
+  [Results](#results): it writes past the declared size on exactly those
+  423 and 361 blobs, and on no other blob on any disc.
 - **Version 2 needs a word-aligned literal stream**, since it reads
   literals with `lw`. `ulz.py` already requires the literal offset to be a
   multiple of 4. A version 2 copy that crosses the declared size is
@@ -183,20 +185,26 @@ as a match only when all of these hold:
 
 ## Results
 
-| Measure | Japanese Disc 1 |
-|---|---:|
-| `ACE3.BIN` SHA256 | `2c3f2ce4…` (the manifest's Japanese hash) |
-| BPH entries checked | 574 |
-| Ulz blobs run | 2,256: 1,167 version 0, 1,089 version 2 |
-| Matched | 2,256 |
-| Mismatches / decoder errors / routine errors | 0 / 0 / 0 |
-| Pair-offset words with a nonzero top byte | 0 |
-| Instructions executed | 643,716,825 |
-| Most in one blob | 4,472,864 |
+| Measure | Japanese Disc 1 | Japanese Disc 2 | English-labeled Disc 1 | English-labeled Disc 2 |
+|---|---:|---:|---:|---:|
+| `ACE3.BIN` SHA256 | `2c3f2ce4…` | `2c3f2ce4…` | `ba0557ec…` | `2c3f2ce4…` |
+| Ulz blobs run | 2,256 | 2,256 | 2,250 | 2,256 |
+| Version 0 / version 2 | 1,167 / 1,089 | 1,167 / 1,089 | 1,155 / 1,095 | 1,166 / 1,090 |
+| Matched | 2,256 | 2,256 | 1,827 | 1,895 |
+| Write past the declared size, inside the blob | 0 | 0 | 4 | 7 |
+| Read past the end of the blob | 0 | 0 | 419 | 354 |
+| Rejected by `ulz.py` | 0 | 0 | 0 | 0 |
+| Pair-offset words with a nonzero top byte | 0 | 0 | 0 | 0 |
+| Instructions executed | 643,716,825 | 643,716,825 | 583,237,079 | 600,274,924 |
 
-The blob count and version split equal the walker's figures for the same
-image in [`bpb-jp1.json`](reports/bpb-jp1.json). So on every Ulz blob on
-Japanese Disc 1, `ulz.py` and the game's own routine agree on four things:
+All 574 BPH entries were checked on each image. The blob counts and
+version splits equal the walker's figures in the
+[BPB reports](reports/). The reports are
+`reports/ulz-routine-{jp1,jp2,en1,en2}.json`; each lists at most 50
+failures.
+
+**Japanese discs.** On every Ulz blob, `ulz.py` and the game's own routine
+agree on four things:
 
 - the output bytes
 - the end pointer
@@ -204,8 +212,31 @@ Japanese Disc 1, `ulz.py` and the game's own routine agree on four things:
 - how many flag words, literal bytes, and pair bytes each one consumes
 
 Every run stayed inside the three mapped regions. None hit a load-delay
-hazard or an overflow trap. The full report is
-[`reports/ulz-routine-jp1.json`](reports/ulz-routine-jp1.json).
+hazard or an overflow trap.
+
+**English-labeled discs.** The failures are exactly the version 0 blobs
+that leave spare zero flag bits after the declared size: 423 on Disc 1 and
+361 on Disc 2, as [bpb-validation.md](bpb-validation.md) counted with
+`ulz.py`. Running the routine on just those blobs fails on every one, and
+those counts equal the failures of the full run, so the two sets are the
+same. Every other blob matches.
+
+- When the blob still holds 2 spare pair bytes, the routine makes one extra
+  3-byte copy past the declared size and stops: 4 and 7 blobs.
+- Otherwise it reads the next pair past the end of the blob, which stops
+  the check, because nothing else is mapped. On the console it would read
+  whatever follows the blob in RAM.
+- A scratch run that pads each such blob with zero bytes lets every run
+  finish. In all 423 and 361 cases, the bytes up to the declared size equal
+  `ulz.py`'s payload. With that padding the routine writes 3–90 bytes past
+  the declared size; on the console the amount depends on the bytes that
+  follow the blob.
+
+So `ulz.py` reproduces the game's output up to the declared size on every
+Ulz blob on all four discs. The English-labeled data adds an overrun that
+the Japanese data never causes; the routine never checks the declared size
+for version 0. Whether that overrun damages anything in the game is not
+measured.
 
 **Negative control (a scratch run, not part of the tool).** Altering real
 blobs makes the check fail as it should:
@@ -235,9 +266,9 @@ never game bytes.
 
 ## Limits
 
-- One image was run. Japanese Disc 2 has the same `ACE3.BIN` and
-  byte-identical BPB reports, so the same result is expected but was not
-  run. The English-labeled images were not run.
+- On the English-labeled discs, the overrunning runs stop at the end of the
+  blob, so the harness does not measure what the console would read and
+  write past it.
 - The version 1 path and both stream entry points were read, not run.
 - The interpreter is checked only against synthetic, project-written
   programs. Its agreement with the R3000 rests on the documented
@@ -247,8 +278,8 @@ never game bytes.
 
 ## Next
 
-- Run the check on the English-labeled images to test the version 0
-  overrun prediction.
+- Find where the overrunning English-labeled blobs are decoded, and whether
+  the bytes written past them land in anything live.
 - Decide whether `ulz.py` should accept the `0x80000000` version 0 word,
   now that the routine's handling of it is known.
 - Trace the BPB loading path: the callers above, how entries 1–4 are

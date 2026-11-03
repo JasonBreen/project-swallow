@@ -157,7 +157,7 @@ def iter_ulz_blobs(data: bytes, path: tuple[int, ...], origin: str = 'stored',
 
 def _routine_executable(image: Path, config_dir: Path) -> tuple[dict, dict, bytes, int, int]:
     report = inspect_executables(image)
-    configs = load_manifest(config_dir)
+    configs = [entry for entry in load_manifest(config_dir) if entry.kind == 'executable']
     found = []
     for exe in report['executables']:
         for config in configs:

@@ -30,7 +30,7 @@ the entries are `jr $ra` counts, a rough estimate until the entries are split.
 | Indirect control flow | 26 `jalr`, 42 computed `jr`, 587 jump-table labels | Every target must be listed before translation |
 | Hardware access | 121 instructions form `0x1F80xxxx` addresses; all 27 that splat resolves are scratchpad, none an I/O register | Scratchpad must exist; the other sites still need classifying |
 | Sound | `ACE3.BIN` uses LIBSPU without LIBSND | Any music sequencing in it is game code, recovered like the rest |
-| Compression | The game's Ulz routine matches `ulz.py` on all 2,256 blobs | The first routine with an executable proof |
+| Compression | The game's Ulz routine matches `ulz.py` on every blob on both Japanese discs; English-patch data makes it overrun past the declared size | The first routine with an executable proof |
 
 ## Strategy: recompile first, then decompile
 

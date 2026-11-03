@@ -101,9 +101,10 @@ unvalidated:
   (English Disc 2) English-patch blobs leave 1–30 bits, always zero. Their
   spare pair bytes could not service those bits as references, so a decoder
   that ignored the declared size would overrun. The game's routine does
-  ignore the size for version 0 and stops only at the zero word, so it is
-  predicted to overrun on those blobs; this has not been run on the English
-  images ([Ulz routine](ulz-routine.md)). Nonzero leftovers are rejected, and
+  ignore the size for version 0 and stops only at the zero word, and running
+  it shows that it overruns on exactly those 423 and 361 blobs and on no
+  other blob ([Ulz routine](ulz-routine.md#results)). The bytes up to the
+  declared size still equal this decoder's output. Nonzero leftovers are rejected, and
   the zero-bit count is reported per blob as `final_word_unused_flag_bits`.
 The psx-spx notes describe the same distinction as "31 flag bits with an
 implied stop bit" for version 0 and "all 32 bits with a stop bit shifted in"
@@ -132,7 +133,9 @@ accounting only.
 
 - Four top-level entries (indices 1–4 on every image) are opaque to the
   walker: each starts with a small word followed by strings or tables, not an
-  offset table. They are identical across all four images. **Decoded from
+  offset table. Entries 1, 2, and 4 are identical on all four images. Entry 3
+  differs on both English-labeled images, only before its code; see
+  [overlays](overlays.md#on-all-four-references). **Decoded from
   code:** they are code overlays for `ACE3.BIN`. Its module loader reads
   entry *k* whole to `0x800CBFE8`, the end of `ACE3.BIN`'s BSS, and calls
   handlers inside it; see [overlays](overlays.md). Their leading words, 4, 5,
