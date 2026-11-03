@@ -59,3 +59,4 @@ SYSTEM.CNF
 !/discs/english-v0.9b3/*.tar.bz2
 !/discs/japanese/*.7z
 !/discs/acecombat/*.tar.bz2
+/discs/supplementary/ps2/*.tmp

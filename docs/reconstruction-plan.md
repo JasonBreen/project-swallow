@@ -167,7 +167,7 @@ Measured facts are marked; everything else is expectation.
 | Ace Combat 2 | PS1 | Not supplied | | Expected to reuse the PS1 runtime |
 | Ace Combat 3 | PS1 | Four references | This project | |
 | Ace Combat 04 | PS2 | Not supplied | Open pending Sal's work; need its status, scope, and license | Shares the PS2 runtime with Zero |
-| Ace Combat Zero, SLUS_213.46 (NTSC-U) | PS2 | PR #8 branch, not merged | From that PR's listing: `BIN/DATA.PAC` with `DATA.TBL`, IRX modules (LIBSD, MCMAN, SIO2MAN, NUSOUND, NUSNDSTR), `SMV` movies, and `STREAM` BGM and radio archives | A separate PS2 runtime: the R5900 CPU, VU0 and VU1 microcode, the GS, and the IOP; far larger code |
+| Ace Combat Zero, SLUS_213.46 (NTSC-U) | PS2 | `discs/supplementary/ps2`, three 7z volumes of one ISO | From its [inventory](supplementary-discs.md): `BIN/DATA.PAC` with `DATA.TBL`, IRX modules (LIBSD, MCMAN, SIO2MAN, NUSOUND, NUSNDSTR), `SMV` movies, and `STREAM` BGM and radio archives | A separate PS2 runtime: the R5900 CPU, VU0 and VU1 microcode, the GS, and the IOP; far larger code |
 
 What carries across titles:
 

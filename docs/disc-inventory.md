@@ -2,6 +2,12 @@
 
 Verified locally on 2026-10-12. This report contains metadata and hashes, not game data.
 
+Two additional owner-supplied references were inventoried on 2026-10-21:
+the original PlayStation Ace Combat and a PlayStation 2 Ace Combat Zero ISO.
+See [supplementary references](supplementary-discs.md) and
+their [separate manifest](../discs/supplementary-manifest.json).
+The four AC3 references below retain their existing baseline identities.
+
 ## Evidence and scope
 
 All four supplied archives were read through system libarchive and their regular BIN/CUE members staged locally. The readme HTML members in the Japanese archives were not executed or included in the source package. Whole-image hashes below were calculated from the extracted BIN bytes, not the compressed archives. All four raw images were inspected using the packaged CLI.
