@@ -1,0 +1,9 @@
+// Symbols for overlay 2: BPH entry 2 of ACE.BPB, loaded at 0x800CBFE8.
+// Evidence is in docs/overlays.md. Names stay generic until the code proves more.
+// Format: name = 0xADDRESS; // type:... size:...
+
+// First word of the overlay, value 5. Its meaning is not decoded.
+ovl2_leading_word = 0x800CBFE8; // type:u32 size:0x4
+// Module 3 in ace3_module_table points here: ace3_module_step calls
+// entry [sub-state] each frame. It begins a run of 27 code pointers; how many belong to this table is not decoded.
+ovl2_handler_table = 0x801097A8; // type:u32

@@ -1,0 +1,52 @@
+# splat config for overlay 2: BPH entry 2 of ACE.BPB, read whole by the
+# ACE3.BIN module loader to 0x800CBFE8, the end of ACE3.BIN's BSS. Matched by
+# the SHA256 of the entry's bytes, never by index; see docs/overlays.md.
+# Content: CPU/GPU/MEM load strings, SC0xx names, 707 jr $ra.
+# The overlay has no $gp-relative accesses, so no gp_value is set. It is
+# disassembled with ACE3.BIN's symbols so its calls into ACE3.BIN are named.
+# Measured on 2026-11-03. Generated assembly is never committed.
+name: ovl2
+options:
+  basename: ovl2
+  target_path: ovl2.bin
+  base_path: .
+  platform: psx
+  compiler: PSYQ
+
+  asm_path: asm
+  src_path: src
+  build_path: build
+  ld_script_path: ovl2.ld
+  ld_dependencies: False
+
+  find_file_boundaries: True
+
+  o_as_suffix: True
+  use_legacy_include_asm: False
+  section_order: [".rodata", ".text", ".data", ".bss"]
+
+  symbol_addrs_path:
+    - symbol_addrs.ace3.txt
+    - symbol_addrs.ovl2.txt
+  undefined_funcs_auto_path: undefined_funcs_auto.ovl2.txt
+  undefined_syms_auto_path: undefined_syms_auto.ovl2.txt
+
+  subalign: 2
+  string_encoding: ASCII
+  data_string_encoding: ASCII
+  rodata_string_guesser_level: 2
+  data_string_guesser_level: 2
+segments:
+  - name: ovl2
+    type: code
+    start: 0x0
+    vram: 0x800CBFE8
+    subsegments:
+      # Leading word 5, then strings and pointer tables.
+      - [0x0, rodata, ovl2_rodata]
+      # First function 0x800CD7C0, right after the last table.
+      - [0x17D8, asm, ovl2_text]
+      # Starts with the module handler table at 0x801097A8, which
+      # follows the last jr $ra and its delay slot.
+      - [0x3D7C0, data, ovl2_data]
+  - [0x46E4C]

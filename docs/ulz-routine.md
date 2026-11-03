@@ -135,11 +135,10 @@ Disassembled, the bytes around the decoder calls in entry 1 are coherent
 code. They load `0x1A7A6C55` (`Ulz\x1a`), compare it with a buffer's first
 word, branch past the call when it differs, and then call `ulz_decompress`
 with `a0` as the blob and `a1` as the destination. Entry 1 also jumps to
-`0x800D8BF8`, above the end of `ACE3.BIN`'s BSS at `0x800CBFE8`. This is the
-first direct evidence for the [overlay hypothesis](bpb-format.md#known-unknowns):
-entries 1–4 contain MIPS code that is linked against `ACE3.BIN`. Their load
-addresses, their count words, and how they are loaded are still not
-decoded.
+`0x800D8BF8`, above the end of `ACE3.BIN`'s BSS at `0x800CBFE8`. This was
+the first direct evidence that entries 1–4 hold code linked against
+`ACE3.BIN`. Tooling v0.10.0 traced the loader: they are overlays loaded at
+`0x800CBFE8`; see [overlays](overlays.md).
 
 ## Running the routine
 

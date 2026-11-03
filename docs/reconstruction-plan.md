@@ -24,7 +24,7 @@ the entries are `jr $ra` counts, a rough estimate until the entries are split.
 |---|---|---|
 | Main game code | `ACE3.BIN` `0x800257e8–0x8009b910`: 120,906 instructions in 1,284 functions, plus the [Ulz routine](ulz-routine.md) | The core of the work |
 | Boot program | 23 functions of its own; links LIBSND, which `ACE3.BIN` does not | Small; also shows the load path |
-| Overlay code | BPB entries 1–4: 289, 707, 20, and 22 `jr $ra`; hundreds of calls onto `ACE3.BIN` functions | About 1,000 more functions, which need load addresses first |
+| Overlay code | BPB entries 1–4, all loaded at `0x800CBFE8` by the module loader ([overlays](overlays.md)): 271, 645, 20, and 20 splat functions | 956 more functions, already disassembled |
 | Library boundary | 159 distinct PsyQ functions called from game code and entries 1–4: LIBGTE 31, LIBGPU 25, LIBCD 19, LIBSPU 17, LIBPAD 11, LIBC2 10, LIBPRESS 8, LIBAPI 5, LIBCARD 5, LIBETC 5, LIBSN 1, and 22 short unnamed stubs, mostly BIOS calls | The interface the runtime replaces |
 | Geometry coprocessor (GTE) | 3,485 inline GTE instructions in game code, using 15 commands: MVMVA 127, NCLIP 81, DPCS 52, RTPS 39, RTPT 33, GPF 32, INTPL 21, DPCT 8, SQR 6, GPL 6, AVSZ3 4, NCT 2, NCCS 2, NCS 1, AVSZ4 1 | A bit-exact GTE is required; the flight and camera maths run through it |
 | Indirect control flow | 26 `jalr`, 42 computed `jr`, 587 jump-table labels | Every target must be listed before translation |
@@ -188,8 +188,10 @@ reaches M6, so the PS1 runtime has been proven once.
 
 ## Next bounded tasks
 
-1. Trace the BPB loader and the overlay load addresses (track step 5), and
-   add splat configs for entries 1–4.
+1. **Done in tooling v0.10.0:** trace the overlay loader and load
+   addresses, and add splat configs for entries 1–4; see
+   [overlays](overlays.md). Still open from it: `func_800273FC`, and what
+   the module handlers load from the other entries.
 2. Finish the code inventory (M1): classify the remaining `0x1F80` sites, and
    list indirect-call targets and registered callbacks.
 3. Owner decisions D1–D5, which can run alongside the above.

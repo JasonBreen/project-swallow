@@ -130,20 +130,14 @@ accounting only.
 
 ## Known unknowns
 
-- Four top-level entries (indices 1–4 on every image) are opaque: each starts
-  with a small count word followed by text-like fixed records, not an offset
-  table. They are identical across all four images and remain uninterpreted.
-  **Hypothesis, now with direct evidence:** they contain MIPS code linked
-  against `ACE3.BIN`, consistent with overlays, though no load is shown. On
-  Japanese Disc 1 their count words are 4, 5, 6, and 7, and they hold 285,
-  1,179, 50, and 415 words in the PlayStation RAM range
-  (`0x80010000`–`0x801fffff`), for example `0x800d1890` in entry 1. They also
-  hold 280, 981, 47, and 50 `jal` words that land exactly on an `ACE3.BIN`
-  function start, against 16 such words in all other stored entries
-  together, and entries 1 and 2 call `ulz_decompress` 13 times after
-  comparing the `Ulz` magic ([Ulz routine](ulz-routine.md#callers)). No
-  count meaning, layout, or load address has been decoded; the
-  [executable track](next-task-executable.md) traces the loader next.
+- Four top-level entries (indices 1–4 on every image) are opaque to the
+  walker: each starts with a small word followed by strings or tables, not an
+  offset table. They are identical across all four images. **Decoded from
+  code:** they are code overlays for `ACE3.BIN`. Its module loader reads
+  entry *k* whole to `0x800CBFE8`, the end of `ACE3.BIN`'s BSS, and calls
+  handlers inside it; see [overlays](overlays.md). Their leading words, 4, 5,
+  6, and 7 on Japanese Disc 1, are not decoded. The walker still reports them
+  as opaque, because it classifies data formats, not code.
 - Four opaque leaves on Japanese Disc 1 contain the Ulz signature at a nonzero
   offset: `508.0.1`, `525.0.0`, `536.0.1`, and `543.0.0`. Their own header
   shapes are unknown, so the embedded data is not walked or decoded.

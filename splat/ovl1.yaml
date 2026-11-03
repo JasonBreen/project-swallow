@@ -1,0 +1,52 @@
+# splat config for overlay 1: BPH entry 1 of ACE.BPB, read whole by the
+# ACE3.BIN module loader to 0x800CBFE8, the end of ACE3.BIN's BSS. Matched by
+# the SHA256 of the entry's bytes, never by index; see docs/overlays.md.
+# Content: Menus: LOG OUT, easy/normal/hard, Mission Simulater strings.
+# The overlay has no $gp-relative accesses, so no gp_value is set. It is
+# disassembled with ACE3.BIN's symbols so its calls into ACE3.BIN are named.
+# Measured on 2026-11-03. Generated assembly is never committed.
+name: ovl1
+options:
+  basename: ovl1
+  target_path: ovl1.bin
+  base_path: .
+  platform: psx
+  compiler: PSYQ
+
+  asm_path: asm
+  src_path: src
+  build_path: build
+  ld_script_path: ovl1.ld
+  ld_dependencies: False
+
+  find_file_boundaries: True
+
+  o_as_suffix: True
+  use_legacy_include_asm: False
+  section_order: [".rodata", ".text", ".data", ".bss"]
+
+  symbol_addrs_path:
+    - symbol_addrs.ace3.txt
+    - symbol_addrs.ovl1.txt
+  undefined_funcs_auto_path: undefined_funcs_auto.ovl1.txt
+  undefined_syms_auto_path: undefined_syms_auto.ovl1.txt
+
+  subalign: 2
+  string_encoding: ASCII
+  data_string_encoding: ASCII
+  rodata_string_guesser_level: 2
+  data_string_guesser_level: 2
+segments:
+  - name: ovl1
+    type: code
+    start: 0x0
+    vram: 0x800CBFE8
+    subsegments:
+      # Leading word 4, then strings and pointer tables.
+      - [0x0, rodata, ovl1_rodata]
+      # First function 0x800CC5D8, right after the last table.
+      - [0x5F0, asm, ovl1_text]
+      # Starts with the module handler table at 0x800DCB00, which
+      # follows the last jr $ra and its delay slot.
+      - [0x10B18, data, ovl1_data]
+  - [0x11A94]

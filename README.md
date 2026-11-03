@@ -30,7 +30,7 @@ The repository currently contains the disc and archive tools needed to build tha
 
 ## Development status
 
-**Pre-alpha · toolchain v0.9.0 · no playable build available yet.**
+**Pre-alpha · toolchain v0.10.0 · no playable build available yet.**
 
 The game is in development. There is currently no C engine, native renderer, playable mission, recovered gameplay runtime, or completed English dub. Windows and Linux are target game platforms; current automated coverage runs the Python tools on both.
 
@@ -41,7 +41,7 @@ The game is in development. There is currently no C engine, native renderer, pla
 | `ACE.BPH` | Typed index parser, explicit payload sizes, range checks, metadata reports; validated against all four references | Resource loading for the C runtime |
 | `ACE.BPB` / Ulz | Nested offset-table containers walked; Namco Ulz (v0/v2) decoded in memory with exact stream accounting; other leaf formats still uninterpreted | Decoded resources for the C runtime |
 | TIM metadata | PlayStation TIM image leaves validated to metadata on all four references; pixels are not yet converted or written | Original assets and enhanced presentation |
-| Executable | Read-only PS-X EXE headers validated on all four disc images; both executables disassembled with [splat](docs/disassembly.md) (364 and 1,715 functions), with PsyQ [library code identified](docs/psyq-libraries.md) and named; the game's [Ulz routine](docs/ulz-routine.md) located and run in a MIPS interpreter, matching the project decoder on all 2,256 Ulz blobs on Japanese Disc 1 | Annotated original routines: loaders, flight model, and missions |
+| Executable | Read-only PS-X EXE headers validated on all four disc images; both executables disassembled with [splat](docs/disassembly.md) (364 and 1,715 functions), with PsyQ [library code identified](docs/psyq-libraries.md) and named; the game's [Ulz routine](docs/ulz-routine.md) located and run in a MIPS interpreter, matching the project decoder on all 2,256 Ulz blobs on Japanese Disc 1; the four [code overlays](docs/overlays.md) in `ACE.BPB` located at `0x800CBFE8` and disassembled (956 more functions) | Annotated original routines: loaders, flight model, and missions |
 | Streaming media | Form 2 detected and kept outside the Form 1 reader | Correct XA audio/video, timing, and interleave |
 | Gameplay and campaign | Not started; original code will be the reference | Playable missions, branching routes, transitions, and saves |
 | English voices | Human-performed dub planned | A complete, credited team recording |
@@ -92,7 +92,7 @@ The executable reader resolves `BOOT` from `SYSTEM.CNF`, finds other PS-X EXEs b
 2. **BPH index — implemented.** Decode and validate the archive's entry ranges; preserve uncertain fields and publish reproducible metadata.
 3. **BPB containers and Ulz compression — implemented.** Walk nested offset tables and decode Ulz versions 0 and 2 with validated stream accounting on all four references.
 4. **TIM metadata — implemented.** Validate PlayStation TIM leaves to metadata; pixel conversion and remaining leaf formats are still planned.
-5. **Executable/MIPS recovery — started.** The boot EXE and `ACE3.BIN` are disassembled with splat, their PsyQ library code is identified, and the game's Ulz decompressor is located and checked by running it. Next, document the BPB loader and gameplay routines before writing the C runtime; see the [executable track](docs/next-task-executable.md).
+5. **Executable/MIPS recovery — started.** The boot EXE and `ACE3.BIN` are disassembled with splat, their PsyQ library code is identified, the game's Ulz decompressor is located and checked by running it, and the module loader and its four code overlays are traced and disassembled. Next, the rest of the BPB loading path and the gameplay routines, before writing the C runtime; see the [executable track](docs/next-task-executable.md).
 6. **One complete mission in the C runtime.** Aircraft, level, recovered flight model, controls, weapons, objectives, dialogue, and results working together with runtime evidence.
 7. **The full Electrosphere.** Branching campaign, disc-specific content, saves, enhanced presentation, human English dialogue, and platform validation.
 

@@ -1,5 +1,5 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "splat_requirement": "splat64[mips]==0.50.1",
   "configs": [
     {
@@ -17,6 +17,44 @@
       "sha256": [
         "2c3f2ce41268176128973ea0cd9b28784a26c0061bff5550c99599388f13ebe9",
         "ba0557ecf85261c4ec3b7b96d4c63c7faf415bf098554037fce102cf10a5ecb2"
+      ]
+    }
+  ],
+  "overlays": [
+    {
+      "config": "ovl1.yaml",
+      "target": "ovl1.bin",
+      "symbols": "symbol_addrs.ovl1.txt",
+      "size_bytes": 72340,
+      "sha256": [
+        "f9c4ae4768124c94d4efb1378c1281e518fda2325caa28f0a1326a2cbb41d124"
+      ]
+    },
+    {
+      "config": "ovl2.yaml",
+      "target": "ovl2.bin",
+      "symbols": "symbol_addrs.ovl2.txt",
+      "size_bytes": 290380,
+      "sha256": [
+        "beb4377c44efe7d33f4172dbc7d8dde281973b63aaa5f32f9a6bb52d139e8f4f"
+      ]
+    },
+    {
+      "config": "ovl3.yaml",
+      "target": "ovl3.bin",
+      "symbols": "symbol_addrs.ovl3.txt",
+      "size_bytes": 338656,
+      "sha256": [
+        "5f049da97151e10e0fc2ff46b6aa72f2c32c67135dc2fef9c1babae340a5b897"
+      ]
+    },
+    {
+      "config": "ovl4.yaml",
+      "target": "ovl4.bin",
+      "symbols": "symbol_addrs.ovl4.txt",
+      "size_bytes": 21860,
+      "sha256": [
+        "e5f73492ef564347fe25ea63af29c8314bead577ff62d30ff6d39acfbf972337"
       ]
     }
   ]
