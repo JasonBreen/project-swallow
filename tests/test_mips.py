@@ -2,7 +2,8 @@
 import struct
 import unittest
 
-from swallow_tools.mips import RETURN_ADDRESS, Memory, MipsError, call, register_index
+from swallow_tools.mips import (
+    RETURN_ADDRESS, SUPPORTED_MNEMONICS, Memory, MipsError, _decode, call, register_index)
 
 BASE = 0x80010000
 DATA = 0x80100000
@@ -279,6 +280,21 @@ class MemoryTests(unittest.TestCase):
 
 
 class DecodeTests(unittest.TestCase):
+    def test_supported_mnemonics_are_exactly_what_the_decoder_accepts(self):
+        words = [SLL('v0', 'a0', 1), SRL('v0', 'a0', 1), SRA('v0', 'a0', 1),
+                 SLLV('v0', 'a0', 'a1'), SRLV('v0', 'a0', 'a1'), SRAV('v0', 'a0', 'a1'),
+                 JR('ra'), JALR('t3', 't2'), ADD('v0', 'a0', 'a1'), ADDU('v0', 'a0', 'a1'),
+                 SUB('v0', 'a0', 'a1'), SUBU('v0', 'a0', 'a1'), AND('v0', 'a0', 'a1'),
+                 OR('v0', 'a0', 'a1'), XOR('v0', 'a0', 'a1'), NOR('v0', 'a0', 'a1'),
+                 SLT('v0', 'a0', 'a1'), SLTU('v0', 'a0', 'a1'), BLTZ('a0', 1), BGEZ('a0', 1),
+                 J(BASE), JAL(BASE), BEQ('a0', 'a1', 1), BNE('a0', 'a1', 1), BLEZ('a0', 1),
+                 BGTZ('a0', 1), ADDI('v0', 'a0', 1), ADDIU('v0', 'a0', 1), SLTI('v0', 'a0', 1),
+                 SLTIU('v0', 'a0', 1), ANDI('v0', 'a0', 1), ORI('v0', 'a0', 1),
+                 XORI('v0', 'a0', 1), LUI('v0', 1), LB('v0', 0, 'a0'), LH('v0', 0, 'a0'),
+                 LW('v0', 0, 'a0'), LBU('v0', 0, 'a0'), LHU('v0', 0, 'a0'), SB('v0', 0, 'a0'),
+                 SH('v0', 0, 'a0'), SW('v0', 0, 'a0')]
+        self.assertEqual({_decode(word, BASE).mnemonic for word in words}, SUPPORTED_MNEMONICS)
+
     def test_instructions_outside_the_subset_are_errors(self):
         for word in (0x0000000C,          # syscall
                      0x00850018,          # mult

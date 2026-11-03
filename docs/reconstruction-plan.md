@@ -27,8 +27,8 @@ the entries are `jr $ra` counts, a rough estimate until the entries are split.
 | Overlay code | BPB entries 1–4, all loaded at `0x800CBFE8` by the module loader ([overlays](overlays.md)): 271, 645, 20, and 20 splat functions | 956 more functions, already disassembled |
 | Library boundary | 159 distinct PsyQ functions called from game code and entries 1–4: LIBGTE 31, LIBGPU 25, LIBCD 19, LIBSPU 17, LIBPAD 11, LIBC2 10, LIBPRESS 8, LIBAPI 5, LIBCARD 5, LIBETC 5, LIBSN 1, and 22 short unnamed stubs, mostly BIOS calls | The interface the runtime replaces |
 | Geometry coprocessor (GTE) | 3,485 inline GTE instructions in game code, using 15 commands: MVMVA 127, NCLIP 81, DPCS 52, RTPS 39, RTPT 33, GPF 32, INTPL 21, DPCT 8, SQR 6, GPL 6, AVSZ3 4, NCT 2, NCCS 2, NCS 1, AVSZ4 1 | A bit-exact GTE is required; the flight and camera maths run through it |
-| Indirect control flow | 26 `jalr`, 42 computed `jr`, 587 jump-table labels | Every target must be listed before translation |
-| Hardware access | 121 instructions form `0x1F80xxxx` addresses; all 27 that splat resolves are scratchpad, none an I/O register | Scratchpad must exist; the other sites still need classifying |
+| Indirect control flow | 77 `jalr` in game code, including overlays; every computed `jr` there has a jump table except `ulz_decompress`'s; 5 registered callbacks ([code inventory](code-inventory.md)) | Dispatch must cover the address-taken functions and those callbacks |
+| Hardware access | Every `0x1F80xxxx` address in game code is scratchpad: 931 operands across `ACE3.BIN` and the overlays. I/O registers appear only in library code ([code inventory](code-inventory.md)) | Scratchpad must exist; game code needs no hardware registers |
 | Sound | `ACE3.BIN` uses LIBSPU without LIBSND | Any music sequencing in it is game code, recovered like the rest |
 | Compression | The game's Ulz routine matches `ulz.py` on every blob on both Japanese discs; English-patch data makes it overrun past the declared size | The first routine with an executable proof |
 
@@ -192,8 +192,12 @@ reaches M6, so the PS1 runtime has been proven once.
    addresses, and add splat configs for entries 1–4; see
    [overlays](overlays.md). Still open from it: `func_800273FC`, and what
    the module handlers load from the other entries.
-2. Finish the code inventory (M1): classify the remaining `0x1F80` sites, and
-   list indirect-call targets and registered callbacks.
+2. **Done in tooling v0.11.0:** indirect calls, jump tables, address-taken
+   functions, callbacks, `0x1F80` addresses, and interpreter gaps are
+   inventoried in [the code inventory](code-inventory.md). Game code names
+   only scratchpad addresses, and only one of its computed jumps lacks a
+   jump table. Still open for M1: assigning every remaining byte to code or
+   data, and the BPB loading path beyond the overlays.
 3. Owner decisions D1–D5, which can run alongside the above.
 4. Emulator spike for D6: deterministic replay and RAM dumps (M2).
 5. Recompiler prototype on `ulz_decompress` (M4), once D5 allows the first C

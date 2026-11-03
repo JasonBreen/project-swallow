@@ -26,6 +26,14 @@ REGISTER_NAMES = (
     't8', 't9', 'k0', 'k1', 'gp', 'sp', 'fp', 'ra',
 )
 _REGISTER_INDEX = {name: index for index, name in enumerate(REGISTER_NAMES)}
+# Every mnemonic the decoder below accepts; any other instruction stops a run.
+SUPPORTED_MNEMONICS = frozenset({
+    'sll', 'srl', 'sra', 'sllv', 'srlv', 'srav', 'jr', 'jalr',
+    'add', 'addu', 'sub', 'subu', 'and', 'or', 'xor', 'nor', 'slt', 'sltu',
+    'bltz', 'bgez', 'j', 'jal', 'beq', 'bne', 'blez', 'bgtz',
+    'addi', 'addiu', 'slti', 'sltiu', 'andi', 'ori', 'xori', 'lui',
+    'lb', 'lh', 'lw', 'lbu', 'lhu', 'sb', 'sh', 'sw',
+})
 
 
 class MipsError(ValueError):

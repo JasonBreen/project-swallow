@@ -9,6 +9,21 @@
 - Added `docs/reconstruction-plan.md`. It plans how the recovered code becomes the C engine: a static recompiler, a runtime that replaces the PsyQ library API, and readable C proven equal to the translated code. It lists decisions D1–D9, all still open for the owner, and milestones M1–M8. It records the owner's direction to reconstruct Ace Combat Zero, Ace Combat (1995), and Ace Combat 2 after AC3; Ace Combat 04 depends on Sal's work. Nothing in the plan is implemented.
 - Measured for the plan, on Japanese Disc 1: game code and BPB entries 1–4 call 159 distinct PsyQ functions and use 3,485 inline GTE instructions across 15 commands, with 26 indirect calls and 42 computed jumps. A survey of the stored Ace Combat (1995) image found no `SYSTEM.CNF`, a `PSX.EXE` that boots seven module executables loaded at `0x80023000`, no Ulz or BPB data, and 62 CD-DA tracks.
 
+## 0.11.0 — 2026-11-03
+
+- Added `swallow_tools.inventory` and the `swallow-inventory` CLI. It reads a `swallow-split` work directory, never the disc, and reports per unit:
+  - indirect calls, computed jumps, and the jump tables that resolve them
+  - address-taken functions and function-pointer tables
+  - callbacks registered with the PsyQ libraries
+  - BIOS stubs and their call numbers
+  - `0x1F80xxxx` addresses by class
+  - instructions outside the interpreter's set
+
+  It tells library from game code by blocks of placed PsyQ objects; on Japanese Disc 1 those blocks are exactly the documented library ranges.
+- Measured on Japanese Disc 1, in `docs/reports/code-inventory-jp1.json` and `docs/code-inventory.md`. Game code holds 2,265 functions and 206,643 instructions across the boot program, `ACE3.BIN`, and the overlays, with 77 `jalr`. Every computed `jr` in game code has a jump table except `ulz_decompress`'s version dispatch. Game code registers five callbacks: the CD driver's ready and sync handlers and two MDEC handlers. It names only scratchpad addresses; I/O registers appear only in library code. It holds 3,948 GTE, 2,324 multiply/divide, 1,002 unaligned-access, and 470 trap instructions that the interpreter does not run yet.
+- `swallow_tools.mips` now exports `SUPPORTED_MNEMONICS`, checked by a test against what its decoder accepts.
+- Added 10 synthetic tests (222 total).
+
 ## 0.10.0 — 2026-11-03
 
 - Traced how `ACE3.BIN` loads its overlays. `archive_open` (`0x8002AE0C`) finds `ACE.BPH`, `ACE.SPH`, `ACE.BPB`, and `ACE.SPB`, reads both indexes, checks `AC3E` and BPH word `+8` against `0x427`, and adds each data file's start sector to its index records. `archive_read_entry` queues reads of entry *id*, and an id with bit `0x800` selects `ACE.SPH`. `ace3_module_step` (`0x80026350`) runs a nine-record module table at `0x800B0134`, each record holding a handler table, overlay id, base, and end. It loads a module's overlay before calling its handlers. The functions and tables are named in `symbol_addrs.ace3.txt`.

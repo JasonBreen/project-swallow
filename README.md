@@ -30,7 +30,7 @@ The repository currently contains the disc and archive tools needed to build tha
 
 ## Development status
 
-**Pre-alpha · toolchain v0.10.0 · no playable build available yet.**
+**Pre-alpha · toolchain v0.11.0 · no playable build available yet.**
 
 The game is in development. There is currently no C engine, native renderer, playable mission, recovered gameplay runtime, or completed English dub. Windows and Linux are target game platforms; current automated coverage runs the Python tools on both.
 
@@ -78,7 +78,7 @@ python -m swallow_tools.exe $disc                         # PS-X EXE headers and
 python -m unittest discover -s tests -v
 ```
 
-On Linux, use the same modules with `PYTHONPATH=src`. `python -m swallow_tools.compare A.bin B.bin --json` compares two images file by file. An optional `python -m pip install -e .` (in a virtual environment on your project drive) installs the `swallow-disc`, `swallow-bph`, `swallow-bpb`, `swallow-exe`, `swallow-split`, `swallow-psyq`, `swallow-ulzcheck`, and `swallow-compare` commands. Disassembly with `swallow_tools.split` needs splat installed separately; see [disassembly](docs/disassembly.md). Library identification with `swallow_tools.psyq` needs a separate, uncommitted copy of the PsyQ signature data; see [library identification](docs/psyq-libraries.md). `python -m swallow_tools.ulzcheck DISC.bin` runs the game's own Ulz routine on every Ulz blob and compares it with the project decoder; see [the Ulz routine](docs/ulz-routine.md).
+On Linux, use the same modules with `PYTHONPATH=src`. `python -m swallow_tools.compare A.bin B.bin --json` compares two images file by file. An optional `python -m pip install -e .` (in a virtual environment on your project drive) installs the `swallow-disc`, `swallow-bph`, `swallow-bpb`, `swallow-exe`, `swallow-split`, `swallow-psyq`, `swallow-ulzcheck`, `swallow-inventory`, and `swallow-compare` commands. Disassembly with `swallow_tools.split` needs splat installed separately; see [disassembly](docs/disassembly.md). Library identification with `swallow_tools.psyq` needs a separate, uncommitted copy of the PsyQ signature data; see [library identification](docs/psyq-libraries.md). `python -m swallow_tools.ulzcheck DISC.bin` runs the game's own Ulz routine on every Ulz blob and compares it with the project decoder; see [the Ulz routine](docs/ulz-routine.md). `python -m swallow_tools.inventory WORK_DIR` lists the indirect control flow, callbacks, hardware addresses, and interpreter gaps in a `swallow-split` work directory; see [the code inventory](docs/code-inventory.md).
 
 The tests use synthetic data only. They need no discs, network, emulator, paid model, or GPU.
 
