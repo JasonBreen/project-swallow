@@ -28,7 +28,7 @@ DEFAULT_PSYQ_REPORT = REPO_ROOT / 'docs' / 'reports' / 'psyq-jp1.json'
 _INSTRUCTION = re.compile(
     r'^\s*/\* ([0-9A-F]+) ([0-9A-F]{8}) ([0-9A-F]{8}) \*/\s+(\S+)\s*(.*?)\s*(?:/\*.*\*/)?\s*$')
 _DIRECTIVE = re.compile(r'^\s*(glabel|alabel|endlabel|dlabel|enddlabel|jlabel)\s+(\S+)')
-_LOCAL_LABEL = re.compile(r'^\s*(\.L[0-9A-Fa-f_A-Za-z]+):\s*$')
+_LOCAL_LABEL = re.compile(r'^\s*(\.L[0-9A-Za-z_]+):\s*$')
 _RELOC = re.compile(r'%(?:hi|lo|gp_rel)\(([A-Za-z_.][A-Za-z0-9_.]*)\)')
 _HW_LITERAL = re.compile(r'0x1F80([0-9A-Fa-f]{4})\b')
 _HW_SYMBOL = re.compile(r'\bD_1F80([0-9A-Fa-f]{4})\b')
