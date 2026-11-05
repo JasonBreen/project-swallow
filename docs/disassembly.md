@@ -25,9 +25,10 @@ setuptools is upgraded, which a fresh venv does.
 
 ## What is committed and what is not
 
-The [`splat/`](../splat) directory holds one config per executable, a
-symbol file per executable, and `manifest.json`, which maps each config to
-the SHA256 values it accepts. The extracted executables and everything
+The [`splat/`](../splat) directory holds one config and one symbol file per
+executable and per [overlay](overlays.md), and `manifest.json`, which maps each
+config to the SHA256 values it accepts. Overlays also list their BPB entry
+size, so only entries of that size are hashed. The extracted executables and everything
 splat generates are derived from the game, so the tool refuses a work
 directory inside the repository. Its output stays local, on `G:`.
 
@@ -103,4 +104,4 @@ current directory. It writes
 - PsyQ library identification is done; see [library identification](psyq-libraries.md).
 - Reassemble the output with a MIPS assembler and compare it byte for byte
   with the input. That needs a toolchain choice, which is not made here.
-- Locate the Ulz decompressor in `ace3_text.s`.
+- The Ulz decompressor is located and checked; see [the Ulz routine](ulz-routine.md).

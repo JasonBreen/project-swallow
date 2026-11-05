@@ -221,7 +221,9 @@ def with_generated_symbols(text: str, result: dict) -> str:
 def update_symbol_files(report: dict, config_dir: Path) -> list[str]:
     """Rewrite the generated section of each matched config's symbol file."""
     from .split import load_manifest
-    configs = load_manifest(config_dir)
+    # Only executables are scanned for signatures; overlay configs in the
+    # same manifest are not PS-X EXEs and take no part.
+    configs = [entry for entry in load_manifest(config_dir) if entry.kind == 'executable']
     by_hash = {digest: entry for entry in configs for digest in entry.sha256}
     updated = []
     for exe in report['executables']:

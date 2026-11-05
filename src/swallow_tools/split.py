@@ -1,11 +1,11 @@
-"""Extract PS-X EXE files from a disc image and disassemble them with splat.
+"""Extract PS-X EXE files and BPB overlays from a disc image and disassemble them with splat.
 
-Contract and measured boundaries: docs/disassembly.md. Executables are matched
-to the configs in splat/manifest.json by SHA256, never by filename. splat
-itself is an external tool (splat/requirements.txt); this module only stages
-inputs, runs it, and counts what it produced. Extracted bytes and generated
-assembly are game-derived, so they go to a work directory outside the
-repository and are never committed.
+Contract and measured boundaries: docs/disassembly.md and docs/overlays.md.
+Executables and overlays are matched to the configs in splat/manifest.json by
+SHA256, never by filename or entry number. splat itself is an external tool
+(splat/requirements.txt); this module only stages inputs, runs it, and counts
+what it produced. Extracted bytes and generated assembly are game-derived, so
+they go to a work directory outside the repository and are never committed.
 """
 from __future__ import annotations
 
@@ -20,13 +20,15 @@ import shutil
 import subprocess
 import sys
 
+from .bph import BphFormatError, locate_archive_files, parse_bph
 from .disc import DiscFormatError, FileEntry, PlayStationDisc
 from .exe import ExeFormatError, _read_whole, inspect_executables
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_CONFIG_DIR = REPO_ROOT / 'splat'
 DEFAULT_SPLAT = (sys.executable, '-m', 'splat')
-SCHEMA_VERSION = 1
+SCHEMA_VERSION = 2
+MANIFEST_VERSIONS = (1, 2)
 # Names the manifest may use: portable on every filesystem the tools run on,
 # so no trailing dot or space, separator, or Windows device name can make two
 # different strings open the same file.
@@ -45,6 +47,10 @@ class SplatConfig:
     target: str
     symbols: str
     sha256: frozenset[str]
+    # 'executable' for a PS-X EXE file; 'overlay' for an ACE.BPB entry,
+    # which also records the entry size its hashes belong to.
+    kind: str = 'executable'
+    size_bytes: int | None = None
 
 
 def load_manifest(config_dir: Path) -> list[SplatConfig]:
@@ -56,10 +62,17 @@ def load_manifest(config_dir: Path) -> list[SplatConfig]:
     """
     try:
         manifest = json.loads((config_dir / 'manifest.json').read_text(encoding='utf-8'))
-        if manifest.get('schema_version') != 1:
+        if manifest.get('schema_version') not in MANIFEST_VERSIONS:
             raise SplitError('Unsupported splat manifest schema version')
         configs = [SplatConfig(item['config'], item['target'], item['symbols'],
                                frozenset(item['sha256'])) for item in manifest['configs']]
+        overlays = manifest.get('overlays', []) if manifest['schema_version'] >= 2 else []
+        for item in overlays:
+            size = item['size_bytes']
+            if not isinstance(size, int) or isinstance(size, bool) or size <= 0:
+                raise SplitError(f"{item['config']}: size_bytes must be a positive integer")
+            configs.append(SplatConfig(item['config'], item['target'], item['symbols'],
+                                       frozenset(item['sha256']), 'overlay', size))
     except (ValueError, KeyError, TypeError, AttributeError) as exc:
         if isinstance(exc, SplitError):
             raise
@@ -111,13 +124,67 @@ def _inside(path: Path, root: Path) -> bool:
     return True
 
 
+def _run_splat(work_dir: Path, entry: SplatConfig, data: bytes, config_dir: Path,
+               splat: tuple[str, ...] | list[str]) -> list[str]:
+    """Write one input and its config, run splat on it, and name the text files it made."""
+    (work_dir / entry.target).write_bytes(data)
+    for name in (entry.config, entry.symbols):
+        shutil.copyfile(config_dir / name, work_dir / name)
+    before = {item['file'] for item in summarize_asm(work_dir / 'asm')}
+    completed = subprocess.run([*splat, 'split', entry.config], cwd=work_dir,
+                               capture_output=True, text=True, encoding='utf-8',
+                               errors='replace')
+    (work_dir / f'{Path(entry.config).stem}.splat.log').write_text(
+        completed.stdout + completed.stderr, encoding='utf-8')
+    if completed.returncode != 0:
+        raise SplitError(f'splat failed on {entry.config} with exit code '
+                         f'{completed.returncode}; see {Path(entry.config).stem}.splat.log')
+    produced = [item for item in summarize_asm(work_dir / 'asm')
+                if item['file'] not in before and item['functions']]
+    if not produced:
+        raise SplitError(f'splat ran {entry.config} but wrote no assembly with functions; '
+                         f'see {Path(entry.config).stem}.splat.log')
+    return [item['file'] for item in produced]
+
+
+def find_overlays(disc: PlayStationDisc, inventory: dict,
+                  overlays: list[SplatConfig]) -> list[tuple[SplatConfig, int, bytes]]:
+    """Match each overlay config to exactly one ACE.BPB entry by size and SHA256.
+
+    Entries are found through the ISO directory and the BPH index, never by
+    entry number. Only entries whose size an overlay config names are hashed.
+    """
+    if not overlays:
+        return []
+    bph, bpb = locate_archive_files(disc, inventory)
+    index = parse_bph(disc.read_file(bph), bpb.size)
+    sizes = {entry.size_bytes for entry in overlays}
+    matched: dict[str, tuple[SplatConfig, int, bytes]] = {}
+    for record in index.entries:
+        if record.kind != 'normal' or record.size_bytes not in sizes:
+            continue
+        data = disc.read_file(bpb, offset=record.offset_bytes, length=record.size_bytes)
+        digest = hashlib.sha256(data).hexdigest()
+        for entry in overlays:
+            if entry.size_bytes == len(data) and digest in entry.sha256:
+                if entry.config in matched:
+                    raise SplitError(f'{entry.config}: BPH entries {matched[entry.config][1]} '
+                                     f'and {record.index} both match')
+                matched[entry.config] = (entry, record.index, data)
+    unmatched = [entry.config for entry in overlays if entry.config not in matched]
+    if unmatched:
+        raise SplitError(f"No ACE.BPB entry matches {', '.join(unmatched)}")
+    return [matched[entry.config] for entry in overlays]
+
+
 def split_image(image: Path, work_dir: Path, *, config_dir: Path = DEFAULT_CONFIG_DIR,
                 splat: tuple[str, ...] | list[str] = DEFAULT_SPLAT,
                 repo_root: Path = REPO_ROOT) -> dict:
-    """Stage every executable on the image and run splat once per config.
+    """Stage every executable and listed overlay on the image and run splat once per config.
 
     The work directory must be outside the repository and empty (or absent),
-    so counts never mix with an earlier run's files.
+    so counts never mix with an earlier run's files. Executables run first,
+    so their symbol files are present when overlay configs list them.
     """
     if _inside(work_dir, repo_root):
         raise SplitError(f'Work directory {work_dir} is inside the repository; '
@@ -125,8 +192,10 @@ def split_image(image: Path, work_dir: Path, *, config_dir: Path = DEFAULT_CONFI
     if work_dir.exists() and any(work_dir.iterdir()):
         raise SplitError(f'Work directory {work_dir} is not empty')
     configs = load_manifest(config_dir)
+    executables = [entry for entry in configs if entry.kind == 'executable']
+    overlays = [entry for entry in configs if entry.kind == 'overlay']
     report = inspect_executables(image)
-    by_hash = {digest: entry for entry in configs for digest in entry.sha256}
+    by_hash = {digest: entry for entry in executables for digest in entry.sha256}
     staged: list[tuple[dict, SplatConfig]] = []
     for exe in report['executables']:
         entry = by_hash.get(exe['sha256'])
@@ -135,46 +204,40 @@ def split_image(image: Path, work_dir: Path, *, config_dir: Path = DEFAULT_CONFI
         if any(other is entry for _, other in staged):
             raise SplitError(f"{exe['path']}: {entry.config} already matched another file")
         staged.append((exe, entry))
-    unmatched = [entry.config for entry in configs
+    unmatched = [entry.config for entry in executables
                  if not any(other is entry for _, other in staged)]
     if unmatched:
         raise SplitError(f"No executable on {image.name} matches {', '.join(unmatched)}")
+    disc = PlayStationDisc(image)
+    inventory = disc.inspect()
+    found = find_overlays(disc, inventory, overlays)
 
     work_dir.mkdir(parents=True, exist_ok=True)
-    disc = PlayStationDisc(image)
     # Keyed by extent, since ISO versions of one name share a stripped path.
     files = {(item['lba'], item['size']): FileEntry(**item)
-             for item in disc.inspect()['files'] if not item['is_directory']}
+             for item in inventory['files'] if not item['is_directory']}
     results = []
     for exe, entry in staged:
         data = _read_whole(disc, files[(exe['lba'], exe['size_bytes'])])
         if hashlib.sha256(data).hexdigest() != exe['sha256']:
             raise SplitError(f"{exe['path']}: bytes changed between report and extraction")
-        (work_dir / entry.target).write_bytes(data)
-        for name in (entry.config, entry.symbols):
-            shutil.copyfile(config_dir / name, work_dir / name)
-        before = {item['file'] for item in summarize_asm(work_dir / 'asm')}
-        completed = subprocess.run([*splat, 'split', entry.config], cwd=work_dir,
-                                   capture_output=True, text=True, encoding='utf-8',
-                                   errors='replace')
-        (work_dir / f'{Path(entry.config).stem}.splat.log').write_text(
-            completed.stdout + completed.stderr, encoding='utf-8')
-        if completed.returncode != 0:
-            raise SplitError(f'splat failed on {entry.config} with exit code '
-                             f'{completed.returncode}; see {Path(entry.config).stem}.splat.log')
-        produced = [item for item in summarize_asm(work_dir / 'asm')
-                    if item['file'] not in before and item['functions']]
-        if not produced:
-            raise SplitError(f'splat ran {entry.config} but wrote no assembly with functions; '
-                             f'see {Path(entry.config).stem}.splat.log')
         results.append({'path': exe['path'], 'sha256': exe['sha256'],
                         'is_boot': exe['is_boot'], 'config': entry.config,
                         'target': entry.target,
-                        'text_files': [item['file'] for item in produced]})
+                        'text_files': _run_splat(work_dir, entry, data, config_dir, splat)})
+    overlay_results = []
+    for entry, bph_entry, data in found:
+        overlay_results.append({'archive': 'ACE.BPB', 'bph_entry': bph_entry,
+                                'size_bytes': len(data),
+                                'sha256': hashlib.sha256(data).hexdigest(),
+                                'config': entry.config, 'target': entry.target,
+                                'text_files': _run_splat(work_dir, entry, data, config_dir,
+                                                         splat)})
     summary = {
         'schema_version': SCHEMA_VERSION,
         'source_image': image.name,
         'executables': results,
+        'overlays': overlay_results,
         'asm_files': summarize_asm(work_dir / 'asm'),
     }
     (work_dir / 'split-report.json').write_text(json.dumps(summary, indent=2) + '\n',
@@ -206,11 +269,14 @@ def main(argv: list[str] | None = None) -> int:
     try:
         summary = split_image(args.bin, args.work_dir, config_dir=args.config_dir,
                               splat=(python, '-m', 'splat'))
-    except (OSError, KeyError, DiscFormatError, ExeFormatError, SplitError) as exc:
+    except (OSError, KeyError, DiscFormatError, ExeFormatError, BphFormatError,
+            SplitError) as exc:
         print(f'ERROR: {exc}', file=sys.stderr)
         return 2
     for exe in summary['executables']:
         print(f"{exe['path']} -> {exe['config']}")
+    for overlay in summary['overlays']:
+        print(f"{overlay['archive']} entry {overlay['bph_entry']} -> {overlay['config']}")
     for item in summary['asm_files']:
         print(f"asm/{item['file']}: {item['functions']} functions, "
               f"{item['data_labels']} data labels, "

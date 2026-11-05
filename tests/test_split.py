@@ -14,6 +14,7 @@ from swallow_tools.split import (
     summarize_asm,
 )
 from test_exe import make_exe, make_image
+from test_ulzcheck import archive_files
 
 # Stands in for `python -m splat split CONFIG`: records its arguments and
 # writes one text file the way splat names it, from the config's stem.
@@ -183,7 +184,7 @@ class SplitTests(unittest.TestCase):
         seen = []
         def fake_split(image, work_dir, *, config_dir, splat):
             seen.append(splat)
-            return {'executables': [], 'asm_files': []}
+            return {'executables': [], 'overlays': [], 'asm_files': []}
         with mock.patch('swallow_tools.split.split_image', fake_split):
             for python in ('python3', str(Path('venv') / 'bin' / 'python')):
                 main([str(self.image), '--work-dir', str(self.root / 'w'),
@@ -209,6 +210,79 @@ class SplitTests(unittest.TestCase):
                                                 'invalid_instruction_words': 0}])
 
 
+class OverlayTests(unittest.TestCase):
+    """BPB entries staged by size and SHA256, after the executables."""
+
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.root = Path(self.tmp.name)
+        self.boot = make_exe(t_addr=0x80120000, pc=0x80120000)
+        self.overlay = b'OVLY' + bytes(range(256)) * 4
+        self.configs = self.root / 'configs'
+        self.configs.mkdir()
+        self.fake = self.root / 'fake_splat.py'
+        self.fake.write_text(FAKE_SPLAT)
+
+    def tearDown(self):
+        self.tmp.cleanup()
+
+    def build(self, payloads, *, overlay_hash=None, size=None, schema=2):
+        bph, bpb = archive_files(payloads)
+        self.image = make_image(self.root, [('BOOT.EXE', self.boot), ('ACE.BPH', bph),
+                                            ('ACE.BPB', bpb)])
+        for name, target in (('boot.yaml', 'boot.psexe'), ('ovl.yaml', 'ovl.bin')):
+            (self.configs / name).write_text(target + '\n')
+            (self.configs / f'symbols.{name}.txt').write_text('// none\n')
+        manifest = {'schema_version': schema, 'configs': [
+            {'config': 'boot.yaml', 'target': 'boot.psexe', 'symbols': 'symbols.boot.yaml.txt',
+             'sha256': [hashlib.sha256(self.boot).hexdigest()]}],
+            'overlays': [{'config': 'ovl.yaml', 'target': 'ovl.bin',
+                          'symbols': 'symbols.ovl.yaml.txt',
+                          'size_bytes': len(self.overlay) if size is None else size,
+                          'sha256': [overlay_hash or hashlib.sha256(self.overlay).hexdigest()]}]}
+        (self.configs / 'manifest.json').write_text(json.dumps(manifest))
+
+    def split(self):
+        return split_image(self.image, self.root / 'work', config_dir=self.configs,
+                           splat=(sys.executable, str(self.fake)), repo_root=self.root / 'repo')
+
+    def test_overlay_entry_is_staged_by_content_after_the_executables(self):
+        other = b'X' * len(self.overlay)   # same size, different bytes
+        self.build([b'data' * 8, other, self.overlay])
+        summary = self.split()
+        work = self.root / 'work'
+        self.assertEqual((work / 'ovl.bin').read_bytes(), self.overlay)
+        self.assertEqual(summary['overlays'], [{
+            'archive': 'ACE.BPB', 'bph_entry': 2, 'size_bytes': len(self.overlay),
+            'sha256': hashlib.sha256(self.overlay).hexdigest(), 'config': 'ovl.yaml',
+            'target': 'ovl.bin', 'text_files': ['ovl_text.s']}])
+        self.assertEqual((work / 'calls.txt').read_text().splitlines(),
+                         ['split boot.yaml boot.psexe', 'split ovl.yaml ovl.bin'])
+        self.assertEqual(summary['schema_version'], 2)
+
+    def test_missing_or_duplicated_overlay_is_an_error(self):
+        self.build([self.overlay], overlay_hash='0' * 64)
+        with self.assertRaisesRegex(SplitError, 'No ACE.BPB entry matches ovl.yaml'):
+            self.split()
+        self.assertFalse((self.root / 'work').exists())
+        self.build([self.overlay, self.overlay])
+        with self.assertRaisesRegex(SplitError, 'BPH entries 0 and 1 both match'):
+            self.split()
+
+    def test_overlays_need_a_positive_size_and_schema_2(self):
+        self.build([self.overlay], size=0)
+        with self.assertRaisesRegex(SplitError, 'size_bytes must be a positive integer'):
+            load_manifest(self.configs)
+        self.build([self.overlay], schema=1)
+        self.assertEqual([entry.kind for entry in load_manifest(self.configs)], ['executable'])
+
+    def test_overlay_without_an_archive_is_an_error(self):
+        self.build([self.overlay])
+        self.image = make_image(self.root, [('BOOT.EXE', self.boot)])
+        with self.assertRaisesRegex(Exception, 'ACE.BPH'):
+            self.split()
+
+
 class CheckedInManifestTests(unittest.TestCase):
     def test_manifest_hashes_match_the_recorded_executable_reports(self):
         configs = load_manifest(DEFAULT_CONFIG_DIR)
@@ -217,7 +291,20 @@ class CheckedInManifestTests(unittest.TestCase):
             report = json.loads((REPO_ROOT / 'docs' / 'reports' / f'exe-{key}.json')
                                 .read_text(encoding='utf-8'))
             recorded |= {exe['sha256'] for exe in report['executables']}
-        self.assertEqual(set().union(*(entry.sha256 for entry in configs)), recorded)
+        executables = [entry for entry in configs if entry.kind == 'executable']
+        self.assertEqual(set().union(*(entry.sha256 for entry in executables)), recorded)
+
+    def test_overlay_configs_load_at_the_module_table_base_and_cover_the_entry(self):
+        overlays = [entry for entry in load_manifest(DEFAULT_CONFIG_DIR) if entry.kind == 'overlay']
+        self.assertEqual([entry.config for entry in overlays],
+                         ['ovl1.yaml', 'ovl2.yaml', 'ovl3.yaml', 'ovl4.yaml'])
+        for entry in overlays:
+            text = (DEFAULT_CONFIG_DIR / entry.config).read_text(encoding='utf-8')
+            with self.subTest(config=entry.config):
+                self.assertIn('    vram: 0x800CBFE8\n', text)
+                self.assertIn(f'  - [0x{entry.size_bytes:X}]\n', text)
+                self.assertIn('    - symbol_addrs.ace3.txt\n', text)
+                self.assertNotRegex(text, r'(?m)^\s*gp_value:')
 
     def test_each_config_names_its_target_and_symbols(self):
         for entry in load_manifest(DEFAULT_CONFIG_DIR):

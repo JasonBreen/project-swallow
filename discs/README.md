@@ -40,6 +40,25 @@ Install Git LFS, then run `git lfs pull` in a normal clone. Use `git lfs ls-file
 to list the tracked archives and `git lfs fsck` to check the local LFS objects.
 The total compressed size of all five archives is 2,098,804,304 bytes.
 
+### Supplementary references added 2026-10-21
+
+The supplied PlayStation 2 Ace Combat Zero ISO is stored under
+`supplementary/ps2/`. The original PlayStation Ace Combat is the
+`acecombat/` archive above. Their archive/member
+hashes and numbered-volume sizes are in `supplementary-manifest.json`; the
+existing `manifest.json` describes the four AC3 references and the
+`acecombat/` archive.
+See [inspection results and restoration commands](../docs/supplementary-discs.md).
+
+The PS1 image was first supplied as `ps1 games.tar.bz2`. Its members are
+byte-identical to `acecombat/game.tar.bz2`, so only that archive is tracked;
+the supplementary manifest records both. The PS2 input was a
+raw ISO, so a new lossless, split 7z archive was created, with each volume
+at most 1 GiB. All numbered volumes are required for restoration. The restored
+ISO's complete MD5, SHA1, and SHA256 were checked against the supplied input.
+The Ace Combat Zero volumes add 3,093,884,579 bytes, so a full LFS checkout
+is 5,192,688,883 bytes.
+
 Extract each archive into a separate local directory, preferably on a drive
 with room for both full BINs. For example, on Windows with the built-in `tar`:
 

@@ -1,0 +1,378 @@
+{
+  "schema_version": 1,
+  "source_image": "Ace Combat 3 Electrosphere (English v0.9b3)[Disc 1].bin",
+  "executable": {
+    "path": "ACE3.BIN",
+    "sha256": "ba0557ecf85261c4ec3b7b96d4c63c7faf415bf098554037fce102cf10a5ecb2",
+    "config": "ace3.yaml",
+    "symbols": "symbol_addrs.ace3.txt"
+  },
+  "routine": {
+    "symbol": "ulz_decompress",
+    "address": "0x800afd08"
+  },
+  "layout": {
+    "text_address": "0x80010000",
+    "source_base": "0x81000000",
+    "destination_base": "0x82000000",
+    "guard_bytes": 65536
+  },
+  "entries_checked": 574,
+  "blobs": 2250,
+  "versions": {
+    "0": 1155,
+    "2": 1095
+  },
+  "matched": 1827,
+  "mismatch_count": 4,
+  "decoder_error_count": 0,
+  "routine_error_count": 419,
+  "pair_word_high_byte_nonzero": 0,
+  "instructions_executed": 583237079,
+  "max_instructions_per_blob": 4472864,
+  "mismatches": [
+    {
+      "path": "122.0.143",
+      "origin": "stored",
+      "version": 0,
+      "problems": [
+        "returned end 1219 != declared size 1216",
+        "wrote 3 bytes past the declared size",
+        "pairs stream: routine consumed 88 bytes, decoder accounting gives 86"
+      ]
+    },
+    {
+      "path": "131.3.0",
+      "origin": "stored",
+      "version": 0,
+      "problems": [
+        "returned end 32867 != declared size 32864",
+        "wrote 3 bytes past the declared size",
+        "pairs stream: routine consumed 2064 bytes, decoder accounting gives 2062"
+      ]
+    },
+    {
+      "path": "339.1.1",
+      "origin": "stored",
+      "version": 0,
+      "problems": [
+        "returned end 32867 != declared size 32864",
+        "wrote 3 bytes past the declared size",
+        "pairs stream: routine consumed 1416 bytes, decoder accounting gives 1414"
+      ]
+    },
+    {
+      "path": "365.1.0",
+      "origin": "stored",
+      "version": 0,
+      "problems": [
+        "returned end 14355 != declared size 14352",
+        "wrote 3 bytes past the declared size",
+        "pairs stream: routine consumed 3112 bytes, decoder accounting gives 3110"
+      ]
+    }
+  ],
+  "decoder_errors": [],
+  "routine_errors": [
+    {
+      "path": "112.4",
+      "origin": "stored",
+      "version": 0,
+      "error": "Unmapped 2-byte read at 0x81019efc"
+    },
+    {
+      "path": "114.5",
+      "origin": "stored",
+      "version": 0,
+      "error": "Unmapped 2-byte read at 0x8100bc34"
+    },
+    {
+      "path": "114.7",
+      "origin": "stored",
+      "version": 0,
+      "error": "Unmapped 2-byte read at 0x81014b74"
+    },
+    {
+      "path": "115.2",
+      "origin": "stored",
+      "version": 0,
+      "error": "Unmapped 2-byte read at 0x81002c04"
+    },
+    {
+      "path": "115.3",
+      "origin": "stored",
+      "version": 0,
+      "error": "Unmapped 2-byte read at 0x8100b3f8"
+    },
+    {
+      "path": "115.4",
+      "origin": "stored",
+      "version": 0,
+      "error": "Unmapped 2-byte read at 0x810070c4"
+    },
+    {
+      "path": "121.0.1",
+      "origin": "stored",
+      "version": 0,
+      "error": "Unmapped 2-byte read at 0x81000314"
+    },
+    {
+      "path": "121.0.2",
+      "origin": "stored",
+      "version": 0,
+      "error": "Unmapped 2-byte read at 0x810003d4"
+    },
+    {
+      "path": "121.0.3",
+      "origin": "stored",
+      "version": 0,
+      "error": "Unmapped 2-byte read at 0x810001d0"
+    },
+    {
+      "path": "121.0.4",
+      "origin": "stored",
+      "version": 0,
+      "error": "Unmapped 2-byte read at 0x810003e8"
+    },
+    {
+      "path": "121.0.9",
+      "origin": "stored",
+      "version": 0,
+      "error": "Unmapped 2-byte read at 0x81000124"
+    },
+    {
+      "path": "121.0.10",
+      "origin": "stored",
+      "version": 0,
+      "error": "Unmapped 2-byte read at 0x81000228"
+    },
+    {
+      "path": "121.0.13",
+      "origin": "stored",
+      "version": 0,
+      "error": "Unmapped 2-byte read at 0x81000220"
+    },
+    {
+      "path": "121.0.14",
+      "origin": "stored",
+      "version": 0,
+      "error": "Unmapped 2-byte read at 0x81000234"
+    },
+    {
+      "path": "121.0.16",
+      "origin": "stored",
+      "version": 0,
+      "error": "Unmapped 2-byte read at 0x81000290"
+    },
+    {
+      "path": "121.0.18",
+      "origin": "stored",
+      "version": 0,
+      "error": "Unmapped 2-byte read at 0x81000230"
+    },
+    {
+      "path": "121.0.19",
+      "origin": "stored",
+      "version": 0,
+      "error": "Unmapped 2-byte read at 0x81000230"
+    },
+    {
+      "path": "121.0.20",
+      "origin": "stored",
+      "version": 0,
+      "error": "Unmapped 2-byte read at 0x81000208"
+    },
+    {
+      "path": "121.0.21",
+      "origin": "stored",
+      "version": 0,
+      "error": "Unmapped 2-byte read at 0x810001f0"
+    },
+    {
+      "path": "121.0.22",
+      "origin": "stored",
+      "version": 0,
+      "error": "Unmapped 2-byte read at 0x810001d0"
+    },
+    {
+      "path": "121.0.23",
+      "origin": "stored",
+      "version": 0,
+      "error": "Unmapped 2-byte read at 0x810001dc"
+    },
+    {
+      "path": "121.0.24",
+      "origin": "stored",
+      "version": 0,
+      "error": "Unmapped 2-byte read at 0x8100016c"
+    },
+    {
+      "path": "121.0.25",
+      "origin": "stored",
+      "version": 0,
+      "error": "Unmapped 2-byte read at 0x810003e8"
+    },
+    {
+      "path": "121.0.26",
+      "origin": "stored",
+      "version": 0,
+      "error": "Unmapped 2-byte read at 0x8100018c"
+    },
+    {
+      "path": "121.0.30",
+      "origin": "stored",
+      "version": 0,
+      "error": "Unmapped 2-byte read at 0x810001f4"
+    },
+    {
+      "path": "121.0.31",
+      "origin": "stored",
+      "version": 0,
+      "error": "Unmapped 2-byte read at 0x8100014c"
+    },
+    {
+      "path": "121.0.32",
+      "origin": "stored",
+      "version": 0,
+      "error": "Unmapped 2-byte read at 0x810001e8"
+    },
+    {
+      "path": "121.0.33",
+      "origin": "stored",
+      "version": 0,
+      "error": "Unmapped 2-byte read at 0x81000250"
+    },
+    {
+      "path": "121.0.34",
+      "origin": "stored",
+      "version": 0,
+      "error": "Unmapped 2-byte read at 0x81000264"
+    },
+    {
+      "path": "121.0.35",
+      "origin": "stored",
+      "version": 0,
+      "error": "Unmapped 2-byte read at 0x810003ac"
+    },
+    {
+      "path": "121.0.36",
+      "origin": "stored",
+      "version": 0,
+      "error": "Unmapped 2-byte read at 0x81000394"
+    },
+    {
+      "path": "121.0.37",
+      "origin": "stored",
+      "version": 0,
+      "error": "Unmapped 2-byte read at 0x81000314"
+    },
+    {
+      "path": "121.0.38",
+      "origin": "stored",
+      "version": 0,
+      "error": "Unmapped 2-byte read at 0x8100021c"
+    },
+    {
+      "path": "121.0.40",
+      "origin": "stored",
+      "version": 0,
+      "error": "Unmapped 2-byte read at 0x8100022c"
+    },
+    {
+      "path": "121.0.41",
+      "origin": "stored",
+      "version": 0,
+      "error": "Unmapped 2-byte read at 0x81000290"
+    },
+    {
+      "path": "121.0.42",
+      "origin": "stored",
+      "version": 0,
+      "error": "Unmapped 2-byte read at 0x81000380"
+    },
+    {
+      "path": "121.0.43",
+      "origin": "stored",
+      "version": 0,
+      "error": "Unmapped 2-byte read at 0x81000270"
+    },
+    {
+      "path": "121.0.44",
+      "origin": "stored",
+      "version": 0,
+      "error": "Unmapped 2-byte read at 0x8100025c"
+    },
+    {
+      "path": "121.0.45",
+      "origin": "stored",
+      "version": 0,
+      "error": "Unmapped 2-byte read at 0x81000200"
+    },
+    {
+      "path": "121.0.46",
+      "origin": "stored",
+      "version": 0,
+      "error": "Unmapped 2-byte read at 0x81000208"
+    },
+    {
+      "path": "121.0.47",
+      "origin": "stored",
+      "version": 0,
+      "error": "Unmapped 2-byte read at 0x8100022c"
+    },
+    {
+      "path": "121.0.48",
+      "origin": "stored",
+      "version": 0,
+      "error": "Unmapped 2-byte read at 0x810001f0"
+    },
+    {
+      "path": "121.0.49",
+      "origin": "stored",
+      "version": 0,
+      "error": "Unmapped 2-byte read at 0x81000220"
+    },
+    {
+      "path": "121.0.50",
+      "origin": "stored",
+      "version": 0,
+      "error": "Unmapped 2-byte read at 0x81000328"
+    },
+    {
+      "path": "121.0.51",
+      "origin": "stored",
+      "version": 0,
+      "error": "Unmapped 2-byte read at 0x810002d8"
+    },
+    {
+      "path": "121.0.52",
+      "origin": "stored",
+      "version": 0,
+      "error": "Unmapped 2-byte read at 0x810001a4"
+    },
+    {
+      "path": "121.0.56",
+      "origin": "stored",
+      "version": 0,
+      "error": "Unmapped 2-byte read at 0x81000194"
+    },
+    {
+      "path": "121.0.57",
+      "origin": "stored",
+      "version": 0,
+      "error": "Unmapped 2-byte read at 0x8100036c"
+    },
+    {
+      "path": "121.0.58",
+      "origin": "stored",
+      "version": 0,
+      "error": "Unmapped 2-byte read at 0x81000280"
+    },
+    {
+      "path": "121.0.59",
+      "origin": "stored",
+      "version": 0,
+      "error": "Unmapped 2-byte read at 0x810002d0"
+    }
+  ]
+}

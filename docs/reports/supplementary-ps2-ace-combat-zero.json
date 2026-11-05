@@ -1,0 +1,321 @@
+{
+  "source_image": "Ace Combat Zero.iso",
+  "size_bytes": 4240605184,
+  "sector_size": 2048,
+  "sector_count": 2070608,
+  "volume_id": "",
+  "iso_volume_sector_count": 2070608,
+  "hashes": {
+    "md5": "61c016fad9d992dee8dcb0aec2a6c31f",
+    "sha1": "e72c3d5fd27bcd6c71cdd1a5bee26956bc625e43",
+    "sha256": "4d9f41ff87690fe8a4cb1a20599d055e66107f9990a823af47fb1c8a58745d3d"
+  },
+  "files": [
+    {
+      "path": "BIN",
+      "lba": 262,
+      "size": 212,
+      "is_directory": true,
+      "flags": 2
+    },
+    {
+      "path": "BIN/DATA.PAC",
+      "lba": 2252,
+      "size": 1096925184,
+      "is_directory": false,
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_iso2048",
+        "sha256": "abd485a6cf46c714a74da7c7b0063340b965731b9ff158d9d56c31c0a1c25db7",
+        "hashed_bytes": 1096925184
+      }
+    },
+    {
+      "path": "BIN/DATA.TBL",
+      "lba": 2245,
+      "size": 12512,
+      "is_directory": false,
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_iso2048",
+        "sha256": "0c16f6412bb2631cb468f83b0a7caa204937d6f8d6d1c66c6979dad128b48cbe",
+        "hashed_bytes": 12512
+      }
+    },
+    {
+      "path": "IRX",
+      "lba": 263,
+      "size": 864,
+      "is_directory": true,
+      "flags": 2
+    },
+    {
+      "path": "IRX/DBCMAN.IRX",
+      "lba": 2055,
+      "size": 15653,
+      "is_directory": false,
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_iso2048",
+        "sha256": "60bfea7d0877df3af370676666e5f1043b6e71723fab94cdff790c19e75e12e7",
+        "hashed_bytes": 15653
+      }
+    },
+    {
+      "path": "IRX/DS2O_D.IRX",
+      "lba": 2063,
+      "size": 11885,
+      "is_directory": false,
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_iso2048",
+        "sha256": "7651f59b6c5190045fd4abf42a7a579e91ae69dc8ab90bbd6d1cf262b0b65e4c",
+        "hashed_bytes": 11885
+      }
+    },
+    {
+      "path": "IRX/FS2.IRX",
+      "lba": 2087,
+      "size": 13689,
+      "is_directory": false,
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_iso2048",
+        "sha256": "9fd87ae2c5a8a80dedd8d6570d7edf148e5c4767f9c918e9be3952223beeb166",
+        "hashed_bytes": 13689
+      }
+    },
+    {
+      "path": "IRX/LGDEV.IRX",
+      "lba": 2094,
+      "size": 57473,
+      "is_directory": false,
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_iso2048",
+        "sha256": "c278c2711c359562f8f91e56b0cada04aa3f82c665ec568bd0184a24be62a081",
+        "hashed_bytes": 57473
+      }
+    },
+    {
+      "path": "IRX/LIBSD.IRX",
+      "lba": 2123,
+      "size": 30085,
+      "is_directory": false,
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_iso2048",
+        "sha256": "94915a3d9673e8a370e144ae493552d5e1f3956bb9ae5bd91e2da5f36c83ce7d",
+        "hashed_bytes": 30085
+      }
+    },
+    {
+      "path": "IRX/MCMAN.IRX",
+      "lba": 2138,
+      "size": 96181,
+      "is_directory": false,
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_iso2048",
+        "sha256": "b4df4061f8fdc9c7cf06a329b96227ad6ca69d008df475c1fc4d3e8d06fe3fa4",
+        "hashed_bytes": 96181
+      }
+    },
+    {
+      "path": "IRX/MCSERV.IRX",
+      "lba": 2185,
+      "size": 7385,
+      "is_directory": false,
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_iso2048",
+        "sha256": "5006b0dd650fa416d03a559bc8e3bae8a7ae95be81f3e4f3fd9bd524fa27e000",
+        "hashed_bytes": 7385
+      }
+    },
+    {
+      "path": "IRX/NUFILE.IRX",
+      "lba": 2197,
+      "size": 53185,
+      "is_directory": false,
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_iso2048",
+        "sha256": "e333e4c1ba3f03bb64ef7f5e2312b52d4c7540f13f8af6f693f01236b2b73b59",
+        "hashed_bytes": 53185
+      }
+    },
+    {
+      "path": "IRX/NUSNDSTR.IRX",
+      "lba": 2223,
+      "size": 44101,
+      "is_directory": false,
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_iso2048",
+        "sha256": "1067e39951cfc08eb0f67def150c62770a7023ea630b4bb94f91f8b039e0b2e9",
+        "hashed_bytes": 44101
+      }
+    },
+    {
+      "path": "IRX/NUSOUND.IRX",
+      "lba": 2189,
+      "size": 14717,
+      "is_directory": false,
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_iso2048",
+        "sha256": "21dbcd4c2babc8f52c32b538e89d67e4fd7318364ccb818c4737716961b84f1f",
+        "hashed_bytes": 14717
+      }
+    },
+    {
+      "path": "IRX/SIO2D.IRX",
+      "lba": 2049,
+      "size": 11289,
+      "is_directory": false,
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_iso2048",
+        "sha256": "b07339d0b6ef6021ebb2bd8dba1138f3159b2cdfbf1b29df799694107107d330",
+        "hashed_bytes": 11289
+      }
+    },
+    {
+      "path": "IRX/SIO2MAN.IRX",
+      "lba": 2045,
+      "size": 6641,
+      "is_directory": false,
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_iso2048",
+        "sha256": "565ec77e75f174cfddf72c41ccc446c1c07a3d5fb0a2ccfefad337cb8a7d0728",
+        "hashed_bytes": 6641
+      }
+    },
+    {
+      "path": "IRX/USBD.IRX",
+      "lba": 2069,
+      "size": 34993,
+      "is_directory": false,
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_iso2048",
+        "sha256": "3e443c652b3bf639139706ef8b6b8c11dc5a03308af956b05f97e69a4840fd8c",
+        "hashed_bytes": 34993
+      }
+    },
+    {
+      "path": "SMV",
+      "lba": 264,
+      "size": 214,
+      "is_directory": true,
+      "flags": 2
+    },
+    {
+      "path": "SMV/BRIEF.PAC",
+      "lba": 661795,
+      "size": 529178624,
+      "is_directory": false,
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_iso2048",
+        "sha256": "529d4c72f0d43d4e19cf8c9d6e2a3fac45f85952cfa956064f9fdd8cd4f773eb",
+        "hashed_bytes": 529178624
+      }
+    },
+    {
+      "path": "SMV/MOVIEUS.PAC",
+      "lba": 1326758,
+      "size": 1502425088,
+      "is_directory": false,
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_iso2048",
+        "sha256": "295d364e718c95b4e105fd1d3efe35244098248e56ff694fa83e8a159cfb1d80",
+        "hashed_bytes": 1502425088
+      }
+    },
+    {
+      "path": "STREAM",
+      "lba": 265,
+      "size": 214,
+      "is_directory": true,
+      "flags": 2
+    },
+    {
+      "path": "STREAM/BGM.PAC",
+      "lba": 920183,
+      "size": 832665600,
+      "is_directory": false,
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_iso2048",
+        "sha256": "596c0f6a4597388061a034eb9a04ccd3daf446960b0a1a22670f092ed23a2636",
+        "hashed_bytes": 832665600
+      }
+    },
+    {
+      "path": "STREAM/RADIOUSA.PAC",
+      "lba": 537860,
+      "size": 253818880,
+      "is_directory": false,
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_iso2048",
+        "sha256": "5c0333e77e2a8cf5010766f745b51eaf3d08d56237b1d7bb3f4f0df49fc1acb8",
+        "hashed_bytes": 253818880
+      }
+    },
+    {
+      "path": "SLUS_213.46",
+      "lba": 301,
+      "size": 3293064,
+      "is_directory": false,
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_iso2048",
+        "sha256": "34ee58ca92a6e8913aa84b6dc5af3534b878a44ca4e33173e962c6090ea243c1",
+        "hashed_bytes": 3293064
+      }
+    },
+    {
+      "path": "IOPRP300.IMG",
+      "lba": 1909,
+      "size": 278305,
+      "is_directory": false,
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_iso2048",
+        "sha256": "8e11fc76bbdd5770a47a56549d861c0caebc9f9190a1cf936990dcff9e5a86c5",
+        "hashed_bytes": 278305
+      }
+    },
+    {
+      "path": "SYSTEM.CNF",
+      "lba": 300,
+      "size": 57,
+      "is_directory": false,
+      "flags": 0,
+      "content_hash": {
+        "status": "verified_iso2048",
+        "sha256": "956921f5c0e5672e0b053209b012ccd8a8c23e847c8717948023218fbe6dbf3d",
+        "hashed_bytes": 57
+      }
+    }
+  ],
+  "observed_identity": {
+    "source_label": "Ace Combat Zero",
+    "boot_identifier": "SLUS_213.46",
+    "system_cnf": "BOOT2 = cdrom0:\\SLUS_213.46;1\r\nVER = 1.00\r\nVMODE = NTSC\r\n",
+    "title_inference": "Ace Combat Zero: The Belkan War, North American identifier",
+    "revision_certified": false
+  },
+  "inspection_scope": {
+    "method": "Bounded direct ISO 9660 metadata reads and streaming logical-file SHA256; no mounting or game execution.",
+    "source_opened_read_only": true,
+    "all_listed_files_hashed": true,
+    "swallow_ps2_support_implemented": false,
+    "emulator_boot_tested": false
+  }
+}

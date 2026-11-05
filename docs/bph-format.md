@@ -17,7 +17,7 @@ All integers below are little-endian. The header occupies 20 bytes:
 |---|---:|---|---|
 | `0x00` | 4 | Magic | ASCII `AC3E` |
 | `0x04` | 4 | Archive type | `3` for the supported BPH format |
-| `0x08` | 2 | `unknown_08` | Preserved; observed `0x0427` on all four inputs |
+| `0x08` | 2 | `unknown_08` | Preserved; observed `0x0427` on all four inputs. `ACE3.BIN`'s `archive_open` compares this word with `0x427` and records an error otherwise ([overlays](overlays.md#other-findings)); its meaning is still not named |
 | `0x0a` | 2 | `unknown_0a` | Preserved; observed zero on all four inputs |
 | `0x0c` | 4 | `unknown_0c` | Preserved; observed `0x1484` on all four inputs |
 | `0x10` | 4 | Entry count | Number of eight-byte records following the header |
@@ -85,7 +85,9 @@ gap values. Only normal ranges have been validated. Zero-length normal records
 remain normal and produce a warning without a guessed sentinel meaning.
 
 Header fields `unknown_08`, `unknown_0a`, `unknown_0c`, and descriptor bit 30
-remain unknown in the API. Published date-like hypotheses are not promoted to
+remain unknown in the API. The game does check `unknown_08` against `0x427`
+([overlays](overlays.md#other-findings)), but that does not say what the
+value means, so the field keeps its neutral name. Published date-like hypotheses are not promoted to
 decoded semantics without executable/reference evidence. Raw values allow
 byte-for-byte reconstruction of the entire index, including uncertain data.
 

@@ -93,14 +93,19 @@ Two further version 0 rules are deliberately strict because they are
 unvalidated:
 
 - A sentinel-only word (`0x80000000`, no flags) is rejected. It occurs in none
-  of the four references, so no semantics are assigned to it.
+  of the four references. The game's routine reads it as a word with no flags
+  and moves to the next word ([Ulz routine](ulz-routine.md)); the decoder
+  still rejects it until that is validated on data.
 - Flag bits left above the sentinel in the final word after the declared size
   must be zero. Japanese blobs never leave any. 423 (English Disc 1) and 361
   (English Disc 2) English-patch blobs leave 1–30 bits, always zero. Their
   spare pair bytes could not service those bits as references, so a decoder
-  that ignored the declared size would overrun; the game's actual handling is
-  unverified. Nonzero leftovers are rejected, and the zero-bit count is
-  reported per blob as `final_word_unused_flag_bits`.
+  that ignored the declared size would overrun. The game's routine does
+  ignore the size for version 0 and stops only at the zero word, and running
+  it shows that it overruns on exactly those 423 and 361 blobs and on no
+  other blob ([Ulz routine](ulz-routine.md#results)). The bytes up to the
+  declared size still equal this decoder's output. Nonzero leftovers are rejected, and
+  the zero-bit count is reported per blob as `final_word_unused_flag_bits`.
 The psx-spx notes describe the same distinction as "31 flag bits with an
 implied stop bit" for version 0 and "all 32 bits with a stop bit shifted in"
 for version 2. Both readings were confirmed locally: the sentinel sits at bit 0
@@ -126,14 +131,16 @@ accounting only.
 
 ## Known unknowns
 
-- Four top-level entries (indices 1–4 on every image) are opaque: each starts
-  with a small count word followed by text-like fixed records, not an offset
-  table. They are identical across all four images and remain uninterpreted.
-  **Hypothesis, unverified:** they may be code or data overlays. On Japanese
-  Disc 1 their count words are 4, 5, 6, and 7, and they hold 285, 1,179, 50,
-  and 415 words in the PlayStation RAM range (`0x80010000`–`0x801fffff`), for
-  example `0x800d1890` in entry 1. No count meaning or load address has been
-  decoded; the [executable track](next-task-executable.md) checks this first.
+- Four top-level entries (indices 1–4 on every image) are opaque to the
+  walker: each starts with a small word followed by strings or tables, not an
+  offset table. Entries 1, 2, and 4 are identical on all four images. Entry 3
+  differs on both English-labeled images, only before its code; see
+  [overlays](overlays.md#on-all-four-references). **Decoded from
+  code:** they are code overlays for `ACE3.BIN`. Its module loader reads
+  entry *k* whole to `0x800CBFE8`, the end of `ACE3.BIN`'s BSS, and calls
+  handlers inside it; see [overlays](overlays.md). Their leading words, 4, 5,
+  6, and 7 on Japanese Disc 1, are not decoded. The walker still reports them
+  as opaque, because it classifies data formats, not code.
 - Four opaque leaves on Japanese Disc 1 contain the Ulz signature at a nonzero
   offset: `508.0.1`, `525.0.0`, `536.0.1`, and `543.0.0`. Their own header
   shapes are unknown, so the embedded data is not walked or decoded.
@@ -144,10 +151,12 @@ accounting only.
 - The psx-spx notes mention a third `ULZ` variant with an uppercase ID, a
   different header, and a `+2` length bias (Time Crisis). It does not occur in
   these images and is not implemented.
-- Whether the game accepts a `0x80000000` version 0 word, and whether it
-  stops version 0 decoding on size or on the zero word, is unknown without
-  executable evidence; the decoder rejects the former and requires both size
-  and terminator.
+- The game's routine answers both version 0 questions: it skips a
+  `0x80000000` word, and it stops on the zero word without reading the size.
+  On every version 0 blob on Japanese Disc 1 the zero word comes exactly at
+  the declared size, so the decoder's rule of requiring both agrees with the
+  routine there ([Ulz routine](ulz-routine.md)). The routine also has a
+  version 1 path in 16-bit units, which no measured blob uses.
 - Padding bytes in the literal stream are sometimes nonzero. Their origin is
   unknown and they are reported, not interpreted.
 

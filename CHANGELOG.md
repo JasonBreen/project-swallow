@@ -2,7 +2,48 @@
 
 ## Unreleased
 
+- Added the Ace Combat Zero (SLUS_213.46, PS2) reference from PR #8: three Git LFS 7z volumes of one 4,240,605,184-byte ISO, with its supplementary manifest, inventory report, and `docs/supplementary-discs.md`. The volumes were fetched again and match their LFS OIDs. The restored ISO matches the recorded size, MD5, SHA1, and SHA256. A full LFS checkout is now 5,192,688,883 bytes.
+- Brought in PR #8's Ace Combat (1995) evidence: the inventory and 63-track validation reports, and `scripts/prepare_acecombat_reference.py`. PR #8's `ps1 games.tar.bz2` is not tracked: its members are byte-identical to `game.BIN` and `game.CUE` in the stored `discs/acecombat/game.tar.bz2`. The supplementary manifest now points at that archive and records the other one's hash.
+- The correction script now builds its output in a hidden staging directory and renames it into place only when every file is written and verified. A failed run leaves nothing behind, so it no longer blocks a retry; this fixes the open review finding on PR #8. Added 3 synthetic tests; the cleanup test fails against the previous script.
 - Stored the supplied ACECOMBAT image (`game.BIN` and `game.CUE`) through Git LFS. It is not one of the four Electrosphere baselines. The CUE names `ACECOMBAT.BIN`; the archived member is `game.BIN`.
+- Added `docs/reconstruction-plan.md`. It plans how the recovered code becomes the C engine: a static recompiler, a runtime that replaces the PsyQ library API, and readable C proven equal to the translated code. It lists decisions D1–D9, all still open for the owner, and milestones M1–M8. It records the owner's direction to reconstruct Ace Combat Zero, Ace Combat (1995), and Ace Combat 2 after AC3; Ace Combat 04 depends on Sal's work. Nothing in the plan is implemented.
+- Measured for the plan, on Japanese Disc 1: game code and BPB entries 1–4 call 159 distinct PsyQ functions and use 3,485 inline GTE instructions across 15 commands, with 26 indirect calls and 42 computed jumps. A survey of the stored Ace Combat (1995) image found no `SYSTEM.CNF`, a `PSX.EXE` that boots seven module executables loaded at `0x80023000`, no Ulz or BPB data, and 62 CD-DA tracks.
+
+## 0.11.0 — 2026-11-03
+
+- Added `swallow_tools.inventory` and the `swallow-inventory` CLI. It reads a `swallow-split` work directory, never the disc, and reports per unit:
+  - indirect calls, computed jumps, and the jump tables that resolve them
+  - address-taken functions and function-pointer tables
+  - callbacks registered with the PsyQ libraries
+  - BIOS stubs and their call numbers
+  - `0x1F80xxxx` addresses by class
+  - instructions outside the interpreter's set
+
+  It tells library from game code by blocks of placed PsyQ objects; on Japanese Disc 1 those blocks are exactly the documented library ranges.
+- Measured on Japanese Disc 1, in `docs/reports/code-inventory-jp1.json` and `docs/code-inventory.md`. Game code holds 2,265 functions and 206,643 instructions across the boot program, `ACE3.BIN`, and the overlays, with 77 `jalr`. Every computed `jr` in game code has a jump table except `ulz_decompress`'s version dispatch. Game code registers five callbacks: the CD driver's ready and sync handlers and two MDEC handlers. It names only scratchpad addresses; I/O registers appear only in library code. It holds 3,948 GTE, 2,324 multiply/divide, 1,002 unaligned-access, and 470 trap instructions that the interpreter does not run yet.
+- `swallow_tools.mips` now exports `SUPPORTED_MNEMONICS`, checked by a test against what its decoder accepts.
+- Added 10 synthetic tests (222 total).
+
+## 0.10.0 — 2026-11-03
+
+- Traced how `ACE3.BIN` loads its overlays. `archive_open` (`0x8002AE0C`) finds `ACE.BPH`, `ACE.SPH`, `ACE.BPB`, and `ACE.SPB`, reads both indexes, checks `AC3E` and BPH word `+8` against `0x427`, and adds each data file's start sector to its index records. `archive_read_entry` queues reads of entry *id*, and an id with bit `0x800` selects `ACE.SPH`. `ace3_module_step` (`0x80026350`) runs a nine-record module table at `0x800B0134`, each record holding a handler table, overlay id, base, and end. It loads a module's overlay before calling its handlers. The functions and tables are named in `symbol_addrs.ace3.txt`.
+- BPH entries 1–4 are code overlays, all loaded whole at `0x800CBFE8`, the end of `ACE3.BIN`'s BSS. Four checks agree: the module records; each entry's own `jal` targets (748 of 768 and 1,841 of 1,877 land on function entries in entries 1 and 2); each handler table pointing into its own overlay; and each overlay's code ending exactly at its handler table. Documented in `docs/overlays.md`. This replaces the overlay hypothesis in `docs/bpb-format.md`.
+- `swallow-split` now also disassembles the overlays. `splat/manifest.json` is schema 2 and lists each overlay with its size and SHA256. The tool reads the BPH index through the ISO directory, hashes only entries of a listed size, and needs exactly one match per overlay config. Configs `ovl1.yaml`–`ovl4.yaml` load at `0x800CBFE8` and also use `ACE3.BIN`'s symbols. The split report is schema 2, with an `overlays` list.
+- Split all four references with these configs: 271, 645, 20, and 20 overlay functions, 956 in all, with no undecodable words, and `ACE3.BIN` still at 1,715 functions. The overlays contain no `$gp`-relative instructions. Entries 1, 2, and 4 are byte-identical on all four references. Entry 3 differs between the Japanese and English-labeled discs in 117,943 bytes, all before its code, so `ovl3.yaml` accepts both hashes. This corrects the earlier record that entries 1–4 were identical everywhere.
+- Ran the Ulz routine check on the other three references. On Japanese Disc 2 all 2,256 blobs match, as on Disc 1. On the English-labeled discs the failures are exactly the version 0 blobs that leave spare zero flag bits after the declared size, 423 and 361 of them; every other blob matches. The routine reads those bits as copies and writes past the declared size, but the bytes up to that size still equal `ulz.py`'s output. Recorded in `docs/reports/ulz-routine-{jp2,en1,en2}.json` and `docs/ulz-routine.md`.
+- `swallow-psyq --update-symbols` and `swallow-ulzcheck` now look only at executable configs in the splat manifest.
+- BPH `unknown_08` (`0x427` on all four references) is checked by the game; the field keeps its neutral name. `archive_find_files` uses `lwl`/`lwr`/`swl`/`swr`, which the MIPS interpreter does not implement yet.
+- Added 5 synthetic tests (212 total).
+
+## 0.9.0 — 2026-11-01
+
+- Located the game's own Ulz decompressor, `ulz_decompress` at `0x800AFD08` in `ACE3.BIN`. It is hand-written assembly after the PsyQ libraries, outside the v0.8.0 game code range, and never compares the `Ulz` magic, so it was found by its decoder shape. Named it, its version jump table, its version 0, 1 and 2 paths, and two unreferenced stream entry points in the hand-written section of `splat/symbol_addrs.ace3.txt`; splat's function counts are unchanged.
+- Added `swallow_tools.mips`, a strict interpreter for the MIPS I integer instructions with R3000 branch and load delay slots. It stops on anything it does not model: unknown instructions, unmapped or misaligned access, writes to read-only memory, overflow traps, branches in delay slots, and load-delay hazards.
+- Added `swallow_tools.ulzcheck` and the `swallow-ulzcheck` CLI. It runs the routine from the disc's `ACE3.BIN`, found through the splat manifest and symbol file, on every Ulz blob the BPB walker reaches. It maps only the text, the blob, and a guarded destination, and compares the output bytes, end pointer, write extent, and flag, literal, and pair consumption with `ulz.py`. It exits `0` when all match, `1` on any disagreement, and `2` on input errors.
+- Measured on Japanese Disc 1: all 2,256 Ulz blobs (1,167 version 0, 1,089 version 2) match, with no mismatches or errors on either side, in 643,716,825 interpreted instructions. Recorded in `docs/reports/ulz-routine-jp1.json`. The other three references were not run.
+- The routine settles open Ulz questions. Version 0 stops at the zero flag word and never reads the declared size. A `0x80000000` word carries no flags and is skipped. Version 2 reads literals as aligned words and finishes a copy that crosses the size. A version 1 path in 16-bit units exists, and no blob uses it. `ulz.py` is unchanged. The English-labeled version 0 blobs with spare flag bits are predicted to overrun; this is not yet measured.
+- BPB entries 1–4 hold 280, 981, 47, and 50 `jal` words that land on `ACE3.BIN` function starts, against 16 in all other stored entries, and entries 1 and 2 call `ulz_decompress` 13 times after comparing the magic. This is the first direct evidence that they contain code linked against `ACE3.BIN`; no load address or layout is decoded.
+- Added 37 synthetic tests (199 total), using only project-written MIPS programs. Documented the routine, the check, and the results in `docs/ulz-routine.md`.
 
 ## 0.8.0 — 2026-10-27
 
