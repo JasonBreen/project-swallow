@@ -9,6 +9,18 @@
 - Added `docs/reconstruction-plan.md`. It plans how the recovered code becomes the C engine: a static recompiler, a runtime that replaces the PsyQ library API, and readable C proven equal to the translated code. It lists decisions D1–D9, all still open for the owner, and milestones M1–M8. It records the owner's direction to reconstruct Ace Combat Zero, Ace Combat (1995), and Ace Combat 2 after AC3; Ace Combat 04 depends on Sal's work. Nothing in the plan is implemented.
 - Measured for the plan, on Japanese Disc 1: game code and BPB entries 1–4 call 159 distinct PsyQ functions and use 3,485 inline GTE instructions across 15 commands, with 26 indirect calls and 42 computed jumps. A survey of the stored Ace Combat (1995) image found no `SYSTEM.CNF`, a `PSX.EXE` that boots seven module executables loaded at `0x80023000`, no Ulz or BPB data, and 62 CD-DA tracks.
 
+## 0.12.0 — 2026-11-05
+
+- `swallow_tools.mips` now runs every instruction in the game's code except `break`. It adds `mult`, `multu`, `div`, `divu`, `mfhi`, `mflo`, `mthi`, `mtlo`, the unaligned `lwl`, `lwr`, `swl`, `swr`, and the coprocessor 2 moves and loads. An `lwr` right after an `lwl` into the same register from the same base merges into the in-flight value, as the hardware does. `call` takes and returns HI, LO, and GTE state; `RunResult` keeps its two-field construction.
+- `break`, `syscall`, and `add`/`addi`/`sub` overflow now raise `MipsTrap`, a subclass of `MipsError` that carries the address, mnemonic, reason, and code. A trap is a result of the original code, distinct from an interpreter limitation.
+- The interpreter refuses four timing cases instead of modelling them: HI/LO writes within two instructions of `mfhi`/`mflo`, a GTE command within two instructions of a GTE register write, a GTE write right after a command, and any COP2 instruction in a branch delay slot. Measured on Japanese Disc 1, game code contains none of them.
+- Added `swallow_tools.gte`, a model of the GTE registers and the 15 commands game code issues, with 44-bit MAC checks at every addition, FLAG and its bit-31 mask, the SXY, SZ, and RGB FIFOs, and the perspective division. The reciprocal table is generated from its published formula. Every rule is documentation-derived until a capture checks it; `docs/mips-interpreter.md` says where each comes from.
+- Added `swallow_tools.oracle`, the calling contract for compiled game code. It stages an executable by content hash (moved from `swallow-ulzcheck`), reads code ranges and `gp_value` from a splat config, finds crt0's `$gp`, and maps code, data, RAM, and scratchpad. On Japanese Disc 1, crt0's `$gp` equals the configs' value for both executables. `ACE3.BIN`'s `func_80036130`, run under the oracle for all 256 counter values, matched a direct Python calculation 256 times.
+- Moved the test assembler to `swallow_tools.mipsasm`, extended with the new instructions and GTE command words.
+- `swallow-inventory` report schema 2 adds the GTE commands by decoded fields, division guards, unguarded divisions, and refused timing cases. Re-measured on Japanese Disc 1: `break` is the only game-code instruction the interpreter does not run. All 470 game-code `break`s are GCC division guards, 236 zero-divisor and 234 overflow guards, which closes v0.11.0's hypothesis. Twelve hand-written divisions in `func_80099894` and `func_8009A944` have no guard, and their results are used. Game code uses 21 GTE command encodings.
+- `swallow-ulzcheck` still matches all 2,256 Ulz blobs on Japanese Disc 1.
+- Added 60 synthetic tests (282 total).
+
 ## 0.11.0 — 2026-11-03
 
 - Added `swallow_tools.inventory` and the `swallow-inventory` CLI. It reads a `swallow-split` work directory, never the disc, and reports per unit:

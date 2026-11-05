@@ -202,5 +202,8 @@ reaches M6, so the PS1 runtime has been proven once.
 4. Emulator spike for D6: deterministic replay and RAM dumps (M2).
 5. Recompiler prototype on `ulz_decompress` (M4), once D5 allows the first C
    code.
-6. GTE core and vectors (M3), first in the Python interpreter so more game
-   functions can run under the oracle.
+6. **Python half done in tooling v0.12.0:** GTE core and vectors (M3). The
+   interpreter now runs every game-code instruction except the division
+   traps, with a GTE model whose rules are all documentation-derived; see
+   [the interpreter](mips-interpreter.md). Still open for M3: the C GTE
+   core, and checking the rules against a capture (M2).

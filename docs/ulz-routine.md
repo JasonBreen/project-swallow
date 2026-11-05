@@ -144,13 +144,15 @@ the first direct evidence that entries 1–4 hold code linked against
 
 ## Running the routine
 
-[`swallow_tools.mips`](../src/swallow_tools/mips.py) is a small
-interpreter for the MIPS I integer instructions: shifts, ALU operations,
-immediates, branches, jumps, and byte, halfword, and word loads and stores.
-It runs branch delay slots as the R3000 does, and makes a load visible only
-after the next instruction. It is offline tooling, not an emulator. It
-stops, rather than guessing, on any instruction outside that set, any
-unmapped or misaligned access, any write to read-only memory, any
+[`swallow_tools.mips`](../src/swallow_tools/mips.py) is the project's
+MIPS I interpreter, described in [its own document](mips-interpreter.md).
+This check was first run in tooling v0.9.0, when it covered only the integer
+instructions: shifts, ALU operations, immediates, branches, jumps, and byte,
+halfword, and word loads and stores. The routine needs nothing more. The
+interpreter runs branch delay slots as the R3000 does, and makes a load
+visible only after the next instruction. It is offline tooling, not an
+emulator. It stops, rather than guessing, on any instruction it does not
+model, any unmapped or misaligned access, any write to read-only memory, any
 `add`/`addi`/`sub` overflow (a trap on the R3000), any branch in a delay
 slot, and any instruction that uses a register in the delay slot of the
 load that sets it.

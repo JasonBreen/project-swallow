@@ -1,5 +1,5 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "source_image": "Ace Combat 3 - Electrosphere (Japan) (Disc 1).bin",
   "units": [
     {
@@ -1320,51 +1320,284 @@
         "0x1F801128": 4
       },
       "not_in_interpreter": {
-        "game_gte": 3485,
-        "game_multiply_divide": 1420,
         "game_trap": 318,
-        "game_unaligned_access": 534,
         "library_cop0": 5,
-        "library_gte": 400,
-        "library_multiply_divide": 180,
-        "library_other": 1,
-        "library_trap": 23,
-        "library_unaligned_access": 52
+        "library_gte": 5,
+        "library_trap": 23
       },
       "not_in_interpreter_game_mnemonics": {
-        "ctc2": 914,
-        "mtc2": 676,
-        "mfc2": 566,
-        "mflo": 555,
-        "mult": 530,
-        "lwc2": 393,
-        "swc2": 377,
-        "break": 318,
-        "swl": 181,
-        "div": 170,
-        "mfhi": 151,
-        "cfc2": 144,
-        "lwl": 143,
-        "mvmva": 127,
-        "lwr": 105,
-        "swr": 105,
-        "nclip": 81,
-        "dpcs": 52,
-        "rtps": 39,
-        "rtpt": 33,
-        "gpf": 32,
-        "intpl": 21,
-        "multu": 12,
-        "dpct": 8,
-        "sqr": 6,
-        "gpl": 6,
-        "avsz3": 4,
-        "divu": 2,
-        "nct": 2,
-        "nccs": 2,
-        "ncs": 1,
-        "avsz4": 1
-      }
+        "break": 318
+      },
+      "gte_commands_game": [
+        {
+          "command": "avsz3",
+          "sf": 1,
+          "lm": 0,
+          "mx": null,
+          "v": null,
+          "cv": null,
+          "count": 4
+        },
+        {
+          "command": "avsz4",
+          "sf": 1,
+          "lm": 0,
+          "mx": null,
+          "v": null,
+          "cv": null,
+          "count": 1
+        },
+        {
+          "command": "dpcs",
+          "sf": 1,
+          "lm": 0,
+          "mx": null,
+          "v": null,
+          "cv": null,
+          "count": 52
+        },
+        {
+          "command": "dpct",
+          "sf": 1,
+          "lm": 0,
+          "mx": null,
+          "v": null,
+          "cv": null,
+          "count": 8
+        },
+        {
+          "command": "gpf",
+          "sf": 0,
+          "lm": 0,
+          "mx": null,
+          "v": null,
+          "cv": null,
+          "count": 22
+        },
+        {
+          "command": "gpf",
+          "sf": 1,
+          "lm": 0,
+          "mx": null,
+          "v": null,
+          "cv": null,
+          "count": 10
+        },
+        {
+          "command": "gpl",
+          "sf": 1,
+          "lm": 0,
+          "mx": null,
+          "v": null,
+          "cv": null,
+          "count": 6
+        },
+        {
+          "command": "intpl",
+          "sf": 1,
+          "lm": 0,
+          "mx": null,
+          "v": null,
+          "cv": null,
+          "count": 21
+        },
+        {
+          "command": "mvmva",
+          "sf": 1,
+          "lm": 0,
+          "mx": 0,
+          "v": 0,
+          "cv": 0,
+          "count": 6
+        },
+        {
+          "command": "mvmva",
+          "sf": 1,
+          "lm": 0,
+          "mx": 0,
+          "v": 0,
+          "cv": 3,
+          "count": 75
+        },
+        {
+          "command": "mvmva",
+          "sf": 1,
+          "lm": 0,
+          "mx": 0,
+          "v": 1,
+          "cv": 3,
+          "count": 1
+        },
+        {
+          "command": "mvmva",
+          "sf": 1,
+          "lm": 0,
+          "mx": 0,
+          "v": 2,
+          "cv": 3,
+          "count": 1
+        },
+        {
+          "command": "mvmva",
+          "sf": 1,
+          "lm": 0,
+          "mx": 0,
+          "v": 3,
+          "cv": 3,
+          "count": 32
+        },
+        {
+          "command": "mvmva",
+          "sf": 1,
+          "lm": 1,
+          "mx": 1,
+          "v": 0,
+          "cv": 3,
+          "count": 12
+        },
+        {
+          "command": "nccs",
+          "sf": 1,
+          "lm": 1,
+          "mx": null,
+          "v": null,
+          "cv": null,
+          "count": 2
+        },
+        {
+          "command": "nclip",
+          "sf": 0,
+          "lm": 0,
+          "mx": null,
+          "v": null,
+          "cv": null,
+          "count": 81
+        },
+        {
+          "command": "ncs",
+          "sf": 1,
+          "lm": 1,
+          "mx": null,
+          "v": null,
+          "cv": null,
+          "count": 1
+        },
+        {
+          "command": "nct",
+          "sf": 1,
+          "lm": 1,
+          "mx": null,
+          "v": null,
+          "cv": null,
+          "count": 2
+        },
+        {
+          "command": "rtps",
+          "sf": 1,
+          "lm": 0,
+          "mx": null,
+          "v": null,
+          "cv": null,
+          "count": 39
+        },
+        {
+          "command": "rtpt",
+          "sf": 1,
+          "lm": 0,
+          "mx": null,
+          "v": null,
+          "cv": null,
+          "count": 33
+        },
+        {
+          "command": "sqr",
+          "sf": 0,
+          "lm": 1,
+          "mx": null,
+          "v": null,
+          "cv": null,
+          "count": 6
+        }
+      ],
+      "traps_game": {
+        "overflow": 158,
+        "zero_divisor": 160
+      },
+      "unguarded_divisions_game": [
+        {
+          "function": "func_80099894",
+          "address": "0x80099C14",
+          "library": false,
+          "mnemonic": "div"
+        },
+        {
+          "function": "func_80099894",
+          "address": "0x80099D50",
+          "library": false,
+          "mnemonic": "div"
+        },
+        {
+          "function": "func_80099894",
+          "address": "0x80099E64",
+          "library": false,
+          "mnemonic": "div"
+        },
+        {
+          "function": "func_80099894",
+          "address": "0x8009A068",
+          "library": false,
+          "mnemonic": "div"
+        },
+        {
+          "function": "func_80099894",
+          "address": "0x8009A1A4",
+          "library": false,
+          "mnemonic": "div"
+        },
+        {
+          "function": "func_80099894",
+          "address": "0x8009A2B8",
+          "library": false,
+          "mnemonic": "div"
+        },
+        {
+          "function": "func_8009A944",
+          "address": "0x8009AC90",
+          "library": false,
+          "mnemonic": "div"
+        },
+        {
+          "function": "func_8009A944",
+          "address": "0x8009ADCC",
+          "library": false,
+          "mnemonic": "div"
+        },
+        {
+          "function": "func_8009A944",
+          "address": "0x8009AEE0",
+          "library": false,
+          "mnemonic": "div"
+        },
+        {
+          "function": "func_8009A944",
+          "address": "0x8009B0E4",
+          "library": false,
+          "mnemonic": "div"
+        },
+        {
+          "function": "func_8009A944",
+          "address": "0x8009B220",
+          "library": false,
+          "mnemonic": "div"
+        },
+        {
+          "function": "func_8009A944",
+          "address": "0x8009B334",
+          "library": false,
+          "mnemonic": "div"
+        }
+      ],
+      "refused_timing_cases_game": {}
     },
     {
       "source": "SLPS_020.20",
@@ -1956,24 +2189,19 @@
         "0x1F801D80": 2
       },
       "not_in_interpreter": {
-        "game_multiply_divide": 16,
         "game_trap": 2,
-        "game_unaligned_access": 40,
-        "library_multiply_divide": 205,
-        "library_trap": 19,
-        "library_unaligned_access": 16
+        "library_trap": 19
       },
       "not_in_interpreter_game_mnemonics": {
-        "lwl": 10,
-        "lwr": 10,
-        "swl": 10,
-        "swr": 10,
-        "mult": 7,
-        "mflo": 6,
-        "mfhi": 2,
-        "break": 2,
-        "div": 1
-      }
+        "break": 2
+      },
+      "gte_commands_game": [],
+      "traps_game": {
+        "overflow": 1,
+        "zero_divisor": 1
+      },
+      "unguarded_divisions_game": [],
+      "refused_timing_cases_game": {}
     },
     {
       "source": "ACE.BPB entry 1",
@@ -2448,21 +2676,18 @@
       },
       "io_registers": {},
       "not_in_interpreter": {
-        "game_multiply_divide": 137,
-        "game_trap": 32,
-        "game_unaligned_access": 112
+        "game_trap": 32
       },
       "not_in_interpreter_game_mnemonics": {
-        "mult": 52,
-        "mflo": 43,
-        "break": 32,
-        "lwl": 28,
-        "lwr": 28,
-        "swl": 28,
-        "swr": 28,
-        "mfhi": 26,
-        "div": 16
-      }
+        "break": 32
+      },
+      "gte_commands_game": [],
+      "traps_game": {
+        "overflow": 16,
+        "zero_divisor": 16
+      },
+      "unguarded_divisions_game": [],
+      "refused_timing_cases_game": {}
     },
     {
       "source": "ACE.BPB entry 2",
@@ -3415,36 +3640,91 @@
       },
       "io_registers": {},
       "not_in_interpreter": {
-        "game_gte": 463,
-        "game_multiply_divide": 711,
-        "game_trap": 108,
-        "game_unaligned_access": 236
+        "game_trap": 108
       },
       "not_in_interpreter_game_mnemonics": {
-        "mult": 297,
-        "mflo": 212,
-        "mfhi": 145,
-        "ctc2": 141,
-        "break": 108,
-        "mfc2": 75,
-        "swc2": 74,
-        "mtc2": 71,
-        "swl": 64,
-        "lwl": 60,
-        "lwr": 56,
-        "swr": 56,
-        "div": 54,
-        "lwc2": 52,
-        "mvmva": 22,
-        "rtpt": 10,
-        "rtps": 8,
-        "cfc2": 5,
-        "multu": 3,
-        "intpl": 2,
-        "gpf": 1,
-        "nclip": 1,
-        "dpcs": 1
-      }
+        "break": 108
+      },
+      "gte_commands_game": [
+        {
+          "command": "dpcs",
+          "sf": 1,
+          "lm": 0,
+          "mx": null,
+          "v": null,
+          "cv": null,
+          "count": 1
+        },
+        {
+          "command": "gpf",
+          "sf": 1,
+          "lm": 0,
+          "mx": null,
+          "v": null,
+          "cv": null,
+          "count": 1
+        },
+        {
+          "command": "intpl",
+          "sf": 1,
+          "lm": 0,
+          "mx": null,
+          "v": null,
+          "cv": null,
+          "count": 2
+        },
+        {
+          "command": "mvmva",
+          "sf": 1,
+          "lm": 0,
+          "mx": 0,
+          "v": 0,
+          "cv": 0,
+          "count": 4
+        },
+        {
+          "command": "mvmva",
+          "sf": 1,
+          "lm": 0,
+          "mx": 0,
+          "v": 3,
+          "cv": 3,
+          "count": 18
+        },
+        {
+          "command": "nclip",
+          "sf": 0,
+          "lm": 0,
+          "mx": null,
+          "v": null,
+          "cv": null,
+          "count": 1
+        },
+        {
+          "command": "rtps",
+          "sf": 1,
+          "lm": 0,
+          "mx": null,
+          "v": null,
+          "cv": null,
+          "count": 8
+        },
+        {
+          "command": "rtpt",
+          "sf": 1,
+          "lm": 0,
+          "mx": null,
+          "v": null,
+          "cv": null,
+          "count": 10
+        }
+      ],
+      "traps_game": {
+        "overflow": 54,
+        "zero_divisor": 54
+      },
+      "unguarded_divisions_game": [],
+      "refused_timing_cases_game": {}
     },
     {
       "source": "ACE.BPB entry 3",
@@ -3482,21 +3762,18 @@
       "hardware_addresses": {},
       "io_registers": {},
       "not_in_interpreter": {
-        "game_multiply_divide": 28,
-        "game_trap": 10,
-        "game_unaligned_access": 80
+        "game_trap": 10
       },
       "not_in_interpreter_game_mnemonics": {
-        "lwl": 20,
-        "lwr": 20,
-        "swl": 20,
-        "swr": 20,
-        "break": 10,
-        "mult": 9,
-        "mflo": 8,
-        "mfhi": 6,
-        "div": 5
-      }
+        "break": 10
+      },
+      "gte_commands_game": [],
+      "traps_game": {
+        "overflow": 5,
+        "zero_divisor": 5
+      },
+      "unguarded_divisions_game": [],
+      "refused_timing_cases_game": {}
     },
     {
       "source": "ACE.BPB entry 4",
@@ -3534,14 +3811,12 @@
         "game_scratchpad": 5
       },
       "io_registers": {},
-      "not_in_interpreter": {
-        "game_multiply_divide": 12
-      },
-      "not_in_interpreter_game_mnemonics": {
-        "mult": 6,
-        "mfhi": 5,
-        "mflo": 1
-      }
+      "not_in_interpreter": {},
+      "not_in_interpreter_game_mnemonics": {},
+      "gte_commands_game": [],
+      "traps_game": {},
+      "unguarded_divisions_game": [],
+      "refused_timing_cases_game": {}
     }
   ]
 }

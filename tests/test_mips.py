@@ -1,82 +1,28 @@
-"""Synthetic tests for the R3000A integer interpreter; every program is hand-written here."""
+"""Synthetic tests for the R3000A interpreter; every program is hand-written here."""
 import struct
 import unittest
 
+from swallow_tools.gte import GteState, MAC0, IR1, IR2, IR3, FLAG
 from swallow_tools.mips import (
-    RETURN_ADDRESS, SUPPORTED_MNEMONICS, Memory, MipsError, _decode, call, register_index)
+    RETURN_ADDRESS, SUPPORTED_MNEMONICS, TRAP_MNEMONICS, Memory, MipsError, MipsTrap,
+    RunResult, _decode, call, divide, register_index)
+from swallow_tools.mipsasm import (
+    NOP, SLL, SRL, SRA, SLLV, SRLV, SRAV, JR, JALR, SYSCALL,
+    BREAK, MFHI, MTHI, MFLO, MTLO, MULT, MULTU, DIV, DIVU, ADD, ADDU, SUB, SUBU, AND, OR,
+    XOR, NOR, SLT, SLTU, BLTZ, BGEZ, J, JAL, BEQ, BNE, BLEZ, BGTZ, ADDI, ADDIU, SLTI, SLTIU,
+    ANDI, ORI, XORI, LUI, LB, LH, LWL, LW, LBU, LHU, LWR, SB, SH, SWL, SW, SWR, MFC2, CFC2,
+    MTC2, CTC2, LWC2, SWC2, GTE, program)
 
 BASE = 0x80010000
 DATA = 0x80100000
 
 
-def reg(name):
-    return register_index(name)
-
-
-def r_type(funct, rs='zero', rt='zero', rd='zero', sa=0):
-    return (reg(rs) << 21) | (reg(rt) << 16) | (reg(rd) << 11) | (sa << 6) | funct
-
-
-def i_type(op, rs, rt, imm):
-    return (op << 26) | (reg(rs) << 21) | (reg(rt) << 16) | (imm & 0xFFFF)
-
-
-# A small assembler for the tests: each helper returns one instruction word.
-def NOP(): return 0
-def SLL(rd, rt, sa): return r_type(0x00, rt=rt, rd=rd, sa=sa)
-def SRL(rd, rt, sa): return r_type(0x02, rt=rt, rd=rd, sa=sa)
-def SRA(rd, rt, sa): return r_type(0x03, rt=rt, rd=rd, sa=sa)
-def SLLV(rd, rt, rs): return r_type(0x04, rs, rt, rd)
-def SRLV(rd, rt, rs): return r_type(0x06, rs, rt, rd)
-def SRAV(rd, rt, rs): return r_type(0x07, rs, rt, rd)
-def JR(rs): return r_type(0x08, rs)
-def JALR(rd, rs): return r_type(0x09, rs, rd=rd)
-def ADD(rd, rs, rt): return r_type(0x20, rs, rt, rd)
-def ADDU(rd, rs, rt): return r_type(0x21, rs, rt, rd)
-def SUB(rd, rs, rt): return r_type(0x22, rs, rt, rd)
-def SUBU(rd, rs, rt): return r_type(0x23, rs, rt, rd)
-def AND(rd, rs, rt): return r_type(0x24, rs, rt, rd)
-def OR(rd, rs, rt): return r_type(0x25, rs, rt, rd)
-def XOR(rd, rs, rt): return r_type(0x26, rs, rt, rd)
-def NOR(rd, rs, rt): return r_type(0x27, rs, rt, rd)
-def SLT(rd, rs, rt): return r_type(0x2A, rs, rt, rd)
-def SLTU(rd, rs, rt): return r_type(0x2B, rs, rt, rd)
-def BLTZ(rs, off): return i_type(1, rs, 'zero', off)
-def BGEZ(rs, off): return i_type(1, rs, 'at', off)
-def J(target): return (2 << 26) | ((target >> 2) & 0x03FFFFFF)
-def JAL(target): return (3 << 26) | ((target >> 2) & 0x03FFFFFF)
-def BEQ(rs, rt, off): return i_type(4, rs, rt, off)
-def BNE(rs, rt, off): return i_type(5, rs, rt, off)
-def BLEZ(rs, off): return i_type(6, rs, 'zero', off)
-def BGTZ(rs, off): return i_type(7, rs, 'zero', off)
-def ADDI(rt, rs, imm): return i_type(0x08, rs, rt, imm)
-def ADDIU(rt, rs, imm): return i_type(0x09, rs, rt, imm)
-def SLTI(rt, rs, imm): return i_type(0x0A, rs, rt, imm)
-def SLTIU(rt, rs, imm): return i_type(0x0B, rs, rt, imm)
-def ANDI(rt, rs, imm): return i_type(0x0C, rs, rt, imm)
-def ORI(rt, rs, imm): return i_type(0x0D, rs, rt, imm)
-def XORI(rt, rs, imm): return i_type(0x0E, rs, rt, imm)
-def LUI(rt, imm): return i_type(0x0F, 'zero', rt, imm)
-def LB(rt, off, rs): return i_type(0x20, rs, rt, off)
-def LH(rt, off, rs): return i_type(0x21, rs, rt, off)
-def LW(rt, off, rs): return i_type(0x23, rs, rt, off)
-def LBU(rt, off, rs): return i_type(0x24, rs, rt, off)
-def LHU(rt, off, rs): return i_type(0x25, rs, rt, off)
-def SB(rt, off, rs): return i_type(0x28, rs, rt, off)
-def SH(rt, off, rs): return i_type(0x29, rs, rt, off)
-def SW(rt, off, rs): return i_type(0x2B, rs, rt, off)
-
-
-def program(*words):
-    return b''.join(struct.pack('<I', word) for word in words)
-
-
-def run(*words, arguments=None, data=None, writable=True, max_steps=1000):
+def run(*words, arguments=None, data=None, writable=True, max_steps=1000, **state):
     memory = Memory()
     memory.map('text', BASE, program(*words), executable=True)
     if data is not None:
         memory.map('data', DATA, data, writable=writable)
-    return call(memory, BASE, arguments, max_steps=max_steps), memory
+    return call(memory, BASE, arguments, max_steps=max_steps, **state), memory
 
 
 class ControlFlowTests(unittest.TestCase):
@@ -185,14 +131,16 @@ class ArithmeticTests(unittest.TestCase):
             with self.subTest(word=f'0x{word:08x}'):
                 self.check([word], arguments, 'v0', expected)
 
-    def test_trapping_arithmetic_overflow_is_an_error(self):
-        cases = [(ADD('v0', 'a0', 'a1'), {'a0': 0x7FFFFFFF, 'a1': 1}),
-                 (ADDI('v0', 'a0', 1), {'a0': 0x7FFFFFFF}),
-                 (SUB('v0', 'a0', 'a1'), {'a0': 0x80000000, 'a1': 1})]
-        for word, arguments in cases:
+    def test_trapping_arithmetic_overflow_is_a_trap(self):
+        cases = [(ADD('v0', 'a0', 'a1'), {'a0': 0x7FFFFFFF, 'a1': 1}, 'add'),
+                 (ADDI('v0', 'a0', 1), {'a0': 0x7FFFFFFF}, 'addi'),
+                 (SUB('v0', 'a0', 'a1'), {'a0': 0x80000000, 'a1': 1}, 'sub')]
+        for word, arguments, mnemonic in cases:
             with self.subTest(word=f'0x{word:08x}'):
-                with self.assertRaisesRegex(MipsError, 'overflows'):
+                with self.assertRaisesRegex(MipsTrap, 'overflows') as caught:
                     run(word, JR('ra'), NOP(), arguments=arguments)
+                self.assertEqual((caught.exception.reason, caught.exception.mnemonic,
+                                  caught.exception.pc), ('overflow', mnemonic, BASE))
 
     def test_zero_register_stays_zero(self):
         result, _ = run(ADDIU('zero', 'zero', 5), ADDU('v0', 'zero', 'zero'), JR('ra'), NOP())
@@ -279,6 +227,189 @@ class MemoryTests(unittest.TestCase):
                     memory.map('b', **kwargs)
 
 
+class MultiplyDivideTests(unittest.TestCase):
+    def hilo(self, *words, arguments):
+        result, _ = run(*words, NOP(), NOP(), MFHI('v0'), MFLO('v1'), JR('ra'), NOP(),
+                        arguments=arguments)
+        return result['v0'], result['v1']
+
+    def test_multiply(self):
+        cases = [(MULT, 0xFFFFFFFF, 2, (0xFFFFFFFF, 0xFFFFFFFE)),     # -1 * 2
+                 (MULTU, 0xFFFFFFFF, 2, (1, 0xFFFFFFFE)),
+                 (MULT, 0x80000000, 0x80000000, (0x40000000, 0)),
+                 (MULTU, 0x12345678, 0x9ABCDEF0, divmod(0x12345678 * 0x9ABCDEF0, 1 << 32))]
+        for instruction, a, b, expected in cases:
+            with self.subTest(instruction=instruction.__name__, a=a, b=b):
+                self.assertEqual(self.hilo(instruction('a0', 'a1'),
+                                           arguments={'a0': a, 'a1': b}), expected)
+
+    def test_divide_rounds_toward_zero(self):
+        cases = [(DIV, 7, 2, (1, 3)), (DIV, -7 & 0xFFFFFFFF, 2, (0xFFFFFFFF, 0xFFFFFFFD)),
+                 (DIV, 7, -2 & 0xFFFFFFFF, (1, 0xFFFFFFFD)), (DIVU, 0xFFFFFFFF, 0x10, (15, 0x0FFFFFFF))]
+        for instruction, a, b, expected in cases:
+            with self.subTest(instruction=instruction.__name__, a=a, b=b):
+                self.assertEqual(self.hilo(instruction('a0', 'a1'),
+                                           arguments={'a0': a, 'a1': b}), expected)
+
+    def test_documented_division_edge_cases(self):
+        # Documentation-derived R3000 results, not yet measured by this project.
+        cases = [('positive by zero', DIV, 5, 0, (5, 0xFFFFFFFF)),
+                 ('negative by zero', DIV, 0xFFFFFFFB, 0, (0xFFFFFFFB, 1)),
+                 ('divu by zero', DIVU, 0xFFFFFFFB, 0, (0xFFFFFFFB, 0xFFFFFFFF)),
+                 ('INT_MIN / -1', DIV, 0x80000000, 0xFFFFFFFF, (0, 0x80000000))]
+        for name, instruction, a, b, expected in cases:
+            with self.subTest(case=name):
+                self.assertEqual(self.hilo(instruction('a0', 'a1'),
+                                           arguments={'a0': a, 'a1': b}), expected)
+                self.assertEqual(divide(a, b, instruction is DIV), expected)
+
+    def test_move_to_hi_and_lo_and_initial_state(self):
+        self.assertEqual(self.hilo(MTHI('a0'), MTLO('a1'), arguments={'a0': 3, 'a1': 4}),
+                         (3, 4))
+        result, _ = run(JR('ra'), NOP(), hi=7, lo=8)
+        self.assertEqual((result.hi, result.lo), (7, 8))
+
+    def test_writing_hi_lo_soon_after_reading_them_is_refused(self):
+        for gap in (0, 1):
+            with self.subTest(gap=gap):
+                with self.assertRaisesRegex(MipsError, 'within two instructions'):
+                    run(MFLO('v0'), *[NOP()] * gap, MULT('a0', 'a1'), JR('ra'), NOP())
+        result, _ = run(MFLO('v0'), NOP(), NOP(), MULT('a0', 'a1'), JR('ra'), NOP())
+        self.assertEqual(result.steps, 6)
+
+
+class UnalignedAccessTests(unittest.TestCase):
+    DATA_BYTES = bytes(range(0x10, 0x20))
+
+    def test_lwl_lwr_pair_merges_from_the_in_flight_value(self):
+        # The register's stale bytes differ from memory, so a version that merged
+        # lwr into the old register value instead of lwl's result would fail.
+        for offset in range(4):
+            with self.subTest(offset=offset):
+                result, _ = run(LWL('t0', offset + 3, 'a0'), LWR('t0', offset, 'a0'), NOP(),
+                                ADDU('v0', 't0', 'zero'), JR('ra'), NOP(),
+                                arguments={'a0': DATA, 't0': 0xAAAAAAAA}, data=self.DATA_BYTES)
+                expected = int.from_bytes(self.DATA_BYTES[offset:offset + 4], 'little')
+                self.assertEqual(result['v0'], expected)
+
+    def test_lone_lwl_and_lwr_keep_the_other_bytes(self):
+        cases = [(LWL('t0', 1, 'a0'), 0x1110AAAA), (LWL('t0', 3, 'a0'), 0x13121110),
+                 (LWR('t0', 1, 'a0'), 0xAA131211), (LWR('t0', 3, 'a0'), 0xAAAAAA13)]
+        for word, expected in cases:
+            with self.subTest(word=f'0x{word:08x}'):
+                result, _ = run(word, NOP(), JR('ra'), NOP(),
+                                arguments={'a0': DATA, 't0': 0xAAAAAAAA}, data=self.DATA_BYTES)
+                self.assertEqual(result['t0'], expected)
+
+    def test_unaligned_access_touches_only_its_bytes(self):
+        # lwl at the first byte of a region reads one byte; lwr at the last reads one.
+        result, _ = run(LWL('t0', 0, 'a0'), NOP(), LWR('t1', 15, 'a0'), NOP(), JR('ra'), NOP(),
+                        arguments={'a0': DATA}, data=self.DATA_BYTES)
+        self.assertEqual((result['t0'], result['t1']), (0x10000000, 0x1F))
+        with self.assertRaisesRegex(MipsError, 'Unmapped 4-byte unaligned read'):
+            run(LWL('t0', 19, 'a0'), NOP(), JR('ra'), NOP(), arguments={'a0': DATA},
+                data=self.DATA_BYTES)
+
+    def test_swl_swr_write_exactly_their_bytes(self):
+        cases = [(SWL('a1', 1, 'a0'), b'\x22\x11\0\0', 2),
+                 (SWR('a1', 1, 'a0'), b'\0\x44\x33\x22', 4),
+                 (SWL('a1', 3, 'a0'), b'\x44\x33\x22\x11', 4),
+                 (SWR('a1', 3, 'a0'), b'\0\0\0\x44', 4)]
+        for word, expected, write_end in cases:
+            with self.subTest(word=f'0x{word:08x}'):
+                _, memory = run(word, JR('ra'), NOP(), arguments={'a0': DATA, 'a1': 0x11223344},
+                                data=bytes(4))
+                region = memory.region('data')
+                self.assertEqual(bytes(region.data), expected)
+                self.assertEqual(region.write_end, write_end)
+
+    def test_pairs_the_hardware_does_not_merge_are_refused(self):
+        cases = {'lwr first': (LWR('t0', 0, 'a0'), LWL('t0', 3, 'a0')),
+                 'different base': (LWL('t0', 3, 'a0'), LWR('t0', 0, 'a1')),
+                 'base is rt': (LWL('a0', 3, 'a0'), LWR('a0', 0, 'a0')),
+                 'use after lwr': (LWR('t0', 0, 'a0'), ADDU('v0', 't0', 'zero'))}
+        for name, (first, second) in cases.items():
+            with self.subTest(case=name):
+                with self.assertRaisesRegex(MipsError, 'delay slot of its load'):
+                    run(first, second, NOP(), JR('ra'), NOP(),
+                        arguments={'a0': DATA, 'a1': DATA}, data=self.DATA_BYTES)
+
+
+class TrapTests(unittest.TestCase):
+    def test_break_and_syscall_raise_traps_with_their_codes(self):
+        cases = [(BREAK(7), 'break', 7, 0x1C00), (BREAK(6), 'break', 6, 0x1800),
+                 (BREAK(0, 1), 'break', 0, 1), (SYSCALL(0x12), 'syscall', 0x12, 0x12)]
+        for word, mnemonic, code, raw_code in cases:
+            with self.subTest(word=f'0x{word:08x}'):
+                with self.assertRaises(MipsTrap) as caught:
+                    run(NOP(), word, JR('ra'), NOP())
+                trap = caught.exception
+                self.assertEqual((trap.mnemonic, trap.reason, trap.code, trap.raw_code, trap.pc),
+                                 (mnemonic, mnemonic, code, raw_code, BASE + 4))
+        self.assertEqual(BREAK(7), 0x0007000D)
+
+    def test_a_guarded_division_skips_its_break(self):
+        # GCC's divide-by-zero guard: div; bnez divisor, +2; nop; break 7.
+        words = [DIV('a0', 'a1'), BNE('a1', 'zero', 2), NOP(), BREAK(7), MFLO('v0'), JR('ra'),
+                 NOP()]
+        result, _ = run(*words, arguments={'a0': 9, 'a1': 3})
+        self.assertEqual(result['v0'], 3)
+        with self.assertRaises(MipsTrap):
+            run(*words, arguments={'a0': 9, 'a1': 0})
+
+
+class Cop2Tests(unittest.TestCase):
+    def test_moves_and_the_mfc2_load_delay(self):
+        words = [MTC2('a0', IR1), CTC2('a1', 26), MFC2('t0', IR1), CFC2('t1', 26), NOP(),
+                 ADDU('v0', 't0', 'zero'), ADDU('v1', 't1', 'zero'), JR('ra'), NOP()]
+        result, _ = run(*words, arguments={'a0': 0xFFFF8000, 'a1': 0x8000})
+        self.assertEqual(result['v0'], 0xFFFF8000)     # IR1 sign-extends
+        self.assertEqual(result['v1'], 0xFFFF8000)     # H reads back sign-extended
+        with self.assertRaisesRegex(MipsError, 'delay slot of its load'):
+            run(MFC2('t0', IR1), ADDU('v0', 't0', 'zero'), JR('ra'), NOP())
+
+    def test_lwc2_and_swc2_go_through_memory(self):
+        words = [LWC2(IR2, 0, 'a0'), NOP(), NOP(), SWC2(IR2, 4, 'a0'), JR('ra'), NOP()]
+        _, memory = run(*words, arguments={'a0': DATA}, data=struct.pack('<II', 0x0000FFFE, 0))
+        self.assertEqual(struct.unpack_from('<I', memory.region('data').data, 4)[0], 0xFFFFFFFE)
+
+    def test_gte_state_goes_in_and_comes_out(self):
+        state = GteState.from_registers(data={IR1: 3, IR2: 4, IR3: 0xFFFB})
+        result, _ = run(GTE('sqr', sf=0), JR('ra'), NOP(), gte=state)
+        self.assertEqual([result.gte.read_data(i) for i in (IR1, IR2, IR3)], [9, 16, 25])
+        result, _ = run(GTE('nclip'), JR('ra'), NOP(),
+                        gte=GteState.from_registers(data={12: 0, 13: 4, 14: 4 << 16}))
+        self.assertEqual(result.gte.read_data(MAC0), 16)
+        self.assertEqual(result.gte.read_control(FLAG), 0)
+
+    def test_psyq_macro_numbers_in_command_words_are_ignored(self):
+        state = GteState.from_registers(data={IR1: 2})
+        plain, _ = run(GTE('sqr', sf=0), JR('ra'), NOP(), gte=state)
+        marked, _ = run(GTE('sqr', sf=0, macro=0x1F), JR('ra'), NOP(), gte=state)
+        self.assertEqual(plain.gte, marked.gte)
+
+    def test_cop2_timing_cases_are_refused(self):
+        cases = {'command after write': (MTC2('a0', IR1), NOP(), GTE('sqr')),
+                 'write after command': (GTE('sqr'), MTC2('a0', IR1), NOP()),
+                 'cop2 in a delay slot': (BEQ('zero', 'zero', 1), MFC2('t0', IR1), NOP())}
+        for name, words in cases.items():
+            with self.subTest(case=name):
+                with self.assertRaises(MipsError):
+                    run(*words, NOP(), JR('ra'), NOP())
+        result, _ = run(MTC2('a0', IR1), NOP(), NOP(), GTE('sqr'), MFC2('v0', IR1), JR('ra'),
+                        NOP(), arguments={'a0': 3})
+        self.assertEqual(result['v0'], 0)              # sf=1: 9 >> 12
+
+
+class ResultTests(unittest.TestCase):
+    def test_two_argument_construction_and_name_lookup_still_work(self):
+        result = RunResult(tuple(range(32)), 5)
+        self.assertEqual((result['v0'], result.steps, result.hi, result.lo, result.gte),
+                         (2, 5, 0, 0, None))
+        with self.assertRaisesRegex(MipsError, 'Unknown register'):
+            result['hi']
+
+
 class DecodeTests(unittest.TestCase):
     def test_supported_mnemonics_are_exactly_what_the_decoder_accepts(self):
         words = [SLL('v0', 'a0', 1), SRL('v0', 'a0', 1), SRA('v0', 'a0', 1),
@@ -292,18 +423,32 @@ class DecodeTests(unittest.TestCase):
                  SLTIU('v0', 'a0', 1), ANDI('v0', 'a0', 1), ORI('v0', 'a0', 1),
                  XORI('v0', 'a0', 1), LUI('v0', 1), LB('v0', 0, 'a0'), LH('v0', 0, 'a0'),
                  LW('v0', 0, 'a0'), LBU('v0', 0, 'a0'), LHU('v0', 0, 'a0'), SB('v0', 0, 'a0'),
-                 SH('v0', 0, 'a0'), SW('v0', 0, 'a0')]
-        self.assertEqual({_decode(word, BASE).mnemonic for word in words}, SUPPORTED_MNEMONICS)
+                 SH('v0', 0, 'a0'), SW('v0', 0, 'a0'),
+                 MULT('a0', 'a1'), MULTU('a0', 'a1'), DIV('a0', 'a1'), DIVU('a0', 'a1'),
+                 MFHI('v0'), MFLO('v0'), MTHI('a0'), MTLO('a0'), LWL('v0', 3, 'a0'),
+                 LWR('v0', 0, 'a0'), SWL('v0', 3, 'a0'), SWR('v0', 0, 'a0'),
+                 MFC2('v0', 1), CFC2('v0', 1), MTC2('v0', 1), CTC2('v0', 1),
+                 LWC2(1, 0, 'a0'), SWC2(1, 0, 'a0'),
+                 BREAK(7), SYSCALL(0)]
+        words += [GTE(name) for name in ('rtps', 'rtpt', 'nclip', 'mvmva', 'dpcs', 'dpct',
+                                         'intpl', 'sqr', 'gpf', 'gpl', 'avsz3', 'avsz4', 'ncs',
+                                         'nct', 'nccs')]
+        self.assertEqual({_decode(word, BASE).mnemonic for word in words},
+                         SUPPORTED_MNEMONICS | TRAP_MNEMONICS)
+        self.assertFalse(SUPPORTED_MNEMONICS & TRAP_MNEMONICS)
 
     def test_instructions_outside_the_subset_are_errors(self):
-        for word in (0x0000000C,          # syscall
-                     0x00850018,          # mult
-                     0x88850000,          # lwl
-                     0x48020000,          # cop2 mfc2
-                     SLL('v0', 'a0', 1) | (1 << 21),   # shift with rs set
-                     LUI('v0', 1) | (1 << 21)):        # lui with rs set
-            with self.subTest(word=f'0x{word:08x}'):
-                with self.assertRaisesRegex(MipsError, 'Unsupported instruction'):
+        cases = {'mfc0': (0x10 << 26, 'Unsupported instruction'),
+                 'bc2f': ((0x12 << 26) | (8 << 21), 'Unsupported instruction'),
+                 'mfc2 with low bits set': (MFC2('v0', 1) | 1, 'Unsupported instruction'),
+                 'GTE op': ((0x12 << 26) | (1 << 25) | 0x0C, 'not modelled'),
+                 'MVMVA cv=2': (GTE('mvmva', cv=2), 'not modelled'),
+                 'MVMVA mx=3': (GTE('mvmva', mx=3), 'not modelled'),
+                 'shift with rs set': (SLL('v0', 'a0', 1) | (1 << 21), 'Unsupported instruction'),
+                 'lui with rs set': (LUI('v0', 1) | (1 << 21), 'Unsupported instruction')}
+        for name, (word, message) in cases.items():
+            with self.subTest(case=name):
+                with self.assertRaisesRegex(MipsError, message):
                     run(word, JR('ra'), NOP())
 
     def test_unknown_register_name(self):

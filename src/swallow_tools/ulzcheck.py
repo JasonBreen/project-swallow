@@ -1,9 +1,9 @@
 """Run AC3's own Ulz routine on every Ulz blob in ACE.BPB and compare it with ulz.py.
 
 Contract and results: docs/ulz-routine.md. The routine is found by name in the
-splat symbol file of the executable whose SHA256 the splat manifest lists, and
-it runs in the read-only interpreter in ``mips`` with only three regions
-mapped: the executable's text, the blob, and a destination buffer. Any access
+splat symbol file of the executable whose SHA256 the splat manifest lists
+(``oracle.find_executable``), and it runs in the interpreter in ``mips`` with
+only three regions mapped: the executable's text, the blob, and a destination buffer. Any access
 outside them stops that run. The report holds counts, addresses, and paths,
 never game bytes.
 """
@@ -12,7 +12,6 @@ from __future__ import annotations
 import argparse
 from collections import Counter
 from dataclasses import dataclass
-import hashlib
 import json
 from pathlib import Path
 import struct
@@ -20,11 +19,11 @@ import sys
 
 from .bph import BphFormatError, locate_archive_files, parse_bph
 from .bpb import MAX_DEPTH, MAX_ENTRY_BYTES, ContainerFormatError, parse_offset_table
-from .disc import DiscFormatError, FileEntry, PlayStationDisc
-from .exe import HEADER_BYTES, ExeFormatError, _read_whole, inspect_executables, parse_psx_exe
+from .disc import DiscFormatError, PlayStationDisc
+from .exe import ExeFormatError
 from .mips import Memory, MipsError, call
-from .psyq import _SYMBOL_LINE
-from .split import DEFAULT_CONFIG_DIR, SplitError, load_manifest
+from .oracle import OracleError, find_executable
+from .split import DEFAULT_CONFIG_DIR, SplitError
 from .ulz import UlzFormatError, decompress_ulz, is_ulz
 
 SCHEMA_VERSION = 1
@@ -55,15 +54,6 @@ class RoutineOutput:
     literal_bytes_read: int
     pair_bytes_read: int
     steps: int
-
-
-def read_symbols(path: Path) -> dict[str, int]:
-    symbols: dict[str, int] = {}
-    for line in path.read_text(encoding='utf-8').splitlines():
-        match = _SYMBOL_LINE.match(line)
-        if match:
-            symbols.setdefault(match.group(1), int(match.group(2), 16))
-    return symbols
 
 
 def run_routine(text: bytes, text_address: int, entry: int, blob: bytes, *,
@@ -156,34 +146,15 @@ def iter_ulz_blobs(data: bytes, path: tuple[int, ...], origin: str = 'stored',
 
 
 def _routine_executable(image: Path, config_dir: Path) -> tuple[dict, dict, bytes, int, int]:
-    report = inspect_executables(image)
-    configs = [entry for entry in load_manifest(config_dir) if entry.kind == 'executable']
-    found = []
-    for exe in report['executables']:
-        for config in configs:
-            if exe['sha256'] in config.sha256:
-                symbols = read_symbols(config_dir / config.symbols)
-                if ROUTINE_SYMBOL in symbols:
-                    found.append((exe, config, symbols[ROUTINE_SYMBOL]))
-    if len(found) != 1:
-        raise UlzCheckError(f'Expected one executable whose symbol file names '
-                            f'{ROUTINE_SYMBOL}; found {len(found)}')
-    exe, config, address = found[0]
-    disc = PlayStationDisc(image)
-    files = {(item['lba'], item['size']): FileEntry(**item)
-             for item in disc.inspect()['files'] if not item['is_directory']}
-    data = _read_whole(disc, files[(exe['lba'], exe['size_bytes'])])
-    if hashlib.sha256(data).hexdigest() != exe['sha256']:
-        raise UlzCheckError(f"{exe['path']}: bytes changed between report and extraction")
-    parsed = parse_psx_exe(data[:HEADER_BYTES], len(data))
-    text_address = parsed.header.text_address
-    text = data[HEADER_BYTES:]
-    if not text_address <= address < text_address + len(text):
-        raise UlzCheckError(f'{ROUTINE_SYMBOL} 0x{address:08x} is outside the text image')
-    described = {'path': exe['path'], 'sha256': exe['sha256'], 'config': config.config,
-                 'symbols': config.symbols}
-    return described, {'symbol': ROUTINE_SYMBOL, 'address': f'0x{address:08x}'}, text, \
-        text_address, address
+    try:
+        staged = find_executable(image, config_dir, ROUTINE_SYMBOL)
+    except OracleError as exc:
+        raise UlzCheckError(str(exc)) from exc
+    address = staged.symbols[ROUTINE_SYMBOL]
+    described = {'path': staged.path, 'sha256': staged.sha256, 'config': staged.config,
+                 'symbols': staged.symbols_file}
+    return described, {'symbol': ROUTINE_SYMBOL, 'address': f'0x{address:08x}'}, \
+        staged.image, staged.text_address, address
 
 
 def check_image(image: Path, *, entries: list[int] | None = None,

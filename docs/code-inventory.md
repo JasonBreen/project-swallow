@@ -1,13 +1,16 @@
 # Code inventory for the recompiler
 
 Implemented in [`swallow_tools.inventory`](../src/swallow_tools/inventory.py),
-tooling v0.11.0. Measured on 2026-11-03 against Japanese Disc 1. This is part
+tooling v0.11.0; report schema 2 and the division, GTE-encoding, and timing
+sections since v0.12.0. Measured on 2026-11-03 and 2026-11-05 against
+Japanese Disc 1. This is part
 of milestone M1 in the [reconstruction plan](reconstruction-plan.md). It
 lists what a static recompiler must know before it can translate the game's
 code: where control goes indirectly, what the code registers as callbacks,
 what hardware it touches, and which instructions the
-[interpreter](../src/swallow_tools/mips.py) cannot run yet. It reads splat's
-output, not the disc, and the report holds names, addresses, and counts only.
+[interpreter](mips-interpreter.md) cannot run yet. It reads splat's output,
+not the disc, and the report holds names, addresses, decoded fields, and
+counts only, never instruction words.
 
 ## Method
 
@@ -46,7 +49,21 @@ is the boot program, `ACE3.BIN`, or one of the four [overlays](overlays.md).
 - **Interpreter gaps.** Every mnemonic outside
   `swallow_tools.mips.SUPPORTED_MNEMONICS` is counted, after mapping
   spimdisasm's pseudo-instructions (`nop`, `beqz`, `bnez`, `b`, `negu`,
-  `neg`, `not`, `move`) to the instructions they stand for.
+  `neg`, `not`, `move`) to the instructions they stand for. A GTE command
+  also counts as a gap when its word does not decode, such as `MVMVA` with
+  an unmodelled selector.
+- **GTE encodings.** Each game-code GTE command is counted by its decoded
+  fields: command, `sf`, `lm`, and for `MVMVA` the matrix, vector, and
+  translation selectors.
+- **Division guards.** A game-code `break 7` is a zero-divisor guard when
+  the three instructions before it are `div`/`divu $zero, a, b`,
+  `bnez b`, and `nop`. A `break 6` is an overflow guard when the five
+  before it are `addiu $at, $zero, -1`, `bne b, $at`, `lui $at, 0x8000`,
+  `bne a, $at`, and `nop`, and the division is nine instructions back. A
+  `div`/`divu` without a zero-divisor guard three instructions later is
+  listed as unguarded.
+- **Timing cases.** Straight-line sequences the interpreter refuses (see
+  [the interpreter](mips-interpreter.md#refused-timing-cases)) are counted.
 
 ## Results
 
@@ -107,19 +124,54 @@ registers `0x1F801C00` and `0x1F801D80` in the boot program. This scan
 covers addresses formed from immediates; an address computed at run time,
 or loaded from data, would not show up.
 
-**Instructions the interpreter cannot run yet**, in game code:
+**Instructions the interpreter cannot run**, in game code. Tooling v0.11.0
+listed these classes; v0.12.0 added all but the traps to the
+[interpreter](mips-interpreter.md):
 
-| Class | Boot | `ACE3.BIN` | `ovl1` | `ovl2` | `ovl3` | `ovl4` | All |
-|---|---:|---:|---:|---:|---:|---:|---:|
-| GTE (`cop2`, its moves, loads, and stores) | 0 | 3,485 | 0 | 463 | 0 | 0 | 3,948 |
-| Multiply and divide (`mult`, `div`, `mfhi`, `mflo`, …) | 16 | 1,420 | 137 | 711 | 28 | 12 | 2,324 |
-| Unaligned access (`lwl`, `lwr`, `swl`, `swr`) | 40 | 534 | 112 | 236 | 80 | 0 | 1,002 |
-| Traps (`break`, `syscall`) | 2 | 318 | 32 | 108 | 10 | 0 | 470 |
-| Coprocessor 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| Class | Boot | `ACE3.BIN` | `ovl1` | `ovl2` | `ovl3` | `ovl4` | All | Since v0.12.0 |
+|---|---:|---:|---:|---:|---:|---:|---:|---|
+| GTE (`cop2`, its moves, loads, and stores) | 0 | 3,485 | 0 | 463 | 0 | 0 | 3,948 | Runs |
+| Multiply and divide (`mult`, `div`, `mfhi`, `mflo`, …) | 16 | 1,420 | 137 | 711 | 28 | 12 | 2,324 | Runs |
+| Unaligned access (`lwl`, `lwr`, `swl`, `swr`) | 40 | 534 | 112 | 236 | 80 | 0 | 1,002 | Runs |
+| Traps (`break`, `syscall`) | 2 | 318 | 32 | 108 | 10 | 0 | 470 | Raise `MipsTrap` |
+| Coprocessor 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | Library only |
 
-Coprocessor 0 instructions appear only in library code, 5 in `ACE3.BIN`.
-**Hypothesis:** most `break` instructions are the compiler's divide-by-zero
-checks after `div`. Their placement fits; it is not verified one by one.
+Coprocessor 0 instructions appear only in library code, 5 in `ACE3.BIN`,
+as do the GTE commands `OP` (4) and `DPCL` (1). With v0.12.0, `break` is the only game-code
+instruction the interpreter does not run to completion.
+
+### Division guards
+
+**Measured:** every one of the 470 game-code `break`s is a GCC division
+guard of the shapes above. There are 236 zero-divisor guards (`break 7`) and
+234 overflow guards (`break 6`): 160 and 158 in `ACE3.BIN`, 1 and 1 in the
+boot program, 16 and 16 in `ovl1`, 54 and 54 in `ovl2`, and 5 and 5 in
+`ovl3`. `break 0, 1` and `syscall` occur only in library code. This replaces
+v0.11.0's hypothesis that most of them were.
+
+Twelve game-code divisions have no guard. All are hand-written
+`div $zero, $v0, $a2` instructions. In all twelve, the next HI/LO
+instruction in program order is an `mflo`, 20 to 54 instructions later, so
+game code uses the quotient:
+
+| Function | Addresses |
+|---|---|
+| `func_80099894` | `0x80099C14`, `0x80099D50`, `0x80099E64`, `0x8009A068`, `0x8009A1A4`, `0x8009A2B8` |
+| `func_8009A944` | `0x8009AC90`, `0x8009ADCC`, `0x8009AEE0`, `0x8009B0E4`, `0x8009B220`, `0x8009B334` |
+
+At the first site, the path is taken only for a negative divisor, so a zero
+divisor cannot reach it but `0x80000000 / -1` can. The other eleven were not
+traced. These are where the R3000's documented division results become
+observable, so they are what the recompiler's checked mode and the capture
+rig target.
+
+### GTE encodings and timing
+
+Game code uses 21 distinct GTE command encodings, listed with counts in
+[the interpreter document](mips-interpreter.md#encodings-game-code-uses).
+`MVMVA` uses only the RT and LLM matrices and the TR or no translation;
+the documented defective selectors never occur. None of the four refused
+timing cases occurs in game code.
 
 ## What this means for the plan
 
@@ -130,9 +182,10 @@ checks after `div`. Their placement fits; it is not verified one by one.
 - Game code reaches hardware only through the libraries and the scratchpad.
   That supports replacing the hardware at the PsyQ API, as the plan
   proposes, rather than emulating registers for game code.
-- Before the interpreter can run most game functions as an oracle, it needs
-  multiply/divide, unaligned access, traps, and a GTE model. GTE is by far
-  the largest of these.
+- Since v0.12.0 the interpreter runs every game-code instruction except
+  `break`, so game functions can run as an oracle once they are given
+  their `$gp`, stack, and GTE state; see
+  [the calling contract](mips-interpreter.md#the-calling-contract-for-compiled-code).
 
 ## Reproduce
 

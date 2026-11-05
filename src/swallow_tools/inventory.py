@@ -4,10 +4,12 @@ Reads the assembly splat wrote (never the disc) and reports, for each
 executable and overlay: indirect calls, computed jumps and the jump tables
 that resolve them, functions whose address is taken, function-pointer
 tables, callbacks registered with the PsyQ libraries, addresses in the
-0x1F80xxxx page, and instructions that swallow_tools.mips does not run.
+0x1F80xxxx page, instructions that swallow_tools.mips does not run, the GTE
+command encodings game code uses, the compiler's division guards and the
+divisions without one, and the timing cases the interpreter refuses.
 Library and game code are told apart by the object ranges in a PsyQ report.
 Contract and results: docs/code-inventory.md. The report holds names,
-addresses, and counts only.
+addresses, decoded fields, and counts only, never instruction words.
 """
 from __future__ import annotations
 
@@ -19,9 +21,10 @@ from pathlib import Path
 import re
 import sys
 
+from .gte import GteError, decode_command
 from .mips import SUPPORTED_MNEMONICS
 
-SCHEMA_VERSION = 1
+SCHEMA_VERSION = 2
 REPO_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_PSYQ_REPORT = REPO_ROOT / 'docs' / 'reports' / 'psyq-jp1.json'
 
@@ -38,7 +41,7 @@ _WORD_SYMBOL = re.compile(r'^([A-Za-z_.][A-Za-z0-9_.]*)(?:\s*\+\s*0x[0-9A-Fa-f]+
 PSEUDO = {'nop': 'sll', 'beqz': 'beq', 'bnez': 'bne', 'b': 'beq', 'negu': 'subu',
           'neg': 'sub', 'not': 'nor', 'move': 'addu'}
 GTE = frozenset({'mtc2', 'mfc2', 'ctc2', 'cfc2', 'lwc2', 'swc2', 'rtps', 'rtpt', 'nclip',
-                 'op', 'dpcs', 'intpl', 'mvmva', 'ncds', 'cdp', 'ncdt', 'nccs', 'cc',
+                 'op', 'dpcs', 'intpl', 'mvmva', 'ncds', 'cdp', 'ncdt', 'nccs', 'cc', 'dpcl',
                  'ncs', 'nct', 'sqr', 'dcpl', 'dpct', 'avsz3', 'avsz4', 'gpf', 'gpl',
                  'ncct'})
 GAP_CLASSES = (
@@ -49,6 +52,12 @@ GAP_CLASSES = (
     ('cop0', frozenset({'mfc0', 'mtc0', 'rfe'})),
     ('gte', GTE),
 )
+# For the timing cases swallow_tools.mips refuses (see timing_cases).
+GTE_WRITES = frozenset({'mtc2', 'ctc2', 'lwc2'})
+GTE_COMMANDS = GTE - {'mtc2', 'mfc2', 'ctc2', 'cfc2', 'lwc2', 'swc2'}
+BRANCHES = frozenset({'beq', 'bne', 'blez', 'bgtz', 'bltz', 'bgez', 'bltzal', 'bgezal', 'bal',
+                      'j', 'jal', 'jr', 'jalr'})
+HILO_WRITES = frozenset({'mult', 'multu', 'div', 'divu', 'mthi', 'mtlo'})
 # How far back from a call the argument register is looked for.
 ARGUMENT_WINDOW = 8
 # PsyQ functions whose names end in Callback but take no function pointer,
@@ -70,6 +79,10 @@ class Instruction:
     address: int
     mnemonic: str
     operands: str
+    word: int = 0
+
+    def args(self) -> list[str]:
+        return [part.strip() for part in self.operands.split(',')]
 
 
 @dataclass
@@ -114,7 +127,8 @@ def parse_text(text: str) -> list[Function]:
         for name in pending_entries:
             current.entries.append(name)
         pending_entries = []
-        current.instructions.append(Instruction(address, match.group(4), match.group(5)))
+        word = int.from_bytes(bytes.fromhex(match.group(3)), 'little')
+        current.instructions.append(Instruction(address, match.group(4), match.group(5), word))
     return [function for function in functions if function.address >= 0]
 
 
@@ -210,6 +224,66 @@ def _argument(function: Function, index: int, register: str) -> str | None:
     return found
 
 
+def gte_fields(instruction: Instruction) -> tuple:
+    """(command, sf, lm, mx, v, cv) from a GTE command word; mx/v/cv only for MVMVA."""
+    word = instruction.word
+    fields = (instruction.mnemonic, (word >> 19) & 1, (word >> 10) & 1)
+    if instruction.mnemonic == 'mvmva':
+        return fields + ((word >> 17) & 3, (word >> 15) & 3, (word >> 13) & 3)
+    return fields + (None, None, None)
+
+
+def division_guard(body: list[Instruction], index: int) -> str | None:
+    """Which GCC division guard the ``break`` at ``index`` closes, if its shape matches.
+
+    ``zero_divisor``: div|divu $zero, a, b; bnez b; nop; break 7.
+    ``overflow``: that division, then addiu $at, $zero, -1; bne b, $at;
+    lui $at, 0x8000; bne a, $at; nop; break 6.
+    """
+    code = (body[index].word >> 16) & 0x3FF
+    if code == 7 and index >= 3:
+        division, test, slot = body[index - 3:index]
+        if (division.mnemonic in ('div', 'divu') and test.mnemonic == 'bnez'
+                and slot.mnemonic == 'nop' and test.args()[0] == division.args()[-1]):
+            return 'zero_divisor'
+    if code == 6 and index >= 9:
+        division = body[index - 9]
+        load, first, high, second, slot = body[index - 5:index]
+        if (division.mnemonic == 'div' and load.mnemonic == 'addiu'
+                and load.args() == ['$at', '$zero', '-0x1'] and first.mnemonic == 'bne'
+                and first.args()[:2] == [division.args()[-1], '$at']
+                and high.mnemonic == 'lui' and high.args()[0] == '$at'
+                and '0x80000000' in high.operands and second.mnemonic == 'bne'
+                and second.args()[:2] == [division.args()[-2], '$at']
+                and slot.mnemonic == 'nop'):
+            return 'overflow'
+    return None
+
+
+def guarded(body: list[Instruction], index: int) -> bool:
+    """A div/divu at ``index`` is guarded when a zero-divisor guard follows it."""
+    return (index + 3 < len(body) and body[index + 3].mnemonic == 'break'
+            and division_guard(body, index + 3) == 'zero_divisor')
+
+
+def timing_cases(body: list[Instruction], index: int) -> list[str]:
+    """Static checks for the cases swallow_tools.mips refuses; straight-line code only."""
+    def at(offset: int) -> str | None:
+        position = index - offset
+        return PSEUDO.get(body[position].mnemonic, body[position].mnemonic) \
+            if position >= 0 else None
+    mnemonic, found = at(0), []
+    if mnemonic in GTE_COMMANDS and (at(1) in GTE_WRITES or at(2) in GTE_WRITES):
+        found.append('gte_command_after_write')
+    if mnemonic in GTE_WRITES and at(1) in GTE_COMMANDS:
+        found.append('gte_write_after_command')
+    if mnemonic in GTE and at(1) in BRANCHES:
+        found.append('cop2_in_delay_slot')
+    if mnemonic in HILO_WRITES and (at(1) in ('mfhi', 'mflo') or at(2) in ('mfhi', 'mflo')):
+        found.append('hilo_write_after_read')
+    return found
+
+
 def inventory_unit(name: str, functions: list[Function],
                    data_blocks: list[tuple[str, int, list[str]]],
                    entry_names: set[str], ranges: list[tuple[int, int]] | None) -> dict:
@@ -244,6 +318,10 @@ def inventory_unit(name: str, functions: list[Function],
     io_registers: Counter = Counter()
     gaps: Counter = Counter()
     gap_mnemonics: Counter = Counter()
+    gte_encodings: Counter = Counter()
+    traps: Counter = Counter()
+    timing: Counter = Counter()
+    unguarded = []
     counts = Counter()
     for function in functions:
         side = 'library' if function.library else 'game'
@@ -289,7 +367,23 @@ def inventory_unit(name: str, functions: list[Function],
             if (mnemonic == 'lui' and not addresses
                     and instruction.operands.replace(' ', '').endswith(',0x1F80')):
                 hardware[f'{side}_unresolved_lui'] += 1
-            if mnemonic not in SUPPORTED_MNEMONICS:
+            supported = mnemonic in SUPPORTED_MNEMONICS
+            if supported and mnemonic in GTE_COMMANDS:
+                try:
+                    decode_command(instruction.word)
+                except GteError:
+                    supported = False      # e.g. MVMVA with an unmodelled selector
+            if side == 'game':
+                if mnemonic in GTE_COMMANDS:
+                    gte_encodings[gte_fields(instruction)] += 1
+                if mnemonic == 'break':
+                    traps[division_guard(function.instructions, index) or 'other'] += 1
+                elif mnemonic == 'syscall':
+                    traps['syscall'] += 1
+                if mnemonic in ('div', 'divu') and not guarded(function.instructions, index):
+                    unguarded.append({**where(function, instruction), 'mnemonic': mnemonic})
+                timing.update(timing_cases(function.instructions, index))
+            if not supported:
                 group = next((group for group, members in GAP_CLASSES if mnemonic in members),
                              'other')
                 gaps[f'{side}_{group}'] += 1
@@ -319,6 +413,14 @@ def inventory_unit(name: str, functions: list[Function],
         'io_registers': dict(sorted(io_registers.items())),
         'not_in_interpreter': dict(sorted(gaps.items())),
         'not_in_interpreter_game_mnemonics': dict(gap_mnemonics.most_common()),
+        'gte_commands_game': [
+            {'command': command, 'sf': sf, 'lm': lm, 'mx': mx, 'v': v, 'cv': cv, 'count': count}
+            for (command, sf, lm, mx, v, cv), count in sorted(
+                gte_encodings.items(), key=lambda item: (item[0][0], *[-1 if f is None else f
+                                                                       for f in item[0][1:]]))],
+        'traps_game': dict(sorted(traps.items())),
+        'unguarded_divisions_game': unguarded,
+        'refused_timing_cases_game': dict(sorted(timing.items())),
     }
 
 

@@ -19,7 +19,8 @@ from swallow_tools.mips import MipsError
 from swallow_tools.ulz import decompress_ulz
 from swallow_tools.ulzcheck import (
     ROUTINE_SYMBOL, RoutineOutput, check_image, compare_with_decoder, iter_ulz_blobs, main,
-    read_symbols, run_routine)
+    run_routine)
+from swallow_tools.oracle import read_symbols
 from test_bph import make_index
 from test_bpb import container, padded
 from test_exe import make_exe, make_image

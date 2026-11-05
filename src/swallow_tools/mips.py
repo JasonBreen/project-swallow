@@ -1,20 +1,29 @@
-"""Minimal R3000A integer interpreter for running one original routine in isolation.
+"""R3000A interpreter for running original routines in isolation, as an oracle.
 
-Offline validation tooling, not an emulator. It executes a bounded subset of
-the MIPS I integer instruction set over explicitly mapped memory regions, so a
-game routine can be run on the same input as a project decoder and the results
-compared. There are no coprocessors, exceptions, interrupts, caches, timing,
-or hardware registers. Every case the interpreter does not model faithfully
-stops execution with ``MipsError`` instead of guessing: an instruction outside
-the subset, an unmapped or misaligned access, a write to a read-only region,
-an ``add``/``addi``/``sub`` overflow (a trap on the R3000), a branch in a
-delay slot, and any instruction that reads or writes a register in the delay
-slot of the load that targets it. Contract: docs/ulz-routine.md.
+Offline validation tooling, not an emulator. It executes the MIPS I
+instructions Ace Combat 3's game code uses, including multiply and divide,
+unaligned loads and stores, and the GTE (coprocessor 2, swallow_tools.gte),
+over explicitly mapped memory regions, so a game routine can be run on the
+same input as a project decoder or generated C and the results compared.
+There are no interrupts, caches, cycle timing, or hardware registers.
+
+Every case the interpreter does not model faithfully stops execution with
+``MipsError`` instead of guessing: an instruction outside the subset, an
+unmapped or misaligned access, a write to a read-only region, a branch in a
+delay slot, any instruction that reads or writes a register in the delay slot
+of the load that targets it (``lwl`` followed by ``lwr`` is the one pair that
+merges), and the timing cases MIPS I or the GTE leave undefined. A case where
+the R3000 itself would raise an exception (``break``, ``syscall``, or an
+``add``/``addi``/``sub`` overflow) stops with ``MipsTrap``, a result of the
+original code rather than a limit of the interpreter.
+Contract: docs/mips-interpreter.md.
 """
 from __future__ import annotations
 
 from dataclasses import dataclass
 import struct
+
+from .gte import COMMANDS as GTE_COMMANDS, Gte, GteError, GteState, decode_command
 
 WORD_MASK = 0xFFFFFFFF
 # Execution stops when control reaches this address; it must stay unmapped.
@@ -30,14 +39,44 @@ _REGISTER_INDEX = {name: index for index, name in enumerate(REGISTER_NAMES)}
 SUPPORTED_MNEMONICS = frozenset({
     'sll', 'srl', 'sra', 'sllv', 'srlv', 'srav', 'jr', 'jalr',
     'add', 'addu', 'sub', 'subu', 'and', 'or', 'xor', 'nor', 'slt', 'sltu',
+    'mult', 'multu', 'div', 'divu', 'mfhi', 'mflo', 'mthi', 'mtlo',
     'bltz', 'bgez', 'j', 'jal', 'beq', 'bne', 'blez', 'bgtz',
     'addi', 'addiu', 'slti', 'sltiu', 'andi', 'ori', 'xori', 'lui',
     'lb', 'lh', 'lw', 'lbu', 'lhu', 'sb', 'sh', 'sw',
+    'lwl', 'lwr', 'swl', 'swr',
+    'mfc2', 'cfc2', 'mtc2', 'ctc2', 'lwc2', 'swc2', *GTE_COMMANDS.values(),
 })
+# Decoded, but running one raises MipsTrap: the R3000 would take an exception.
+TRAP_MNEMONICS = frozenset({'break', 'syscall'})
+# For the timing checks in call(): GTE commands, GTE register writes, every
+# COP2 instruction, and the instructions that write HI/LO.
+_GTE_COMMANDS = frozenset(GTE_COMMANDS.values())
+_COP2_WRITES = frozenset({'mtc2', 'ctc2', 'lwc2'})
+_COP2 = frozenset({'mfc2', 'cfc2', 'mtc2', 'ctc2', 'lwc2', 'swc2'}) | _GTE_COMMANDS
+_HILO_WRITES = frozenset({'mult', 'multu', 'div', 'divu', 'mthi', 'mtlo'})
 
 
 class MipsError(ValueError):
     """The routine left the modelled subset; the run stops instead of guessing."""
+
+
+class MipsTrap(MipsError):
+    """The original code would raise an exception here: a result, not a limitation.
+
+    ``reason`` is ``break``, ``syscall``, or ``overflow``. For ``break`` and
+    ``syscall``, ``raw_code`` is the 20-bit field in bits 6-25 and ``code`` is
+    the value the GNU assembler and spimdisasm print: bits 16-25 for
+    ``break`` (``break 7`` is 0x0007000D) and the whole field for ``syscall``.
+    """
+
+    def __init__(self, message: str, *, pc: int, mnemonic: str, reason: str,
+                 code: int | None = None, raw_code: int | None = None) -> None:
+        super().__init__(message)
+        self.pc = pc
+        self.mnemonic = mnemonic
+        self.reason = reason
+        self.code = code
+        self.raw_code = raw_code
 
 
 def register_index(name: str) -> int:
@@ -53,8 +92,34 @@ def _signed(value: int) -> int:
 
 def _checked(value: int, mnemonic: str, pc: int) -> int:
     if not -0x80000000 <= value <= 0x7FFFFFFF:
-        raise MipsError(f'{mnemonic} at 0x{pc:08x} overflows; the R3000 would trap')
+        raise MipsTrap(f'{mnemonic} at 0x{pc:08x} overflows; the R3000 would trap',
+                       pc=pc, mnemonic=mnemonic, reason='overflow')
     return value & WORD_MASK
+
+
+def divide(dividend: int, divisor: int, signed: bool) -> tuple[int, int]:
+    """(HI, LO) after div/divu, including the documented R3000 results.
+
+    By zero: HI = dividend; LO = -1 for a non-negative signed dividend, +1
+    for a negative one, and 0xFFFFFFFF for divu. 0x80000000 / -1 gives
+    HI = 0, LO = 0x80000000. These come from public documentation and are
+    not yet checked by this project (docs/mips-interpreter.md).
+    """
+    dividend &= WORD_MASK
+    divisor &= WORD_MASK
+    if divisor == 0:
+        if not signed:
+            return dividend, WORD_MASK
+        return dividend, (1 if dividend & 0x80000000 else WORD_MASK)
+    if not signed:
+        return dividend % divisor, dividend // divisor
+    a, b = _signed(dividend), _signed(divisor)
+    if a == -0x80000000 and b == -1:
+        return 0, 0x80000000
+    quotient = abs(a) // abs(b)
+    if (a < 0) != (b < 0):
+        quotient = -quotient
+    return (a - quotient * b) & WORD_MASK, quotient & WORD_MASK
 
 
 @dataclass
@@ -120,6 +185,25 @@ class Memory:
             size, 'little')
         region.write_end = max(region.write_end, offset + size)
 
+    def _locate_bytes(self, address: int, count: int, access: str) -> tuple[Region, int]:
+        for region in self.regions:
+            if region.base <= address and address + count <= region.end:
+                return region, address - region.base
+        raise MipsError(f'Unmapped {count}-byte unaligned {access} at 0x{address:08x}')
+
+    def load_bytes(self, address: int, count: int) -> bytes:
+        """Read exactly these bytes, without an alignment rule (lwl/lwr)."""
+        region, offset = self._locate_bytes(address, count, 'read')
+        return bytes(region.data[offset:offset + count])
+
+    def store_bytes(self, address: int, data: bytes) -> None:
+        """Write exactly these bytes, without an alignment rule (swl/swr)."""
+        region, offset = self._locate_bytes(address, len(data), 'write')
+        if not region.writable:
+            raise MipsError(f'Write to read-only region {region.name} at 0x{address:08x}')
+        region.data[offset:offset + len(data)] = data
+        region.write_end = max(region.write_end, offset + len(data))
+
     def fetch(self, address: int) -> int:
         region, offset = self._locate(address, 4, 'instruction fetch')
         if not region.executable:
@@ -132,6 +216,9 @@ class Memory:
 class RunResult:
     registers: tuple[int, ...]
     steps: int
+    hi: int = 0
+    lo: int = 0
+    gte: GteState | None = None
 
     def __getitem__(self, name: str) -> int:
         return self.registers[register_index(name)]
@@ -144,14 +231,21 @@ class _Decoded:
     writes: frozenset[int]
     is_branch: bool
     mnemonic: str
+    # (mnemonic, rt, base) for lwl/lwr, so an lwl/lwr pair can merge.
+    pair: tuple[str, int, int] | None = None
 
 
 class _Cpu:
-    def __init__(self, memory: Memory) -> None:
+    def __init__(self, memory: Memory, gte: Gte) -> None:
         self.memory = memory
+        self.gte = gte
         self.r = [0] * 32
+        self.hi = 0
+        self.lo = 0
         self.pc = 0
         self.pending: tuple[int, int] | None = None   # load issued by this instruction
+        # The in-flight lwl result an lwr in its delay slot merges into.
+        self.forward: int | None = None
 
 
 def _decode(word: int, pc: int) -> _Decoded:
@@ -164,9 +258,9 @@ def _decode(word: int, pc: int) -> _Decoded:
     imm = word & 0xFFFF
     simm = imm - 0x10000 if imm & 0x8000 else imm
 
-    def decoded(run, reads, writes, mnemonic, is_branch=False):
+    def decoded(run, reads, writes, mnemonic, is_branch=False, pair=None):
         return _Decoded(run, frozenset(r for r in reads if r), frozenset(w for w in writes if w),
-                        is_branch, mnemonic)
+                        is_branch, mnemonic, pair)
 
     def unsupported():
         raise MipsError(f'Unsupported instruction 0x{word:08x} at 0x{pc:08x}')
@@ -207,8 +301,49 @@ def _decode(word: int, pc: int) -> _Decoded:
                 c.r[rd] = (c.pc + 8) & WORD_MASK
                 return target
             return decoded(run, (rs,), (rd,), 'jalr', True)
+        if funct in (0x0C, 0x0D):
+            mnemonic = 'syscall' if funct == 0x0C else 'break'
+            raw_code = (word >> 6) & 0xFFFFF
+            code = raw_code if mnemonic == 'syscall' else raw_code >> 10
+            def run(c):
+                raise MipsTrap(f'{mnemonic} {code} at 0x{c.pc:08x}; the R3000 would take an '
+                               'exception', pc=c.pc, mnemonic=mnemonic, reason=mnemonic,
+                               code=code, raw_code=raw_code)
+            return decoded(run, (), (), mnemonic)
         if sa:
             unsupported()
+        if funct in (0x10, 0x12):
+            if rs or rt:
+                unsupported()
+            if funct == 0x10:
+                def run(c): c.r[rd] = c.hi
+                return decoded(run, (), (rd,), 'mfhi')
+            def run(c): c.r[rd] = c.lo
+            return decoded(run, (), (rd,), 'mflo')
+        if funct in (0x11, 0x13):
+            if rt or rd:
+                unsupported()
+            if funct == 0x11:
+                def run(c): c.hi = c.r[rs]
+                return decoded(run, (rs,), (), 'mthi')
+            def run(c): c.lo = c.r[rs]
+            return decoded(run, (rs,), (), 'mtlo')
+        if funct in (0x18, 0x19, 0x1A, 0x1B):
+            if rd:
+                unsupported()
+            if funct == 0x18:
+                def run(c):
+                    product = _signed(c.r[rs]) * _signed(c.r[rt])
+                    c.hi, c.lo = (product >> 32) & WORD_MASK, product & WORD_MASK
+                return decoded(run, (rs, rt), (), 'mult')
+            if funct == 0x19:
+                def run(c):
+                    product = c.r[rs] * c.r[rt]
+                    c.hi, c.lo = product >> 32, product & WORD_MASK
+                return decoded(run, (rs, rt), (), 'multu')
+            signed = funct == 0x1A
+            def run(c): c.hi, c.lo = divide(c.r[rs], c.r[rt], signed)
+            return decoded(run, (rs, rt), (), 'div' if signed else 'divu')
         if funct == 0x20:
             def run(c): c.r[rd] = _checked(_signed(c.r[rs]) + _signed(c.r[rt]), 'add', c.pc)
             return decoded(run, (rs, rt), (rd,), 'add')
@@ -315,21 +450,88 @@ def _decode(word: int, pc: int) -> _Decoded:
         mnemonic, size = stores[op]
         def run(c): c.memory.store((c.r[rs] + simm) & WORD_MASK, size, c.r[rt])
         return decoded(run, (rs, rt), (), mnemonic)
+    if op in (0x22, 0x26):
+        # Little-endian: lwl fills the high bytes of rt from [address & ~3, address],
+        # lwr the low bytes from [address, address | 3]; the rest of rt is kept.
+        left = op == 0x22
+        mnemonic = 'lwl' if left else 'lwr'
+        def run(c):
+            address = (c.r[rs] + simm) & WORD_MASK
+            shift = address & 3
+            old = c.forward if c.forward is not None else c.r[rt]
+            if left:
+                data = c.memory.load_bytes(address - shift, shift + 1)
+                value = old.to_bytes(4, 'little')[:3 - shift] + data
+            else:
+                data = c.memory.load_bytes(address, 4 - shift)
+                value = data + old.to_bytes(4, 'little')[4 - shift:]
+            c.pending = (rt, int.from_bytes(value, 'little'))
+        return decoded(run, (rs, rt), (rt,), mnemonic, pair=(mnemonic, rt, rs))
+    if op in (0x2A, 0x2E):
+        left = op == 0x2A
+        mnemonic = 'swl' if left else 'swr'
+        def run(c):
+            address = (c.r[rs] + simm) & WORD_MASK
+            shift = address & 3
+            value = c.r[rt].to_bytes(4, 'little')
+            if left:
+                c.memory.store_bytes(address - shift, value[3 - shift:])
+            else:
+                c.memory.store_bytes(address, value[:4 - shift])
+        return decoded(run, (rs, rt), (), mnemonic)
+    if op == 0x12:
+        if word & (1 << 25):
+            try:
+                command = decode_command(word)
+            except GteError as exc:
+                raise MipsError(f'{exc} at 0x{pc:08x}') from None
+            def run(c): c.gte.execute(command)
+            return decoded(run, (), (), command.name)
+        if word & 0x7FF or rs not in (0, 2, 4, 6):
+            unsupported()
+        if rs == 0:
+            def run(c): c.pending = (rt, c.gte.read_data(rd))
+            return decoded(run, (), (rt,), 'mfc2')
+        if rs == 2:
+            def run(c): c.pending = (rt, c.gte.read_control(rd))
+            return decoded(run, (), (rt,), 'cfc2')
+        if rs == 4:
+            def run(c): c.gte.write_data(rd, c.r[rt])
+            return decoded(run, (rt,), (), 'mtc2')
+        def run(c): c.gte.write_control(rd, c.r[rt])
+        return decoded(run, (rt,), (), 'ctc2')
+    if op == 0x32:
+        def run(c): c.gte.write_data(rt, c.memory.load((c.r[rs] + simm) & WORD_MASK, 4))
+        return decoded(run, (rs,), (), 'lwc2')
+    if op == 0x3A:
+        def run(c): c.memory.store((c.r[rs] + simm) & WORD_MASK, 4, c.gte.read_data(rt))
+        return decoded(run, (rs,), (), 'swc2')
     unsupported()
 
 
 def call(memory: Memory, entry: int, arguments: dict[str, int] | None = None, *,
-         max_steps: int) -> RunResult:
-    """Run from ``entry`` until it returns to ``RETURN_ADDRESS``; return all registers.
+         max_steps: int, hi: int = 0, lo: int = 0, gte: GteState | None = None) -> RunResult:
+    """Run from ``entry`` until it returns to ``RETURN_ADDRESS``; return the final state.
 
     ``arguments`` sets registers by name before the first instruction; every
-    other register starts at zero and ``$ra`` holds ``RETURN_ADDRESS``. Branch
-    delay slots execute as on the R3000. A load result becomes visible only
-    after the following instruction, and that instruction may not touch the
-    loaded register, so no behaviour depends on interlock details.
+    other register starts at zero and ``$ra`` holds ``RETURN_ADDRESS``. ``hi``,
+    ``lo``, and ``gte`` give the starting HI, LO, and GTE registers (all zero
+    when omitted). Branch delay slots execute as on the R3000. A load,
+    ``mfc2``, or ``cfc2`` result becomes visible only after the following
+    instruction, and that instruction may not touch the loaded register, so
+    no behaviour depends on interlock details. The exception is an ``lwr``
+    right after an ``lwl`` into the same register from the same base, which
+    merges into the ``lwl`` result as the hardware does.
+
+    These are refused because MIPS I or the GTE leaves them undefined, and
+    game code never does them: ``mult``/``div``/``mthi``/``mtlo`` within two
+    instructions after ``mfhi``/``mflo``; a GTE command within two
+    instructions after a GTE register write; a GTE register write right after
+    a command; and any COP2 instruction in a branch delay slot.
     """
-    cpu = _Cpu(memory)
+    cpu = _Cpu(memory, Gte(gte))
     cpu.r[31] = RETURN_ADDRESS
+    cpu.hi, cpu.lo = hi & WORD_MASK, lo & WORD_MASK
     for name, value in (arguments or {}).items():
         index = register_index(name)
         if index == 0:
@@ -339,6 +541,9 @@ def call(memory: Memory, entry: int, arguments: dict[str, int] | None = None, *,
     pc, next_pc = entry & WORD_MASK, (entry + 4) & WORD_MASK
     in_delay_slot = False
     load: tuple[int, int] | None = None
+    previous: _Decoded | None = None
+    # Step numbers of the last HI/LO read, GTE register write, and GTE command.
+    last_hilo_read = last_cop2_write = last_command = -10
     steps = 0
     while not (pc == RETURN_ADDRESS and not in_delay_slot):
         if steps >= max_steps:
@@ -346,11 +551,29 @@ def call(memory: Memory, entry: int, arguments: dict[str, int] | None = None, *,
         instruction = cache.get(pc)
         if instruction is None:
             instruction = cache[pc] = _decode(memory.fetch(pc), pc)
+        mnemonic = instruction.mnemonic
+        cpu.forward = None
         if load is not None and (load[0] in instruction.reads or load[0] in instruction.writes):
-            raise MipsError(f'{instruction.mnemonic} at 0x{pc:08x} uses ${REGISTER_NAMES[load[0]]} '
-                            'in the delay slot of its load')
+            pair = instruction.pair
+            if (pair is not None and pair[0] == 'lwr' and previous is not None
+                    and previous.pair == ('lwl', pair[1], pair[2]) and pair[1] != pair[2]):
+                cpu.forward, load = load[1], None
+            else:
+                raise MipsError(f'{mnemonic} at 0x{pc:08x} uses ${REGISTER_NAMES[load[0]]} '
+                                'in the delay slot of its load')
         if instruction.is_branch and in_delay_slot:
-            raise MipsError(f'Branch {instruction.mnemonic} at 0x{pc:08x} is in a delay slot')
+            raise MipsError(f'Branch {mnemonic} at 0x{pc:08x} is in a delay slot')
+        if in_delay_slot and mnemonic in _COP2:
+            raise MipsError(f'{mnemonic} at 0x{pc:08x} is in a branch delay slot')
+        if mnemonic in _HILO_WRITES and steps - last_hilo_read <= 2:
+            raise MipsError(f'{mnemonic} at 0x{pc:08x} follows mfhi/mflo within two '
+                            'instructions, which MIPS I leaves undefined')
+        if mnemonic in _GTE_COMMANDS and steps - last_cop2_write <= 2:
+            raise MipsError(f'GTE command {mnemonic} at 0x{pc:08x} follows a GTE register '
+                            'write within two instructions')
+        if mnemonic in _COP2_WRITES and steps - last_command == 1:
+            raise MipsError(f'{mnemonic} at 0x{pc:08x} writes a GTE register right after '
+                            'a GTE command')
         cpu.pc = pc
         cpu.pending = None
         target = instruction.run(cpu)
@@ -358,12 +581,19 @@ def call(memory: Memory, entry: int, arguments: dict[str, int] | None = None, *,
             cpu.r[load[0]] = load[1]
         load = cpu.pending if cpu.pending and cpu.pending[0] else None
         cpu.r[0] = 0
+        if mnemonic in ('mfhi', 'mflo'):
+            last_hilo_read = steps
+        elif mnemonic in _COP2_WRITES:
+            last_cop2_write = steps
+        elif mnemonic in _GTE_COMMANDS:
+            last_command = steps
         steps += 1
         following = (next_pc + 4) & WORD_MASK
         if target is not None:
             following = target
         in_delay_slot = instruction.is_branch
+        previous = instruction
         pc, next_pc = next_pc, following
     if load is not None:
         cpu.r[load[0]] = load[1]
-    return RunResult(tuple(cpu.r), steps)
+    return RunResult(tuple(cpu.r), steps, cpu.hi, cpu.lo, cpu.gte.snapshot())

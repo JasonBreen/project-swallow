@@ -8,11 +8,13 @@ import unittest
 
 from swallow_tools.inventory import (
     InventoryError, inventory_work_dir, library_ranges, main, parse_data, parse_text)
+from swallow_tools.mipsasm import BREAK, DIV, GTE
 
 
-def line(address, mnemonic, operands='', slot=False):
+def line(address, mnemonic, operands='', slot=False, word=0):
     pad = '   ' if slot else '  '
-    return f'    /* {address - 0x80010000:X} {address:08X} 00000000 */{pad}{mnemonic:<10} {operands}'
+    raw = word.to_bytes(4, 'little').hex().upper()     # spimdisasm prints file byte order
+    return f'    /* {address - 0x80010000:X} {address:08X} {raw} */{pad}{mnemonic:<10} {operands}'
 
 
 GAME_TEXT = '\n'.join([
@@ -51,6 +53,30 @@ GAME_TEXT = '\n'.join([
     line(0x8001005C, 'jr', '$t9  /* handwritten instruction */'),
     line(0x80010060, 'nop', slot=True),
     'endlabel odd_jump',
+    '',
+    'glabel math_func',
+    line(0x80010070, 'div', '$zero, $a0, $a1', word=DIV('a0', 'a1')),
+    line(0x80010074, 'bnez', '$a1, .L80010080'),
+    line(0x80010078, 'nop', slot=True),
+    line(0x8001007C, 'break', '7', word=BREAK(7)),
+    '  .L80010080:',
+    line(0x80010080, 'addiu', '$at, $zero, -0x1'),
+    line(0x80010084, 'bne', '$a1, $at, .L80010098'),
+    line(0x80010088, 'lui', '$at, (0x80000000 >> 16)', slot=True),
+    line(0x8001008C, 'bne', '$a0, $at, .L80010098'),
+    line(0x80010090, 'nop', slot=True),
+    line(0x80010094, 'break', '6', word=BREAK(6)),
+    '  .L80010098:',
+    line(0x80010098, 'mflo', '$v0'),
+    line(0x8001009C, 'div', '$zero, $v0, $a2  /* handwritten instruction */',
+         word=DIV('v0', 'a2')),
+    line(0x800100A0, 'mtc2', '$a0, $0'),
+    line(0x800100A4, 'rtps', '', word=GTE('rtps', macro=1)),
+    line(0x800100A8, 'mvmva', '1, 1, 0, 3, 1', word=GTE('mvmva', lm=1, mx=1, v=0, cv=3)),
+    line(0x800100AC, 'mvmva', '1, 0, 0, 2, 0', word=GTE('mvmva', cv=2)),
+    line(0x800100B0, 'jr', '$ra'),
+    line(0x800100B4, 'nop', slot=True),
+    'endlabel math_func',
     '',
     'glabel lib_func',
     line(0x80020000, 'lui', '$t0, (0x1F801120 >> 16)'),
@@ -112,8 +138,9 @@ def make_work_dir(root):
 class ParseTests(unittest.TestCase):
     def test_functions_labels_and_operands(self):
         functions = {f.name: f for f in parse_text(GAME_TEXT)}
-        self.assertEqual(list(functions), ['main_func', 'cb_func', 'odd_jump', 'lib_func',
-                                           'bios_stub'])
+        self.assertEqual(list(functions), ['main_func', 'cb_func', 'odd_jump', 'math_func',
+                                           'lib_func', 'bios_stub'])
+        self.assertEqual(functions['math_func'].instructions[3].word, 0x0007000D)
         self.assertEqual(functions['main_func'].address, 0x80010000)
         self.assertIn('.L80010030', functions['main_func'].labels)
         self.assertEqual(functions['odd_jump'].instructions[0].operands, '$t9')
@@ -145,7 +172,7 @@ class InventoryTests(unittest.TestCase):
 
     def test_library_and_game_code_are_split_by_the_psyq_objects(self):
         self.assertTrue(self.game['library_split'])
-        self.assertEqual(self.game['counts']['game_functions'], 3)
+        self.assertEqual(self.game['counts']['game_functions'], 4)
         self.assertEqual(self.game['counts']['library_functions'], 2)
         self.assertFalse(self.overlay['library_split'])
         self.assertEqual(self.overlay['source'], 'ACE.BPB entry 1')
@@ -178,15 +205,30 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(self.game['hardware_addresses'],
                          {'game_scratchpad': 2, 'library_io': 2})
         self.assertEqual(self.game['io_registers'], {'0x1F801120': 2})
-        self.assertEqual(self.game['not_in_interpreter'],
-                         {'game_gte': 1, 'game_multiply_divide': 1, 'game_unaligned_access': 1})
+        # mult, lwl, mtc2 and two GTE commands now run; MVMVA with cv = 2 does not.
+        self.assertEqual(self.game['not_in_interpreter'], {'game_gte': 1, 'game_trap': 2})
         self.assertEqual(self.game['not_in_interpreter_game_mnemonics'],
-                         {'mult': 1, 'lwl': 1, 'mtc2': 1})
+                         {'break': 2, 'mvmva': 1})
+
+    def test_gte_encodings_division_guards_and_timing(self):
+        self.assertEqual(self.game['gte_commands_game'], [
+            {'command': 'mvmva', 'sf': 1, 'lm': 0, 'mx': 0, 'v': 0, 'cv': 2, 'count': 1},
+            {'command': 'mvmva', 'sf': 1, 'lm': 1, 'mx': 1, 'v': 0, 'cv': 3, 'count': 1},
+            {'command': 'rtps', 'sf': 1, 'lm': 0, 'mx': None, 'v': None, 'cv': None,
+             'count': 1}])
+        self.assertEqual(self.game['traps_game'], {'overflow': 1, 'zero_divisor': 1})
+        self.assertEqual(self.game['unguarded_divisions_game'], [{
+            'function': 'math_func', 'address': '0x8001009C', 'library': False,
+            'mnemonic': 'div'}])
+        # rtps and the first mvmva follow mtc2 within two instructions; mflo is
+        # right before the unguarded div.
+        self.assertEqual(self.game['refused_timing_cases_game'],
+                         {'gte_command_after_write': 2, 'hilo_write_after_read': 1})
 
     def test_unknown_executable_has_no_library_split(self):
         report = inventory_work_dir(self.root, {'executables': []})
         self.assertFalse(report['units'][0]['library_split'])
-        self.assertEqual(report['units'][0]['counts']['game_functions'], 5)
+        self.assertEqual(report['units'][0]['counts']['game_functions'], 6)
 
 
 class CliTests(unittest.TestCase):
@@ -199,11 +241,11 @@ class CliTests(unittest.TestCase):
             out = StringIO()
             with redirect_stdout(out):
                 self.assertEqual(main([str(root), '--psyq', str(psyq)]), 0)
-            self.assertIn('game: 5 functions, 1 jalr (1 in game code)', out.getvalue())
+            self.assertIn('game: 6 functions, 1 jalr (1 in game code)', out.getvalue())
             out = StringIO()
             with redirect_stdout(out):
                 self.assertEqual(main([str(root), '--psyq', str(psyq), '--json']), 0)
-            self.assertEqual(json.loads(out.getvalue())['schema_version'], 1)
+            self.assertEqual(json.loads(out.getvalue())['schema_version'], 2)
             err = StringIO()
             with redirect_stderr(err):
                 self.assertEqual(main([str(root / 'missing')]), 2)
