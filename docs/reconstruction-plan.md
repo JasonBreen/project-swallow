@@ -145,6 +145,16 @@ The planned tests:
 
 ## Decisions needed
 
+**Decided by the owner on 2026-11-04:**
+
+- **D1:** recompile, then rewrite. Mechanical translation to C against a
+  guest RAM image comes first, and readable C replaces functions one at a
+  time, each proven equal.
+- **D5:** CMake and C11, built with GCC, Clang, and MSVC.
+- **D6:** evaluate PCSX-Redux and DuckStation first.
+
+The other rows are still open.
+
 | | Decision | Options | Recommendation | What settles it |
 |---|---|---|---|---|
 | D1 | Form of recovered code | Matching decompilation; recompilation plus rewrites; rewrites only | Recompilation plus tested rewrites, with matching where approved | A recompiler prototype on `ulz_decompress` (M4), and a measured identification of the game's compiler from its code patterns |
@@ -198,10 +208,16 @@ reaches M6, so the PS1 runtime has been proven once.
    only scratchpad addresses, and only one of its computed jumps lacks a
    jump table. Still open for M1: assigning every remaining byte to code or
    data, and the BPB loading path beyond the overlays.
-3. Owner decisions D1–D5, which can run alongside the above.
+3. Owner decisions D1–D5, which can run alongside the above. D1 and D5
+   were decided on 2026-11-04.
 4. Emulator spike for D6: deterministic replay and RAM dumps (M2).
-5. Recompiler prototype on `ulz_decompress` (M4), once D5 allows the first C
-   code.
+5. **Done in tooling v0.13.0:** recompiler prototype on `ulz_decompress`
+   (M4, part 1). The translated routine, built natively, matches the
+   project decoder on all 2,256 Ulz blobs on each Japanese disc, and
+   reproduces the interpreter's results on the English-labeled discs; see
+   [the recompiler](recompiler.md). Still open for M4: the rest of the
+   game's code, which needs the GTE, unaligned accesses, and the PsyQ API
+   in the runtime.
 6. **Python half done in tooling v0.12.0:** GTE core and vectors (M3). The
    interpreter now runs every game-code instruction except the division
    traps, with a GTE model whose rules are all documentation-derived; see

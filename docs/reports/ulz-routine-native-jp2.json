@@ -1,0 +1,37 @@
+{
+  "schema_version": 2,
+  "source_image": "Ace Combat 3 - Electrosphere (Japan) (Disc 2).bin",
+  "oracle": "native",
+  "executable": {
+    "path": "ACE3.BIN",
+    "sha256": "2c3f2ce41268176128973ea0cd9b28784a26c0061bff5550c99599388f13ebe9",
+    "config": "ace3.yaml",
+    "symbols": "symbol_addrs.ace3.txt"
+  },
+  "routine": {
+    "symbol": "ulz_decompress",
+    "address": "0x800afd08"
+  },
+  "layout": {
+    "text_address": "0x80010000",
+    "source_base": "0x81000000",
+    "destination_base": "0x82000000",
+    "guard_bytes": 65536
+  },
+  "entries_checked": 574,
+  "blobs": 2256,
+  "versions": {
+    "0": 1167,
+    "2": 1089
+  },
+  "matched": 2256,
+  "mismatch_count": 0,
+  "decoder_error_count": 0,
+  "routine_error_count": 0,
+  "pair_word_high_byte_nonzero": 0,
+  "instructions_executed": null,
+  "max_instructions_per_blob": null,
+  "mismatches": [],
+  "decoder_errors": [],
+  "routine_errors": []
+}

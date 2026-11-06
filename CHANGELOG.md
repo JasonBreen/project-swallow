@@ -9,6 +9,32 @@
 - Added `docs/reconstruction-plan.md`. It plans how the recovered code becomes the C engine: a static recompiler, a runtime that replaces the PsyQ library API, and readable C proven equal to the translated code. It lists decisions D1–D9, all still open for the owner, and milestones M1–M8. It records the owner's direction to reconstruct Ace Combat Zero, Ace Combat (1995), and Ace Combat 2 after AC3; Ace Combat 04 depends on Sal's work. Nothing in the plan is implemented.
 - Measured for the plan, on Japanese Disc 1: game code and BPB entries 1–4 call 159 distinct PsyQ functions and use 3,485 inline GTE instructions across 15 commands, with 26 indirect calls and 42 computed jumps. A survey of the stored Ace Combat (1995) image found no `SYSTEM.CNF`, a `PSX.EXE` that boots seven module executables loaded at `0x80023000`, no Ulz or BPB data, and 62 CD-DA tracks.
 
+## 0.13.0 — 2026-11-06
+
+- Added `swallow_tools.recompile` and the `swallow-recompile` CLI, the recompiler prototype. It translates original MIPS functions to C that runs against a guest register file and guest memory. It writes the C, a CMake project, and a report without code to a new directory outside the repository, since the C is derived from the game. How it works:
+  - Code is found by following control flow from the entry points, so data inside the text, such as a jump table, is never translated.
+  - A delay slot runs after the branch condition is evaluated and before the transfer. A slot that is also a branch target is emitted a second time under its own label.
+  - A static check proves that no instruction uses a register in the delay slot of its load, on every path, before loads are allowed to take effect at once.
+  - Overflowing `add`/`addi`/`sub`, `break`, `syscall`, unknown jump targets, a spent branch budget, and instructions not yet translated all trap at run time.
+- Added the C runtime core in `runtime/`: CMake 3.21 or later, C11, built with warnings as errors on GCC, Clang, and MSVC.
+  - Guest memory has the interpreter's region contract.
+  - A trap returns to `swallow_call` with a message, and the CPU stays usable afterwards.
+  - Division helpers return the R3000's documented results where C's `/` is undefined.
+- Added `swallow_tools.native`, which drives a built module through ctypes with every argument and result type declared.
+- `swallow-ulzcheck --native LIBRARY` runs the translated routine on every blob, with the same regions and the same five checks. It refuses a library translated from a different executable. The report moves to schema 2 with an `oracle` field, and instruction counts are `null` in native mode.
+- Measured on all four references:
+  - `ulz_decompress` translates to 262 instructions, with nothing left untranslated.
+  - Built natively, it matches the project decoder on all 2,256 blobs on each Japanese disc.
+  - On English-labeled Discs 1 and 2 it reproduces the interpreter's 423 and 361 overruns. The counts are identical, and so are the listed sites.
+  - On Japanese Disc 1 the native check takes 24 seconds, against about 8.5 minutes in the interpreter.
+  - The generated C compiles without warnings under `-Wall -Wextra` with GCC 13.3 and Clang 18.1.
+  - The reports are `docs/reports/ulz-routine-native-*.json`. The interpreter reports were regenerated in schema 2.
+- Added `swallow_tools.selftest`: ten synthetic programs, 18 cases, translated at build time and compared with the interpreter. The CTest targets run them natively (`selftest`) and through ctypes (`native_selftest`), next to the core unit tests (`core`). A deliberately broken translation, with the slot run before the branch condition, failed two of the self-test's checks.
+- CI gains a `runtime` job that builds `runtime/` and runs CTest with GCC and Clang on Ubuntu and with MSVC on Windows.
+- `docs/reconstruction-plan.md` records the owner's decisions of 2026-11-04 on D1 (recompile, then rewrite), D5 (CMake and C11), and D6 (evaluate PCSX-Redux and DuckStation first). `docs/recompiler.md` documents the translation, the runtime, and the results.
+- `.gitignore` covers native build outputs.
+- Added 20 synthetic Python tests (302 total).
+
 ## 0.12.0 — 2026-11-05
 
 - `swallow_tools.mips` now runs every instruction in the game's code except `break`. It adds `mult`, `multu`, `div`, `divu`, `mfhi`, `mflo`, `mthi`, `mtlo`, the unaligned `lwl`, `lwr`, `swl`, `swr`, and the coprocessor 2 moves and loads. An `lwr` right after an `lwl` into the same register from the same base merges into the in-flight value, as the hardware does. `call` takes and returns HI, LO, and GTE state; `RunResult` keeps its two-field construction.

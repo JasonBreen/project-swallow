@@ -1,0 +1,409 @@
+{
+  "schema_version": 2,
+  "source_image": "Ace Combat 3 Electrosphere (English v0.9b3)[Disc 2].bin",
+  "oracle": "native",
+  "executable": {
+    "path": "ACE3.BIN",
+    "sha256": "2c3f2ce41268176128973ea0cd9b28784a26c0061bff5550c99599388f13ebe9",
+    "config": "ace3.yaml",
+    "symbols": "symbol_addrs.ace3.txt"
+  },
+  "routine": {
+    "symbol": "ulz_decompress",
+    "address": "0x800afd08"
+  },
+  "layout": {
+    "text_address": "0x80010000",
+    "source_base": "0x81000000",
+    "destination_base": "0x82000000",
+    "guard_bytes": 65536
+  },
+  "entries_checked": 574,
+  "blobs": 2256,
+  "versions": {
+    "0": 1166,
+    "2": 1090
+  },
+  "matched": 1895,
+  "mismatch_count": 7,
+  "decoder_error_count": 0,
+  "routine_error_count": 354,
+  "pair_word_high_byte_nonzero": 0,
+  "instructions_executed": null,
+  "max_instructions_per_blob": null,
+  "mismatches": [
+    {
+      "path": "122.0.143",
+      "origin": "stored",
+      "version": 0,
+      "problems": [
+        "returned end 1219 != declared size 1216",
+        "wrote 3 bytes past the declared size",
+        "pairs stream: routine consumed 88 bytes, decoder accounting gives 86"
+      ]
+    },
+    {
+      "path": "323.1.0",
+      "origin": "stored",
+      "version": 0,
+      "problems": [
+        "returned end 32867 != declared size 32864",
+        "wrote 3 bytes past the declared size",
+        "pairs stream: routine consumed 2496 bytes, decoder accounting gives 2494"
+      ]
+    },
+    {
+      "path": "339.1.1",
+      "origin": "stored",
+      "version": 0,
+      "problems": [
+        "returned end 32867 != declared size 32864",
+        "wrote 3 bytes past the declared size",
+        "pairs stream: routine consumed 1416 bytes, decoder accounting gives 1414"
+      ]
+    },
+    {
+      "path": "340.1.0",
+      "origin": "stored",
+      "version": 0,
+      "problems": [
+        "returned end 32867 != declared size 32864",
+        "wrote 3 bytes past the declared size",
+        "pairs stream: routine consumed 1820 bytes, decoder accounting gives 1818"
+      ]
+    },
+    {
+      "path": "365.1.0",
+      "origin": "stored",
+      "version": 0,
+      "problems": [
+        "returned end 14355 != declared size 14352",
+        "wrote 3 bytes past the declared size",
+        "pairs stream: routine consumed 3112 bytes, decoder accounting gives 3110"
+      ]
+    },
+    {
+      "path": "395.1.0",
+      "origin": "stored",
+      "version": 0,
+      "problems": [
+        "returned end 32867 != declared size 32864",
+        "wrote 3 bytes past the declared size",
+        "pairs stream: routine consumed 2584 bytes, decoder accounting gives 2582"
+      ]
+    },
+    {
+      "path": "406.1.0",
+      "origin": "stored",
+      "version": 0,
+      "problems": [
+        "returned end 32867 != declared size 32864",
+        "wrote 3 bytes past the declared size",
+        "pairs stream: routine consumed 2684 bytes, decoder accounting gives 2682"
+      ]
+    }
+  ],
+  "decoder_errors": [],
+  "routine_errors": [
+    {
+      "path": "23.15",
+      "origin": "stored",
+      "version": 0,
+      "error": "Native trap: Unmapped 2-byte read at 0x81002f44 (instruction 0x800afda8)"
+    },
+    {
+      "path": "112.4",
+      "origin": "stored",
+      "version": 0,
+      "error": "Native trap: Unmapped 2-byte read at 0x81019efc (instruction 0x800afda8)"
+    },
+    {
+      "path": "114.5",
+      "origin": "stored",
+      "version": 0,
+      "error": "Native trap: Unmapped 2-byte read at 0x8100bc34 (instruction 0x800afda8)"
+    },
+    {
+      "path": "114.7",
+      "origin": "stored",
+      "version": 0,
+      "error": "Native trap: Unmapped 2-byte read at 0x81014b74 (instruction 0x800afda8)"
+    },
+    {
+      "path": "115.2",
+      "origin": "stored",
+      "version": 0,
+      "error": "Native trap: Unmapped 2-byte read at 0x81002c04 (instruction 0x800afda8)"
+    },
+    {
+      "path": "115.3",
+      "origin": "stored",
+      "version": 0,
+      "error": "Native trap: Unmapped 2-byte read at 0x8100b3f8 (instruction 0x800afda8)"
+    },
+    {
+      "path": "115.4",
+      "origin": "stored",
+      "version": 0,
+      "error": "Native trap: Unmapped 2-byte read at 0x810070c4 (instruction 0x800afda8)"
+    },
+    {
+      "path": "121.0.1",
+      "origin": "stored",
+      "version": 0,
+      "error": "Native trap: Unmapped 2-byte read at 0x81000314 (instruction 0x800afda8)"
+    },
+    {
+      "path": "121.0.2",
+      "origin": "stored",
+      "version": 0,
+      "error": "Native trap: Unmapped 2-byte read at 0x810003d4 (instruction 0x800afda8)"
+    },
+    {
+      "path": "121.0.3",
+      "origin": "stored",
+      "version": 0,
+      "error": "Native trap: Unmapped 2-byte read at 0x810001d0 (instruction 0x800afda8)"
+    },
+    {
+      "path": "121.0.4",
+      "origin": "stored",
+      "version": 0,
+      "error": "Native trap: Unmapped 2-byte read at 0x810003e8 (instruction 0x800afda8)"
+    },
+    {
+      "path": "121.0.9",
+      "origin": "stored",
+      "version": 0,
+      "error": "Native trap: Unmapped 2-byte read at 0x81000124 (instruction 0x800afda8)"
+    },
+    {
+      "path": "121.0.10",
+      "origin": "stored",
+      "version": 0,
+      "error": "Native trap: Unmapped 2-byte read at 0x81000228 (instruction 0x800afda8)"
+    },
+    {
+      "path": "121.0.13",
+      "origin": "stored",
+      "version": 0,
+      "error": "Native trap: Unmapped 2-byte read at 0x81000220 (instruction 0x800afda8)"
+    },
+    {
+      "path": "121.0.14",
+      "origin": "stored",
+      "version": 0,
+      "error": "Native trap: Unmapped 2-byte read at 0x81000234 (instruction 0x800afda8)"
+    },
+    {
+      "path": "121.0.16",
+      "origin": "stored",
+      "version": 0,
+      "error": "Native trap: Unmapped 2-byte read at 0x81000290 (instruction 0x800afda8)"
+    },
+    {
+      "path": "121.0.18",
+      "origin": "stored",
+      "version": 0,
+      "error": "Native trap: Unmapped 2-byte read at 0x81000230 (instruction 0x800afda8)"
+    },
+    {
+      "path": "121.0.19",
+      "origin": "stored",
+      "version": 0,
+      "error": "Native trap: Unmapped 2-byte read at 0x81000230 (instruction 0x800afda8)"
+    },
+    {
+      "path": "121.0.20",
+      "origin": "stored",
+      "version": 0,
+      "error": "Native trap: Unmapped 2-byte read at 0x81000208 (instruction 0x800afda8)"
+    },
+    {
+      "path": "121.0.21",
+      "origin": "stored",
+      "version": 0,
+      "error": "Native trap: Unmapped 2-byte read at 0x810001f0 (instruction 0x800afda8)"
+    },
+    {
+      "path": "121.0.22",
+      "origin": "stored",
+      "version": 0,
+      "error": "Native trap: Unmapped 2-byte read at 0x810001d0 (instruction 0x800afda8)"
+    },
+    {
+      "path": "121.0.23",
+      "origin": "stored",
+      "version": 0,
+      "error": "Native trap: Unmapped 2-byte read at 0x810001dc (instruction 0x800afda8)"
+    },
+    {
+      "path": "121.0.24",
+      "origin": "stored",
+      "version": 0,
+      "error": "Native trap: Unmapped 2-byte read at 0x8100016c (instruction 0x800afda8)"
+    },
+    {
+      "path": "121.0.25",
+      "origin": "stored",
+      "version": 0,
+      "error": "Native trap: Unmapped 2-byte read at 0x810003e8 (instruction 0x800afda8)"
+    },
+    {
+      "path": "121.0.26",
+      "origin": "stored",
+      "version": 0,
+      "error": "Native trap: Unmapped 2-byte read at 0x8100018c (instruction 0x800afda8)"
+    },
+    {
+      "path": "121.0.30",
+      "origin": "stored",
+      "version": 0,
+      "error": "Native trap: Unmapped 2-byte read at 0x810001f4 (instruction 0x800afda8)"
+    },
+    {
+      "path": "121.0.31",
+      "origin": "stored",
+      "version": 0,
+      "error": "Native trap: Unmapped 2-byte read at 0x8100014c (instruction 0x800afda8)"
+    },
+    {
+      "path": "121.0.32",
+      "origin": "stored",
+      "version": 0,
+      "error": "Native trap: Unmapped 2-byte read at 0x810001e8 (instruction 0x800afda8)"
+    },
+    {
+      "path": "121.0.33",
+      "origin": "stored",
+      "version": 0,
+      "error": "Native trap: Unmapped 2-byte read at 0x81000250 (instruction 0x800afda8)"
+    },
+    {
+      "path": "121.0.34",
+      "origin": "stored",
+      "version": 0,
+      "error": "Native trap: Unmapped 2-byte read at 0x81000264 (instruction 0x800afda8)"
+    },
+    {
+      "path": "121.0.35",
+      "origin": "stored",
+      "version": 0,
+      "error": "Native trap: Unmapped 2-byte read at 0x810003ac (instruction 0x800afda8)"
+    },
+    {
+      "path": "121.0.36",
+      "origin": "stored",
+      "version": 0,
+      "error": "Native trap: Unmapped 2-byte read at 0x81000394 (instruction 0x800afda8)"
+    },
+    {
+      "path": "121.0.37",
+      "origin": "stored",
+      "version": 0,
+      "error": "Native trap: Unmapped 2-byte read at 0x81000314 (instruction 0x800afda8)"
+    },
+    {
+      "path": "121.0.38",
+      "origin": "stored",
+      "version": 0,
+      "error": "Native trap: Unmapped 2-byte read at 0x8100021c (instruction 0x800afda8)"
+    },
+    {
+      "path": "121.0.40",
+      "origin": "stored",
+      "version": 0,
+      "error": "Native trap: Unmapped 2-byte read at 0x8100022c (instruction 0x800afda8)"
+    },
+    {
+      "path": "121.0.41",
+      "origin": "stored",
+      "version": 0,
+      "error": "Native trap: Unmapped 2-byte read at 0x81000290 (instruction 0x800afda8)"
+    },
+    {
+      "path": "121.0.42",
+      "origin": "stored",
+      "version": 0,
+      "error": "Native trap: Unmapped 2-byte read at 0x81000380 (instruction 0x800afda8)"
+    },
+    {
+      "path": "121.0.43",
+      "origin": "stored",
+      "version": 0,
+      "error": "Native trap: Unmapped 2-byte read at 0x81000270 (instruction 0x800afda8)"
+    },
+    {
+      "path": "121.0.44",
+      "origin": "stored",
+      "version": 0,
+      "error": "Native trap: Unmapped 2-byte read at 0x8100025c (instruction 0x800afda8)"
+    },
+    {
+      "path": "121.0.45",
+      "origin": "stored",
+      "version": 0,
+      "error": "Native trap: Unmapped 2-byte read at 0x81000200 (instruction 0x800afda8)"
+    },
+    {
+      "path": "121.0.46",
+      "origin": "stored",
+      "version": 0,
+      "error": "Native trap: Unmapped 2-byte read at 0x81000208 (instruction 0x800afda8)"
+    },
+    {
+      "path": "121.0.47",
+      "origin": "stored",
+      "version": 0,
+      "error": "Native trap: Unmapped 2-byte read at 0x8100022c (instruction 0x800afda8)"
+    },
+    {
+      "path": "121.0.48",
+      "origin": "stored",
+      "version": 0,
+      "error": "Native trap: Unmapped 2-byte read at 0x810001f0 (instruction 0x800afda8)"
+    },
+    {
+      "path": "121.0.49",
+      "origin": "stored",
+      "version": 0,
+      "error": "Native trap: Unmapped 2-byte read at 0x81000220 (instruction 0x800afda8)"
+    },
+    {
+      "path": "121.0.50",
+      "origin": "stored",
+      "version": 0,
+      "error": "Native trap: Unmapped 2-byte read at 0x81000328 (instruction 0x800afda8)"
+    },
+    {
+      "path": "121.0.51",
+      "origin": "stored",
+      "version": 0,
+      "error": "Native trap: Unmapped 2-byte read at 0x810002d8 (instruction 0x800afda8)"
+    },
+    {
+      "path": "121.0.52",
+      "origin": "stored",
+      "version": 0,
+      "error": "Native trap: Unmapped 2-byte read at 0x810001a4 (instruction 0x800afda8)"
+    },
+    {
+      "path": "121.0.56",
+      "origin": "stored",
+      "version": 0,
+      "error": "Native trap: Unmapped 2-byte read at 0x81000194 (instruction 0x800afda8)"
+    },
+    {
+      "path": "121.0.57",
+      "origin": "stored",
+      "version": 0,
+      "error": "Native trap: Unmapped 2-byte read at 0x8100036c (instruction 0x800afda8)"
+    },
+    {
+      "path": "121.0.58",
+      "origin": "stored",
+      "version": 0,
+      "error": "Native trap: Unmapped 2-byte read at 0x81000280 (instruction 0x800afda8)"
+    }
+  ]
+}

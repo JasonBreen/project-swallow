@@ -1,6 +1,7 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "source_image": "Ace Combat 3 - Electrosphere (Japan) (Disc 2).bin",
+  "oracle": "interpreter",
   "executable": {
     "path": "ACE3.BIN",
     "sha256": "2c3f2ce41268176128973ea0cd9b28784a26c0061bff5550c99599388f13ebe9",

@@ -1,5 +1,10 @@
 """Run AC3's own Ulz routine on every Ulz blob in ACE.BPB and compare it with ulz.py.
 
+The routine runs either in the interpreter (``mips``) or, with ``--native``,
+as C translated by swallow-recompile and built into a shared library
+(``native``). Both runs map the same regions at the same addresses and pass
+the same checks.
+
 Contract and results: docs/ulz-routine.md. The routine is found by name in the
 splat symbol file of the executable whose SHA256 the splat manifest lists
 (``oracle.find_executable``), and it runs in the interpreter in ``mips`` with
@@ -22,11 +27,12 @@ from .bpb import MAX_DEPTH, MAX_ENTRY_BYTES, ContainerFormatError, parse_offset_
 from .disc import DiscFormatError, PlayStationDisc
 from .exe import ExeFormatError
 from .mips import Memory, MipsError, call
+from .native import NativeError, NativeModule
 from .oracle import OracleError, find_executable
 from .split import DEFAULT_CONFIG_DIR, SplitError
 from .ulz import UlzFormatError, decompress_ulz, is_ulz
 
-SCHEMA_VERSION = 1
+SCHEMA_VERSION = 2
 ROUTINE_SYMBOL = 'ulz_decompress'
 # Interpreter addresses, chosen clear of each other and of any PS-X text image.
 # The routine only follows the pointers it is given, so these need not be RAM.
@@ -53,37 +59,53 @@ class RoutineOutput:
     flag_bytes_read: int
     literal_bytes_read: int
     pair_bytes_read: int
-    steps: int
+    # Instructions executed; None for a native run, which does not count them.
+    steps: int | None
 
 
 def run_routine(text: bytes, text_address: int, entry: int, blob: bytes, *,
-                guard_bytes: int = GUARD_BYTES) -> RoutineOutput:
+                guard_bytes: int = GUARD_BYTES,
+                native: NativeModule | None = None) -> RoutineOutput:
     """Call the routine as ``entry(blob, destination)`` and measure what it did.
 
     Header fields are read the way the routine reads them: three 24-bit
     fields at ``+4``, ``+8`` and ``+0xC``. The destination holds the declared
-    size plus ``guard_bytes``.
+    size plus ``guard_bytes``. With ``native``, the translated routine runs
+    instead of the interpreter, on the same regions, and a trap in it is
+    reported as a ``MipsError``.
     """
     if len(blob) < 16:
         raise UlzFormatError('Truncated Ulz header: expected at least 16 bytes')
     size_word, literal_word, pair_word = struct.unpack_from('<III', blob, 4)
     declared = size_word & FIELD_MASK
-    memory = Memory()
-    memory.map('text', text_address, text, executable=True)
-    memory.map('blob', SOURCE_BASE, blob)
-    destination = memory.map('destination', DESTINATION_BASE, bytes(declared + guard_bytes),
-                             writable=True)
-    result = call(memory, entry, {'a0': SOURCE_BASE, 'a1': DESTINATION_BASE},
-                  max_steps=32 * (declared + len(blob)) + 4096)
+    max_steps = 32 * (declared + len(blob)) + 4096
+    arguments = {'a0': SOURCE_BASE, 'a1': DESTINATION_BASE}
+    if native is None:
+        memory = Memory()
+        memory.map('text', text_address, text, executable=True)
+        memory.map('blob', SOURCE_BASE, blob)
+        region = memory.map('destination', DESTINATION_BASE, bytes(declared + guard_bytes),
+                            writable=True)
+        result = call(memory, entry, arguments, max_steps=max_steps)
+        destination, write_end, steps = region.data, region.write_end, result.steps
+    else:
+        destination = bytearray(declared + guard_bytes)
+        regions = [('text', text_address, bytearray(text), False),
+                   ('blob', SOURCE_BASE, bytearray(blob), False),
+                   ('destination', DESTINATION_BASE, destination, True)]
+        result = native.run(entry, regions, arguments, budget=max_steps)
+        if not result.ok:
+            raise MipsError(f'Native trap: {result.message}')
+        write_end, steps = result.write_ends['destination'], None
     end = (result['v0'] - DESTINATION_BASE) & 0xFFFFFFFF
-    if end > len(destination.data):
+    if end > len(destination):
         raise MipsError(f'Returned end pointer 0x{result["v0"]:08x} is outside the destination')
     starts = {'flags': 16, 'literals': literal_word & FIELD_MASK,
               'pairs': pair_word & FIELD_MASK}
     read = {stream: (result[register] - SOURCE_BASE - starts[stream]) & 0xFFFFFFFF
             for stream, register in STREAM_REGISTERS.items()}
-    return RoutineOutput(bytes(destination.data[:end]), end, destination.write_end,
-                         read['flags'], read['literals'], read['pairs'], result.steps)
+    return RoutineOutput(bytes(destination[:end]), end, write_end,
+                         read['flags'], read['literals'], read['pairs'], steps)
 
 
 def compare_with_decoder(blob: bytes, output: RoutineOutput) -> list[str]:
@@ -158,8 +180,12 @@ def _routine_executable(image: Path, config_dir: Path) -> tuple[dict, dict, byte
 
 
 def check_image(image: Path, *, entries: list[int] | None = None,
-                config_dir: Path = DEFAULT_CONFIG_DIR) -> dict:
+                config_dir: Path = DEFAULT_CONFIG_DIR,
+                native: NativeModule | None = None) -> dict:
     executable, routine, text, text_address, entry = _routine_executable(image, config_dir)
+    if native is not None and native.sha256 != executable['sha256']:
+        raise UlzCheckError(f"The native library was translated from SHA256 {native.sha256}, "
+                            f"not from {executable['path']} ({executable['sha256']})")
     disc = PlayStationDisc(image)
     bph, bpb = locate_archive_files(disc, disc.inspect())
     index = parse_bph(disc.read_file(bph), bpb.size)
@@ -184,12 +210,13 @@ def check_image(image: Path, *, entries: list[int] | None = None,
             if len(blob) >= 16 and blob[15]:
                 high_byte += 1
             try:
-                output = run_routine(text, text_address, entry, blob)
+                output = run_routine(text, text_address, entry, blob, native=native)
             except (MipsError, UlzFormatError) as exc:
                 routine_errors.append({**where, 'error': str(exc)})
                 continue
-            steps += output.steps
-            max_steps = max(max_steps, output.steps)
+            if output.steps is not None:
+                steps += output.steps
+                max_steps = max(max_steps, output.steps)
             try:
                 problems = compare_with_decoder(blob, output)
             except UlzFormatError as exc:
@@ -203,6 +230,7 @@ def check_image(image: Path, *, entries: list[int] | None = None,
     return {
         'schema_version': SCHEMA_VERSION,
         'source_image': image.name,
+        'oracle': 'interpreter' if native is None else 'native',
         'executable': executable,
         'routine': routine,
         'layout': {'text_address': f'0x{text_address:08x}',
@@ -217,8 +245,8 @@ def check_image(image: Path, *, entries: list[int] | None = None,
         'decoder_error_count': len(decoder_errors),
         'routine_error_count': len(routine_errors),
         'pair_word_high_byte_nonzero': high_byte,
-        'instructions_executed': steps,
-        'max_instructions_per_blob': max_steps,
+        'instructions_executed': steps if native is None else None,
+        'max_instructions_per_blob': max_steps if native is None else None,
         'mismatches': mismatches[:MAX_REPORTED],
         'decoder_errors': decoder_errors[:MAX_REPORTED],
         'routine_errors': routine_errors[:MAX_REPORTED],
@@ -233,19 +261,30 @@ def main(argv: list[str] | None = None) -> int:
                         help='Check only this BPH entry index (repeatable)')
     parser.add_argument('--config-dir', type=Path, default=DEFAULT_CONFIG_DIR,
                         help='splat config directory with manifest.json and symbol files')
+    parser.add_argument('--native', type=Path, metavar='LIBRARY',
+                        help='Run the routine translated by swallow-recompile from this '
+                             'built shared library instead of the interpreter')
     parser.add_argument('--json', action='store_true', help='Print the full JSON report')
     args = parser.parse_args(argv)
+    native = None
     try:
-        report = check_image(args.bin, entries=args.entry, config_dir=args.config_dir)
+        if args.native is not None:
+            native = NativeModule(args.native)
+        report = check_image(args.bin, entries=args.entry, config_dir=args.config_dir,
+                             native=native)
     except (OSError, DiscFormatError, BphFormatError, ContainerFormatError, ExeFormatError,
-            SplitError, UlzCheckError) as exc:
+            SplitError, UlzCheckError, NativeError) as exc:
         print(f'ERROR: {exc}', file=sys.stderr)
         return 2
+    finally:
+        if native is not None:
+            native.close()
     if args.json:
         print(json.dumps(report, indent=2))
     else:
         print(f"{report['executable']['path']} {report['routine']['symbol']} "
-              f"{report['routine']['address']}: {report['matched']} of {report['blobs']} "
+              f"{report['routine']['address']} ({report['oracle']}): "
+              f"{report['matched']} of {report['blobs']} "
               f"blobs match; {report['mismatch_count']} mismatches, "
               f"{report['decoder_error_count']} decoder errors, "
               f"{report['routine_error_count']} routine errors")

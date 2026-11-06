@@ -37,6 +37,20 @@ __pycache__/
 venv/
 build/
 dist/
+# Native builds of runtime/ and of swallow-recompile output (which must stay
+# outside the repository anyway).
+build-*/
+CMakeFiles/
+CMakeCache.txt
+*.so
+*.dll
+*.dylib
+*.o
+*.obj
+*.a
+*.lib
+*.exp
+*.pdb
 
 # Local configuration and recordings
 .env

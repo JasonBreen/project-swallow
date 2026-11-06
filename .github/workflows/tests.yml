@@ -25,3 +25,40 @@ jobs:
         env:
           PYTHONPATH: src
         run: python -m unittest discover -s tests -v
+
+  runtime:
+    # The C runtime core, its unit tests, and the recompiler self-test, which
+    # translates synthetic programs and compares them with the interpreter,
+    # natively and through ctypes. No disc data is used.
+    name: runtime (${{ matrix.compiler }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            compiler: gcc
+          - os: ubuntu-latest
+            compiler: clang
+          - os: windows-latest
+            compiler: msvc
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+          lfs: false
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.13'
+      - name: Configure with ${{ matrix.compiler }}
+        if: matrix.compiler != 'msvc'
+        env:
+          CC: ${{ matrix.compiler }}
+        run: cmake -S runtime -B build-runtime -DCMAKE_BUILD_TYPE=Release
+      - name: Configure with MSVC
+        if: matrix.compiler == 'msvc'
+        run: cmake -S runtime -B build-runtime
+      - name: Build
+        run: cmake --build build-runtime --config Release
+      - name: Test
+        run: ctest --test-dir build-runtime -C Release --output-on-failure

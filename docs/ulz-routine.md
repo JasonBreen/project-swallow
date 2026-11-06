@@ -278,6 +278,15 @@ never game bytes.
 - A match shows that the routine and `ulz.py` agree on these blobs. It
   says nothing about input that does not occur on the disc.
 
+## As translated C
+
+Since tooling v0.13.0 the routine also runs as C translated by
+[the recompiler](recompiler.md) and built natively: `swallow-ulzcheck
+--native` applies the same five checks. It matches all 2,256 blobs on each
+Japanese disc and reproduces the overruns on the English-labeled discs at
+the same blobs, so the translation and the interpreter agree everywhere the
+disc exercises the routine.
+
 ## Next
 
 - Find where the overrunning English-labeled blobs are decoded, and whether

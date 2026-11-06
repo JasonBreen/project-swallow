@@ -15,7 +15,8 @@ import struct
 import tempfile
 import unittest
 
-from swallow_tools.mips import MipsError
+from swallow_tools.mips import Memory, MipsError, call
+from swallow_tools.native import NativeError, NativeModule, NativeResult
 from swallow_tools.ulz import decompress_ulz
 from swallow_tools.ulzcheck import (
     ROUTINE_SYMBOL, RoutineOutput, check_image, compare_with_decoder, iter_ulz_blobs, main,
@@ -179,6 +180,31 @@ class SymbolTests(unittest.TestCase):
         self.assertNotIn(ROUTINE_SYMBOL, read_symbols(root / 'splat' / 'symbol_addrs.boot.txt'))
 
 
+class FakeNative:
+    """Stands in for a library built by swallow-recompile: runs the interpreter
+    behind NativeModule's interface, writing into the caller's buffers."""
+
+    def __init__(self, sha256, trap=None):
+        self.sha256 = sha256
+        self.trap = trap
+        self.calls = 0
+
+    def run(self, entry, regions, arguments=None, *, budget):
+        self.calls += 1
+        if self.trap:
+            return NativeResult(False, self.trap, (0,) * 32, 0, 0, {})
+        memory = Memory()
+        for name, base, data, writable in regions:
+            memory.map(name, base, data, writable=writable, executable=name == 'text')
+        result = call(memory, entry, arguments, max_steps=budget)
+        write_ends = {}
+        for name, _, data, _ in regions:
+            region = memory.region(name)
+            data[:] = region.data
+            write_ends[name] = region.write_end
+        return NativeResult(True, '', result.registers, result.hi, result.lo, write_ends)
+
+
 def archive_files(payloads):
     """ACE.BPH and ACE.BPB bytes with each payload on its own sector."""
     records, bpb, sector = [], bytearray(), 0
@@ -242,6 +268,42 @@ class ImageTests(unittest.TestCase):
         with redirect_stdout(StringIO()):
             self.assertEqual(main([str(image), '--config-dir', str(self.configs),
                                    '--entry', '0', '--json']), 0)
+
+    def test_native_run_applies_the_same_checks(self):
+        image = self.build([literal_blob(b'mission'), literal_blob(b'second')])
+        game = make_exe(text=copier_text(), pc=ENTRY)
+        native = FakeNative(hashlib.sha256(game).hexdigest())
+        report = check_image(image, config_dir=self.configs, native=native)
+        self.assertEqual((report['oracle'], report['matched'], report['blobs']),
+                         ('native', 2, 2))
+        self.assertIsNone(report['instructions_executed'])
+        self.assertEqual(native.calls, 2)
+        self.assertEqual(report['schema_version'], 2)
+        interpreted = check_image(image, config_dir=self.configs)
+        self.assertEqual(interpreted['oracle'], 'interpreter')
+
+    def test_native_trap_is_a_routine_error(self):
+        image = self.build([literal_blob(b'x')])
+        game = make_exe(text=copier_text(), pc=ENTRY)
+        native = FakeNative(hashlib.sha256(game).hexdigest(), trap='Unmapped 4-byte read')
+        report = check_image(image, config_dir=self.configs, native=native)
+        self.assertEqual(report['routine_error_count'], 1)
+        self.assertIn('Native trap: Unmapped', report['routine_errors'][0]['error'])
+
+    def test_library_from_another_executable_is_refused(self):
+        image = self.build([literal_blob(b'x')])
+        with self.assertRaisesRegex(Exception, 'translated from SHA256 ' + '0' * 64):
+            check_image(image, config_dir=self.configs, native=FakeNative('0' * 64))
+
+    def test_missing_library_exits_2(self):
+        image = self.build([literal_blob(b'x')])
+        err = StringIO()
+        with redirect_stderr(err):
+            self.assertEqual(main([str(image), '--config-dir', str(self.configs),
+                                   '--native', str(self.root / 'missing.so')]), 2)
+        self.assertIn('Cannot load', err.getvalue())
+        with self.assertRaises(NativeError):
+            NativeModule(self.root / 'missing.so')
 
     def test_missing_routine_symbol_exits_2(self):
         image = self.build([literal_blob(b'x')], symbols='// none\n')
