@@ -1,9 +1,9 @@
 # Reconstruction plan: from recovered code to a native engine
 
 **Status: plan, drafted 2026-11-01. Nothing below is implemented unless it
-says so.** Items marked **D1–D9** are decisions for the owner. AGENTS.md
-requires measured evidence and project approval before an engine stack is
-chosen, so this plan recommends; it does not decide. The near-term steps are
+says so.** Items marked **D1–D9** are the owner's architecture decisions.
+All nine were approved by 2026-11-09; see [Decisions](#decisions). D4 and
+D6 approve a spike, not a final choice. The near-term steps are
 in the [roadmap](roadmap.md) and the [executable track](next-task-executable.md).
 
 ## Owner direction
@@ -143,17 +143,33 @@ The planned tests:
 | M7 | Readable core | The flight model and mission logic are rewritten in C and proven equal; texture and voice replacement hooks work. |
 | M8 | Full game | Both discs, branching, saves, presentation options, and the dub. |
 
-## Decisions needed
+## Decisions
 
-**Decided by the owner on 2026-11-04:**
+**D1, D5, and D6 were decided by the owner on 2026-11-04. The owner
+approved the rest as recommended on 2026-11-09.**
 
 - **D1:** recompile, then rewrite. Mechanical translation to C against a
   guest RAM image comes first, and readable C replaces functions one at a
-  time, each proven equal.
+  time, each proven equal. Matching decompilation stays optional.
+- **D2:** guest RAM image. Game state keeps its original layout and 32-bit
+  guest addresses; native structures come later, only where presentation
+  needs them.
+- **D3:** publish tools only. Generated code is built from the user's own
+  disc. Hand-rewritten C is also derived from the game, so it stays in this
+  private repository until the owner has legal advice.
+- **D4:** a renderer spike on SDL3. The final platform choice waits for its
+  results on Windows, Linux, and Steam Deck class hardware.
 - **D5:** CMake and C11, built with GCC, Clang, and MSVC.
-- **D6:** evaluate PCSX-Redux and DuckStation first.
+- **D6:** evaluate PCSX-Redux and DuckStation first, as tools only; no
+  emulator code is incorporated.
+- **D7:** the original simulation rate, with interpolated presentation as
+  an option.
+- **D8:** AC3 to M6 first, then AC2 and AC1, then the PS2 titles. AC04
+  stays open pending Sal's work.
+- **D9:** one repository; split out the shared tooling and runtime when a
+  second title starts.
 
-The other rows are still open.
+The table keeps the options and evidence each decision was made from.
 
 | | Decision | Options | Recommendation | What settles it |
 |---|---|---|---|---|
@@ -208,8 +224,8 @@ reaches M6, so the PS1 runtime has been proven once.
    only scratchpad addresses, and only one of its computed jumps lacks a
    jump table. Still open for M1: assigning every remaining byte to code or
    data, and the BPB loading path beyond the overlays.
-3. Owner decisions D1–D5, which can run alongside the above. D1 and D5
-   were decided on 2026-11-04.
+3. **Done:** owner decisions D1–D9. D1, D5, and D6 were decided on
+   2026-11-04, and the rest on 2026-11-09.
 4. Emulator spike for D6: deterministic replay and RAM dumps (M2).
 5. **Done in tooling v0.13.0:** recompiler prototype on `ulz_decompress`
    (M4, part 1). The translated routine, built natively, matches the
