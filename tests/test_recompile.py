@@ -146,6 +146,11 @@ class TranslationTests(unittest.TestCase):
         self.assertIn('swallow_enter(cpu, entry);', body)
         self.assertLess(body.index('cpu->r[2] = r_v0;'), body.index('t_fn_80010010(cpu'))
         self.assertIn('return;', body)
+        # The callee returns through $ra, so $ra must still be this function's.
+        self.assertIn('const uint32_t ra_entry = cpu->r[31];', body)
+        self.assertEqual(body.count('if (cpu->r[31] != ra_entry) swallow_trap(cpu, "tail '
+                                    'transfer at 0x'), 2)
+        self.assertLess(body.index('cpu->r[31] != ra_entry'), body.index('t_fn_80010010(cpu'))
 
     def test_jump_tables_in_rodata_resolve_by_their_targets(self):
         words = [LW('t0', 0, 'a0'), NOP(), JR('t0'), NOP(),
@@ -190,6 +195,17 @@ class RefusalTests(unittest.TestCase):
                               ADDU('v0', 't0', 'zero'), JR('ra'), NOP()]))
         with self.assertRaisesRegex(RecompileError, 'delay slot of jr'):
             translate(module([JR('ra'), LW('v0', 0, 'a0')]))
+        # A load in the slot of a tail transfer is checked against the other
+        # function's entry; the same jump with an unrelated load is fine.
+        other = BASE + 8
+        functions = [Function('f', BASE, other, {BASE: 'f'}),
+                     Function('g', other, BASE + 0x14, {other: 'g'})]
+        with self.assertRaisesRegex(RecompileError, '0x80010008: addu uses \\$t0 in the delay '
+                                                    'slot of the lw at 0x80010004'):
+            translate(module([J(other), LW('t0', 0, 'a0'),
+                              ADDU('v0', 't0', 'zero'), JR('ra'), NOP()], functions=functions))
+        translate(module([J(other), LW('t1', 0, 'a0'),
+                          ADDU('v0', 't0', 'zero'), JR('ra'), NOP()], functions=functions))
 
     def test_control_leaving_the_function_is_refused(self):
         with self.assertRaisesRegex(RecompileError, 'outside f'):
@@ -211,6 +227,15 @@ class RefusalTests(unittest.TestCase):
         with self.assertRaisesRegex(RecompileError, 'mult too soon after the mflo'):
             translate(module([BEQ('a0', 'zero', 3), MFLO('v0'), JR('ra'), NOP(),
                               MULT('a0', 'a1'), JR('ra'), NOP()]))
+        # A path through a tail transfer continues into the other function.
+        other = BASE + 8
+        functions = [Function('f', BASE, other, {BASE: 'f'}),
+                     Function('g', other, BASE + 0x14, {other: 'g'})]
+        with self.assertRaisesRegex(RecompileError, '0x8001000c: mult too soon after the mflo'):
+            translate(module([J(other), MFLO('v0'), NOP(), MULT('a0', 'a1'), JR('ra'), NOP()],
+                             functions=functions))
+        translate(module([J(other), MFLO('v0'), NOP(), NOP(), MULT('a0', 'a1'), JR('ra'), NOP()],
+                         functions=[functions[0], Function('g', other, BASE + 0x1C, {other: 'g'})]))
         translate(module([MTC2('a0', 0), NOP(), NOP(), GTE('rtps'), MFC2('v0', 14), NOP(),
                           MFLO('v1'), NOP(), NOP(), MULT('a0', 'a1'), JR('ra'), NOP()]))
 
@@ -288,8 +313,9 @@ class SelftestTests(unittest.TestCase):
             self.assertFalse(outcomes[name].ok, name)
         source, summary = translate(selftest.selftest_module())
         self.assertIn('SWALLOW_API int swallow_run', source)
-        self.assertEqual(len(summary['functions']), 16)
+        self.assertEqual(len(summary['functions']), 19)
         self.assertFalse(outcomes['tail_call_cycle'].ok)
+        self.assertFalse(outcomes['tail_call_moved_ra'].ok)
         self.assertTrue(outcomes['unaligned'].ok)
         self.assertFalse(outcomes['fault_unaligned_unmapped'].ok)
         for name in ('gte_scene', 'gte_random'):

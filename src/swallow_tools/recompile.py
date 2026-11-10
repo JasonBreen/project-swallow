@@ -259,10 +259,35 @@ def _successors(module: Module, function: Function, analysis: Analysis, pc: int,
     return list(table_targets)
 
 
+def _entries(module: Module) -> set[int]:
+    """Every entry of every function in the module: where a tail transfer may go."""
+    return {address for function in module.functions for address in function.entries}
+
+
+def _outside(module: Module, address: int, count: int) -> list:
+    """The first ``count`` instructions at another function's entry, as they run.
+
+    Straight-line: the entry runs next, then the instruction after it, which
+    is either the next one or the entry's own delay slot.
+    """
+    decoded = []
+    for pc in range(address, address + 4 * count, 4):
+        try:
+            decoded.append(_decode(_word(module.text, module.text_address, pc), pc))
+        except (MipsError, RecompileError):
+            decoded.append(None)
+    return decoded
+
+
 def _check_hazards(module: Module, function: Function, analysis: Analysis,
                    table_targets: list[int]) -> None:
-    """Refuse any path where an instruction uses a register in the delay slot of its load."""
+    """Refuse any path where an instruction uses a register in the delay slot of its load.
+
+    A path that leaves through a tail transfer continues at another
+    function's entry, and that instruction is checked too.
+    """
     problems = []
+    entries = _entries(module)
     slots = {pc + 4: pc for pc in analysis.normal
              if analysis.decoded[pc] is not None and analysis.decoded[pc].is_branch}
     for pc in sorted(analysis.normal | set(slots)):
@@ -292,9 +317,12 @@ def _check_hazards(module: Module, function: Function, analysis: Analysis,
                                 f'{branch.mnemonic}, whose next instruction is elsewhere')
                 continue
         for follower in followers:
-            if not function.start <= follower < function.end:
-                continue
-            after = _decode_at(module, analysis, follower)
+            if function.start <= follower < function.end:
+                after = _decode_at(module, analysis, follower)
+            elif follower in entries:
+                after = _outside(module, follower, 1)[0]     # a tail transfer
+            else:
+                continue                                     # traps: never runs
             if after is None or loaded not in (after.reads | after.writes):
                 continue
             if (decoded.mnemonic == 'lwl' and after.pair is not None and after.pair[0] == 'lwr'
@@ -339,6 +367,20 @@ def _next_nodes(module: Module, function: Function, analysis: Analysis, node,
             if function.start <= target < function.end and target in analysis.normal]
 
 
+def _tail_target(module: Module, analysis: Analysis, node) -> int | None:
+    """Where a delay slot node continues when its branch or jump leaves the function."""
+    pc, branch = node
+    if branch is None:
+        return None
+    decoded = analysis.decoded[branch]
+    if decoded.mnemonic not in CONDITIONAL and decoded.mnemonic != 'j':
+        return None
+    target = _branch_target(_word(module.text, module.text_address, branch), branch,
+                            decoded.mnemonic)
+    function = analysis.function
+    return None if function.start <= target < function.end else target
+
+
 def _check_timing(module: Module, function: Function, analysis: Analysis,
                   table_targets: list[int]) -> None:
     """Refuse the timing cases swallow_tools.mips refuses, on every path inside the function.
@@ -348,9 +390,11 @@ def _check_timing(module: Module, function: Function, analysis: Analysis,
     command, and one between a command and a register write; and no COP2
     instruction may sit in a branch delay slot. The translation runs each
     instruction to completion in order, so it is faithful only where none of
-    these occurs.
+    these occurs. A path that leaves through a tail transfer is followed
+    into the other function's entry.
     """
     problems = []
+    entries = _entries(module)
     nodes = [(pc, None) for pc in analysis.normal]
     nodes += [(pc + 4, pc) for pc in analysis.normal
               if analysis.decoded[pc] is not None and analysis.decoded[pc].is_branch]
@@ -371,13 +415,26 @@ def _check_timing(module: Module, function: Function, analysis: Analysis,
             continue
         frontier = [node]
         for _ in range(reach):
-            frontier = [following for current in frontier
-                        for following in _next_nodes(module, function, analysis, current,
-                                                     table_targets)]
+            following_nodes = []
+            for current in frontier:
+                if current[0] == 'outside':
+                    following_nodes.append(('outside', current[1] + 4))
+                    continue
+                following_nodes += _next_nodes(module, function, analysis, current,
+                                               table_targets)
+                target = _tail_target(module, analysis, current)
+                if target is not None and target in entries:
+                    following_nodes.append(('outside', target))
+            frontier = following_nodes
             for following in frontier:
-                after = analysis.decoded.get(following[0])
+                if following[0] == 'outside':
+                    address = following[1]
+                    after = _outside(module, address, 1)[0]
+                else:
+                    address = following[0]
+                    after = analysis.decoded.get(address)
                 if after is not None and after.mnemonic in forbidden:
-                    problems.append(f'0x{following[0]:08x}: {after.mnemonic} too soon after the '
+                    problems.append(f'0x{address:08x}: {after.mnemonic} too soon after the '
                                     f'{what}')
     if problems:
         raise RecompileError('Timing cases in ' + function.name + ': '
@@ -497,14 +554,33 @@ class _Emitter:
             lines += ['r_hi = cpu->hi;', 'r_lo = cpu->lo;']
         return lines
 
-    def tail_call(self, analysis: Analysis, target: int) -> list[str]:
+    def tail_call(self, analysis: Analysis, pc: int, target: int) -> list[str]:
         """A branch or jump into another function's entry: run it in place of the rest.
 
-        ``$ra`` still holds this function's return address, so the callee
-        returns to this function's caller; its registers are the result.
+        The callee returns through ``$ra`` to this function's caller, so
+        ``$ra`` must still hold the address this function was entered with;
+        if it does not, the callee would return elsewhere, and the call traps
+        as a wrong ``jr $ra`` would. The callee's registers are the result.
         """
-        return [*self.spill(analysis), f'{self.entry_owner[target]}(cpu, 0x{target:08X}u);',
+        return [*self.spill(analysis),
+                f'if (cpu->r[31] != ra_entry) swallow_trap(cpu, "tail transfer at 0x{pc:08x} '
+                'with $ra 0x%08x, not its caller at 0x%08x", (unsigned)cpu->r[31], '
+                '(unsigned)ra_entry);',
+                f'{self.entry_owner[target]}(cpu, 0x{target:08X}u);',
                 'swallow_leave(cpu);', 'return;']
+
+    def tail_calls(self, analysis: Analysis) -> bool:
+        """Whether any branch or jump of the function transfers to another function's entry."""
+        function = analysis.function
+        for pc in analysis.normal:
+            decoded = analysis.decoded[pc]
+            if decoded is None or (decoded.mnemonic not in CONDITIONAL and decoded.mnemonic != 'j'):
+                continue
+            target = _branch_target(_word(self.module.text, self.module.text_address, pc), pc,
+                                    decoded.mnemonic)
+            if not function.start <= target < function.end and target in self.entry_owner:
+                return True
+        return False
 
     def budget(self, target: int, pc: int) -> str:
         if target > pc:
@@ -534,7 +610,7 @@ class _Emitter:
                 lines.append(f'    if (taken) {{ {self.budget(target, pc)}goto L_{target:08X}; }}')
             elif target in self.entry_owner:
                 lines.append('    if (taken) {')
-                lines += ['        ' + line for line in self.tail_call(analysis, target)]
+                lines += ['        ' + line for line in self.tail_call(analysis, pc, target)]
                 lines.append('    }')
             else:
                 lines.append(f'    if (taken) swallow_trap(cpu, "branch to 0x{target:08x}, '
@@ -549,7 +625,7 @@ class _Emitter:
             if function.start <= target < function.end:
                 lines.append(f'    {self.budget(target, pc)}goto L_{target:08X};')
             elif target in self.entry_owner:
-                lines += ['    ' + line for line in self.tail_call(analysis, target)]
+                lines += ['    ' + line for line in self.tail_call(analysis, pc, target)]
             else:
                 lines.append(f'    swallow_trap(cpu, "jump to 0x{target:08x}, outside '
                              f'{function.name}");')
@@ -597,7 +673,7 @@ class _Emitter:
                 out.append(f'    uint32_t {self.reg(index)} = cpu->r[{index}];')
         if analysis.hilo:
             out += ['    uint32_t r_hi = cpu->hi;', '    uint32_t r_lo = cpu->lo;']
-        if analysis.returns:
+        if analysis.returns or self.tail_calls(analysis):
             out.append('    const uint32_t ra_entry = cpu->r[31];')
         out.append('    swallow_enter(cpu, entry);')
         out.append('    switch (entry) {')

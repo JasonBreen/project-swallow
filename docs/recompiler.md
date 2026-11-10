@@ -188,7 +188,11 @@ register from the same base, which merges as the hardware does.
   Python model. A GTE command calls `swallow_gte_command` with its word.
 - A branch or `j` to another translated function's entry is a tail call:
   registers are written back, the callee runs, and the function returns
-  with the callee's result. A target that is not an entry traps.
+  with the callee's result. The callee returns through `$ra`, so the
+  transfer traps if `$ra` no longer holds the address the function was
+  entered with, as a wrong `jr $ra` does. The load-delay and timing checks
+  follow such a path into the callee's first instructions. A target that
+  is not an entry traps.
 - A computed `jr` resolves through every jump table whose words land inside
   its function, whether the table sits inside the function, as
   `ulz_version_table` does, or in rodata, as the compiler's tables do.
@@ -242,11 +246,11 @@ The runtime's CTest targets, which CI runs with GCC, Clang, and MSVC:
 - **`core`**: unit tests for the region rules, accesses, trap recovery, and
   the arithmetic helpers.
 - **`selftest`**: [`swallow_tools.selftest`](../src/swallow_tools/selftest.py)
-  assembles thirteen synthetic programs with `mipsasm`. They cover each shape
+  assembles fourteen synthetic programs with `mipsasm`. They cover each shape
   above, including a slot that is also a target, a jump table in the text,
   calls, faults, traps, an endless loop, the unaligned loads and stores at
   every misalignment, and every kind of COP2 access with a run of GTE
-  commands. The programs are translated at build time, and the 23 cases run
+  commands. The programs are translated at build time, and the 24 cases run
   natively and are compared with the interpreter's registers, HI/LO, GTE
   registers, memory, and write extents.
 - **`native_selftest`**: the same module built as a shared library and run

@@ -189,6 +189,12 @@ def _tail_cycle(base: int) -> list[int]:
     return [J(base + 8), NOP(), J(base), NOP()]
 
 
+def _tail_moved_ra(base: int) -> list[int]:
+    # A call changes $ra, then a jump into another function: that function's
+    # return would go back into this one, not to this function's caller.
+    return [JAL(base + 0x10), NOP(), J(base + 0x18), NOP(), JR('ra'), NOP(), JR('ra'), NOP()]
+
+
 def _endless(base: int) -> list[int]:
     return [BEQ('zero', 'zero', -1), NOP()]
 
@@ -199,7 +205,7 @@ _BUILDERS = [('alu', _alu, None), ('slot_changes_condition', _slot_changes_condi
              ('multiply_divide', _multiply_divide, None), ('calls', _calls, None),
              ('traps', _traps, None), ('endless', _endless, None),
              ('unaligned', _unaligned, None), ('gte', _gte, None),
-             ('tail_cycle', _tail_cycle, None)]
+             ('tail_cycle', _tail_cycle, None), ('tail_moved_ra', _tail_moved_ra, None)]
 
 
 def programs() -> list[Program]:
@@ -217,6 +223,11 @@ def programs() -> list[Program]:
         elif name == 'tail_cycle':
             functions = (Function(name, base, base + 8, {base: name}),
                          Function(f'{name}_other', base + 8, end, {base + 8: f'{name}_other'}))
+        elif name == 'tail_moved_ra':
+            functions = (Function(name, base, base + 0x10, {base: name}),
+                         Function(f'{name}_call', base + 0x10, base + 0x18,
+                                  {base + 0x10: f'{name}_call'}),
+                         Function(f'{name}_jump', base + 0x18, end, {base + 0x18: f'{name}_jump'}))
         else:
             functions = (Function(name, base, end, {base: name}),)
         tables = {}
@@ -252,6 +263,7 @@ def cases() -> list[Case]:
         Case('trap_break', by_name['traps'], {'a0': 1, 'a1': 9}),
         Case('endless_loop', by_name['endless'], {}),
         Case('tail_call_cycle', by_name['tail_cycle'], {}),
+        Case('tail_call_moved_ra', by_name['tail_moved_ra'], {}),
         Case('unaligned', by_name['unaligned'],
              {'a0': 0xA1B2C3D4, 'a1': 0x11223344, 'a2': 0x55667788}, bytes(range(1, 49))),
         Case('fault_unaligned_unmapped', by_name['unaligned'], {}, bytes(range(1, 9))),
