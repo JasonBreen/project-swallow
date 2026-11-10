@@ -98,6 +98,12 @@ the implementation, not the hardware.
 
 ## The GTE model
 
+Tooling v0.14.0 ports this model to C in
+[`runtime/ps1/gte`](../runtime/ps1/gte/) for translated code. The native
+self-test checks that the two agree bit for bit; see
+[the recompiler](recompiler.md#self-tests). A change to a rule here must be
+made in both.
+
 ### Registers
 
 Registers are stored as the hardware keeps them; reads convert them.

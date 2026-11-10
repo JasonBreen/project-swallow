@@ -60,14 +60,10 @@ SWALLOW_API int64_t swallow_guest_write_end(const swallow_cpu *cpu, const char *
     return -1;
 }
 
-static swallow_region *locate(swallow_cpu *cpu, uint32_t address, uint32_t size,
-                              const char *access, uint32_t pc)
+static swallow_region *locate_bytes(swallow_cpu *cpu, uint32_t address, uint32_t size,
+                                    const char *access, uint32_t pc)
 {
     int index;
-    if (address % size != 0u) {
-        swallow_trap(cpu, "Misaligned %u-byte %s at 0x%08x (instruction 0x%08x)",
-                     (unsigned)size, access, (unsigned)address, (unsigned)pc);
-    }
     for (index = 0; index < cpu->region_count; ++index) {
         swallow_region *region = &cpu->regions[index];
         if (region->base <= address && (uint64_t)address + size <= region_end(region)) {
@@ -76,6 +72,16 @@ static swallow_region *locate(swallow_cpu *cpu, uint32_t address, uint32_t size,
     }
     swallow_trap(cpu, "Unmapped %u-byte %s at 0x%08x (instruction 0x%08x)", (unsigned)size,
                  access, (unsigned)address, (unsigned)pc);
+}
+
+static swallow_region *locate(swallow_cpu *cpu, uint32_t address, uint32_t size,
+                              const char *access, uint32_t pc)
+{
+    if (address % size != 0u) {
+        swallow_trap(cpu, "Misaligned %u-byte %s at 0x%08x (instruction 0x%08x)",
+                     (unsigned)size, access, (unsigned)address, (unsigned)pc);
+    }
+    return locate_bytes(cpu, address, size, access, pc);
 }
 
 uint32_t swallow_load(swallow_cpu *cpu, uint32_t address, uint32_t size, uint32_t pc)
@@ -106,4 +112,67 @@ void swallow_store(swallow_cpu *cpu, uint32_t address, uint32_t size, uint32_t v
     if (offset + size > region->write_end) {
         region->write_end = offset + size;
     }
+}
+
+/* Bytes [address, address + count) as a little-endian value; count <= 4. */
+static uint32_t load_bytes(swallow_cpu *cpu, uint32_t address, uint32_t count, uint32_t pc)
+{
+    const swallow_region *region = locate_bytes(cpu, address, count, "read", pc);
+    const uint8_t *bytes = region->data + (address - region->base);
+    uint32_t value = 0u;
+    uint32_t index;
+    for (index = 0u; index < count; ++index) {
+        value |= (uint32_t)bytes[index] << (8u * index);
+    }
+    return value;
+}
+
+static void store_bytes(swallow_cpu *cpu, uint32_t address, uint32_t count, uint32_t value,
+                        uint32_t pc)
+{
+    swallow_region *region = locate_bytes(cpu, address, count, "write", pc);
+    uint32_t offset = address - region->base;
+    uint32_t index;
+    if (!region->writable) {
+        swallow_trap(cpu, "Write to read-only region %s at 0x%08x (instruction 0x%08x)",
+                     region->name, (unsigned)address, (unsigned)pc);
+    }
+    for (index = 0u; index < count; ++index) {
+        region->data[offset + index] = (uint8_t)(value >> (8u * index));
+    }
+    if (offset + count > region->write_end) {
+        region->write_end = offset + count;
+    }
+}
+
+/* Mask of the low n bytes, n = 0..4. */
+static uint32_t low_bytes(uint32_t n)
+{
+    return n >= 4u ? 0xFFFFFFFFu : ((uint32_t)1 << (8u * n)) - 1u;
+}
+
+uint32_t swallow_lwl(swallow_cpu *cpu, uint32_t address, uint32_t old, uint32_t pc)
+{
+    uint32_t shift = address & 3u;
+    uint32_t data = load_bytes(cpu, address - shift, shift + 1u, pc);
+    return (old & low_bytes(3u - shift)) | (data << (8u * (3u - shift)));
+}
+
+uint32_t swallow_lwr(swallow_cpu *cpu, uint32_t address, uint32_t old, uint32_t pc)
+{
+    uint32_t shift = address & 3u;
+    uint32_t data = load_bytes(cpu, address, 4u - shift, pc);
+    return (old & ~low_bytes(4u - shift)) | data;
+}
+
+void swallow_swl(swallow_cpu *cpu, uint32_t address, uint32_t value, uint32_t pc)
+{
+    uint32_t shift = address & 3u;
+    store_bytes(cpu, address - shift, shift + 1u, value >> (8u * (3u - shift)), pc);
+}
+
+void swallow_swr(swallow_cpu *cpu, uint32_t address, uint32_t value, uint32_t pc)
+{
+    uint32_t shift = address & 3u;
+    store_bytes(cpu, address, 4u - shift, value, pc);
 }

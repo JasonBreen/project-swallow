@@ -10,10 +10,12 @@ import unittest
 
 from swallow_tools import selftest
 from swallow_tools.mipsasm import (
-    ADDI, ADDIU, ADDU, BEQ, BGTZ, BLEZ, GTE, JAL, JR, LW, LWL, LWR, NOP, program)
+    ADDI, ADDIU, ADDU, BEQ, BGTZ, BLEZ, CFC2, CTC2, GTE, J, JAL, JR, LW, LWC2, LWL, LWR, MFC2,
+    MFLO, MTC2, MULT, NOP, SWC2, SWL, SWR, program)
 from swallow_tools.recompile import (
-    Function, Module, RecompileError, cmake_project, functions_from_symbols,
-    jump_tables_from_symbols, read_symbol_file, recompile_image, translate)
+    Function, Module, RecompileError, Symbol, cmake_project, functions_from_symbols,
+    jump_tables_from_symbols, read_symbol_file, recompile_image, recompile_split,
+    split_functions, translate)
 
 BASE = 0x80010000
 ROOT = Path(__file__).resolve().parents[1]
@@ -97,13 +99,61 @@ class TranslationTests(unittest.TestCase):
         self.assertEqual(summary['functions'][0]['instructions'], 7)
 
     def test_zero_register_and_unsupported_instructions(self):
-        source = c_source([ADDU('zero', 'a0', 'a1'), LW('zero', 0, 'a0'), GTE('rtps'),
+        unmodelled = (0x12 << 26) | (1 << 25) | 0x0C          # GTE "op": not modelled
+        source = c_source([ADDU('zero', 'a0', 'a1'), LW('zero', 0, 'a0'), unmodelled,
                            JR('ra'), NOP()])
         self.assertIn('/* result discarded: $zero */;', source)
         self.assertIn('(void)swallow_load(cpu, r_a0, 4u, 0x80010004u);', source)
-        self.assertIn('swallow_trap(cpu, "unsupported: rtps at 0x80010008");', source)
-        self.assertEqual(translate(module([GTE('rtps'), JR('ra'), NOP()]))[1]
+        self.assertIn('swallow_trap(cpu, "unsupported: instruction 0x4a00000c at 0x80010008");',
+                      source)
+        self.assertEqual(translate(module([unmodelled, JR('ra'), NOP()]))[1]
                          ['functions'][0]['untranslated'], ['0x80010000'])
+
+    def test_cop2_instructions_use_the_gte_core(self):
+        source, summary = translate(module([
+            LWC2(0, 4, 'a0'), MTC2('a1', 1), CTC2('a2', 26), NOP(), NOP(),
+            GTE('rtps', macro=5), MFC2('v0', 14), CFC2('v1', 31), NOP(), SWC2(19, 8, 'a0'),
+            JR('ra'), NOP()]))
+        self.assertIn('swallow_gte_write_data(&cpu->gte, 0u, swallow_load(cpu, r_a0 + 0x4u, '
+                      '4u, 0x80010000u));', source)
+        self.assertIn('swallow_gte_write_data(&cpu->gte, 1u, r_a1);', source)
+        self.assertIn('swallow_gte_write_control(&cpu->gte, 26u, r_a2);', source)
+        self.assertIn('(void)swallow_gte_command(&cpu->gte, 0x4A580001u); /* rtps */', source)
+        self.assertIn('r_v0 = swallow_gte_read_data(&cpu->gte, 14u);', source)
+        self.assertIn('r_v1 = swallow_gte_read_control(&cpu->gte, 31u);', source)
+        self.assertIn('swallow_store(cpu, r_a0 + 0x8u, 4u, swallow_gte_read_data(&cpu->gte, '
+                      '19u), 0x80010024u);', source)
+        self.assertEqual(summary['functions'][0]['untranslated'], [])
+
+    def test_unaligned_accesses_merge_into_the_register(self):
+        source = c_source([LWL('t0', 3, 'a0'), LWR('t0', 0, 'a0'), NOP(),
+                           SWL('t0', 7, 'a1'), SWR('t0', 4, 'a1'), JR('ra'), NOP()])
+        self.assertIn('r_t0 = swallow_lwl(cpu, r_a0 + 0x3u, r_t0, 0x80010000u);', source)
+        self.assertIn('r_t0 = swallow_lwr(cpu, r_a0, r_t0, 0x80010004u);', source)
+        self.assertIn('swallow_swl(cpu, r_a1 + 0x7u, r_t0, 0x8001000Cu);', source)
+        self.assertIn('swallow_swr(cpu, r_a1 + 0x4u, r_t0, 0x80010010u);', source)
+
+    def test_jumps_into_another_function_are_tail_calls(self):
+        other = BASE + 0x10
+        words = [BEQ('a0', 'zero', 3), NOP(), J(other), ADDIU('v0', 'zero', 1),
+                 ADDIU('v0', 'zero', 2), JR('ra'), NOP()]
+        functions = [Function('f', BASE, other, {BASE: 'f'}),
+                     Function('g', other, BASE + 0x1C, {other: 'g'})]
+        source = c_source(words, functions=functions)
+        body = source[source.index('/* f:'):source.index('/* g:')]
+        self.assertEqual(body.count('t_fn_80010010(cpu, 0x80010010u);'), 2)
+        self.assertLess(body.index('cpu->r[2] = r_v0;'), body.index('t_fn_80010010(cpu'))
+        self.assertIn('return;', body)
+
+    def test_jump_tables_in_rodata_resolve_by_their_targets(self):
+        words = [LW('t0', 0, 'a0'), NOP(), JR('t0'), NOP(),
+                 ADDIU('v0', 'zero', 1), JR('ra'), NOP(),
+                 ADDIU('v0', 'zero', 2), JR('ra'), NOP()]
+        rodata = 0x80090000
+        source = c_source(words, tables={rodata: (BASE + 0x10, BASE + 0x1C, 0x80050000)})
+        self.assertIn('case 0x80010010u: goto L_80010010;', source)
+        self.assertIn('case 0x8001001Cu: goto L_8001001C;', source)
+        self.assertNotIn('case 0x80050000u', source)
 
     def test_calls_spill_and_reload_registers(self):
         callee = BASE + 0x10
@@ -145,6 +195,23 @@ class RefusalTests(unittest.TestCase):
         with self.assertRaisesRegex(RecompileError, 'Branch in the delay slot'):
             translate(module([BEQ('a0', 'zero', 1), BEQ('a0', 'zero', 1), NOP(), JR('ra'), NOP()]))
 
+    def test_timing_cases_are_refused(self):
+        with self.assertRaisesRegex(RecompileError, 'mult too soon after the mflo'):
+            translate(module([MFLO('v0'), NOP(), MULT('a0', 'a1'), JR('ra'), NOP()]))
+        with self.assertRaisesRegex(RecompileError, 'rtps too soon after the GTE write'):
+            translate(module([MTC2('a0', 0), NOP(), GTE('rtps'), JR('ra'), NOP()]))
+        with self.assertRaisesRegex(RecompileError, 'mtc2 too soon after the GTE command'):
+            translate(module([GTE('rtps'), MTC2('a0', 0), JR('ra'), NOP()]))
+        with self.assertRaisesRegex(RecompileError, 'mfc2 in a branch delay slot'):
+            translate(module([BEQ('a0', 'zero', 1), MFC2('v0', 14), JR('ra'), NOP()]))
+        # The distance is counted along every path, here from a branch's slot
+        # to its target; the fall-through path returns.
+        with self.assertRaisesRegex(RecompileError, 'mult too soon after the mflo'):
+            translate(module([BEQ('a0', 'zero', 3), MFLO('v0'), JR('ra'), NOP(),
+                              MULT('a0', 'a1'), JR('ra'), NOP()]))
+        translate(module([MTC2('a0', 0), NOP(), NOP(), GTE('rtps'), MFC2('v0', 14), NOP(),
+                          MFLO('v1'), NOP(), NOP(), MULT('a0', 'a1'), JR('ra'), NOP()]))
+
     def test_output_must_be_outside_the_repository_and_empty(self):
         with self.assertRaisesRegex(RecompileError, 'inside the repository'):
             recompile_image(ROOT / 'missing.bin', ROOT / 'build-generated', repo_root=ROOT)
@@ -161,6 +228,52 @@ class RefusalTests(unittest.TestCase):
         self.assertIn('add_library(swallow_recompiled SHARED module.c)', text)
 
 
+def _asm_line(address, word, text):
+    return f'    /* 0 {address:08X} {word.to_bytes(4, "little").hex().upper()} */  {text}'
+
+
+class SplitTests(unittest.TestCase):
+    def work_dir(self, tmp: Path) -> Path:
+        (tmp / 'asm' / 'data').mkdir(parents=True)
+        lines = ['glabel game_a', _asm_line(BASE, JR('ra'), 'jr $ra'),
+                 '  alabel game_a_alt', _asm_line(BASE + 4, NOP(), 'nop'), 'endlabel game_a',
+                 'glabel lib_b', _asm_line(BASE + 8, JR('ra'), 'jr $ra'),
+                 _asm_line(BASE + 12, NOP(), 'nop'), 'endlabel lib_b']
+        (tmp / 'asm' / 'exe_text.s').write_text('\n'.join(lines) + '\n')
+        data = ['dlabel jtbl_80020000', _asm_line(0x80020000, BASE, '.word .L80010000'),
+                _asm_line(0x80020004, BASE + 4, '.word .L80010004'), 'enddlabel jtbl_80020000',
+                'dlabel D_80020008', _asm_line(0x80020008, 0, '.word 0x00000000'),
+                'enddlabel D_80020008']
+        (tmp / 'asm' / 'data' / 'exe_rodata.rodata.s').write_text('\n'.join(data) + '\n')
+        (tmp / 'split-report.json').write_text(
+            '{"executables": [{"sha256": "ab", "config": "exe.yaml", '
+            '"text_files": ["exe_text.s"]}]}')
+        return tmp
+
+    def test_game_functions_entries_and_jump_tables_come_from_the_split(self):
+        psyq = {'executables': [{'sha256': 'ab', 'objects': [
+            {'address': f'0x{BASE + 8:08x}', 'size': 8}]}]}
+        with tempfile.TemporaryDirectory() as tmp:
+            work = self.work_dir(Path(tmp))
+            functions, tables, skipped = split_functions(
+                work, 'ab', psyq, [Symbol('extra', BASE + 4, 'func', None)])
+        self.assertEqual(skipped, 1)
+        self.assertEqual([(f.name, f.start, f.end) for f in functions],
+                         [('game_a', BASE, BASE + 8)])
+        self.assertEqual(functions[0].entries, {BASE: 'game_a', BASE + 4: 'game_a_alt'})
+        self.assertEqual(tables, [(0x80020000, 2)])
+
+    def test_split_needs_the_executable_and_a_library_report(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            work = self.work_dir(Path(tmp))
+            with self.assertRaisesRegex(RecompileError, 'no split of the executable'):
+                split_functions(work, 'cd', {}, [])
+            with self.assertRaisesRegex(RecompileError, 'does not list this executable'):
+                split_functions(work, 'ab', {'executables': []}, [])
+        with self.assertRaisesRegex(RecompileError, 'inside the repository'):
+            recompile_split(ROOT / 'missing.bin', ROOT, ROOT / 'build-generated', repo_root=ROOT)
+
+
 class SelftestTests(unittest.TestCase):
     def test_programs_translate_and_the_interpreter_sets_the_expectations(self):
         outcomes = {case.name: selftest.interpret(case) for case in selftest.cases()}
@@ -173,7 +286,12 @@ class SelftestTests(unittest.TestCase):
             self.assertFalse(outcomes[name].ok, name)
         source, summary = translate(selftest.selftest_module())
         self.assertIn('SWALLOW_API int swallow_run', source)
-        self.assertEqual(len(summary['functions']), 12)
+        self.assertEqual(len(summary['functions']), 14)
+        self.assertTrue(outcomes['unaligned'].ok)
+        self.assertFalse(outcomes['fault_unaligned_unmapped'].ok)
+        for name in ('gte_scene', 'gte_random'):
+            self.assertTrue(outcomes[name].ok, name)
+            self.assertNotEqual(outcomes[name].gte, selftest.cases()[-1].gte or None)
 
     def test_write_selftest(self):
         with tempfile.TemporaryDirectory() as tmp:

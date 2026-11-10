@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "source_image": "Ace Combat 3 - Electrosphere (Japan) (Disc 1).bin",
+  "executable": {
+    "path": "ACE3.BIN",
+    "sha256": "2c3f2ce41268176128973ea0cd9b28784a26c0061bff5550c99599388f13ebe9"
+  },
+  "seed": 23057,
+  "trials_per_function": 32,
+  "layout": {
+    "gp": "0x800BCB74",
+    "sp": "0x801FFF00",
+    "heap": "0x80100000-0x801F0000",
+    "max_steps": 200000,
+    "native_budget": 1000000
+  },
+  "functions": 1286,
+  "functions_compared": 1213,
+  "functions_with_a_returning_match": 469,
+  "outcomes": {
+    "both_stopped": 28501,
+    "boundary": 3570,
+    "match": 9024,
+    "step_limit": 57
+  },
+  "mismatch_count": 0,
+  "mismatches": []
+}

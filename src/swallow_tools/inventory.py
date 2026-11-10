@@ -93,6 +93,7 @@ class Function:
     instructions: list[Instruction] = field(default_factory=list)
     labels: set[str] = field(default_factory=set)
     library: bool | None = None
+    entry_addresses: dict[str, int] = field(default_factory=dict)
 
 
 def parse_text(text: str) -> list[Function]:
@@ -126,6 +127,7 @@ def parse_text(text: str) -> list[Function]:
             current.address = address
         for name in pending_entries:
             current.entries.append(name)
+            current.entry_addresses[name] = address
         pending_entries = []
         word = int.from_bytes(bytes.fromhex(match.group(3)), 'little')
         current.instructions.append(Instruction(address, match.group(4), match.group(5), word))

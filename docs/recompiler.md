@@ -1,10 +1,13 @@
-# The recompiler prototype
+# The recompiler
 
 Implemented in [`swallow_tools.recompile`](../src/swallow_tools/recompile.py),
-the C runtime core in [`runtime/`](../runtime/), and
-[`swallow_tools.native`](../src/swallow_tools/native.py), tooling v0.13.0.
-This is the first part of milestone M4 in the
-[reconstruction plan](reconstruction-plan.md). It follows the owner's
+the C runtime core in [`runtime/`](../runtime/),
+[`swallow_tools.native`](../src/swallow_tools/native.py), and
+[`swallow_tools.recompcheck`](../src/swallow_tools/recompcheck.py). The
+prototype on the Ulz routine is tooling v0.13.0, the first part of milestone
+M4 in the [reconstruction plan](reconstruction-plan.md). Tooling v0.14.0
+translates every game function in `ACE3.BIN` and adds the GTE to the C core;
+see [Every game function](#every-game-function). It follows the owner's
 decisions of 2026-11-04: recompile first and rewrite later (D1), in C11 built
 with CMake on GCC, Clang, and MSVC (D5).
 
@@ -46,6 +49,77 @@ Measured on 2026-11-06:
 The reports are [`ulz-routine-native-jp1.json`](reports/ulz-routine-native-jp1.json)
 and its `jp2`, `en1`, and `en2` companions. Like the interpreter's reports,
 they hold counts, paths, and addresses, never game bytes.
+
+## Every game function
+
+Measured on 2026-11-09 on Japanese Disc 1, with tooling v0.14.0.
+
+`swallow-recompile --split-dir` takes function bounds, alternate entry
+points, and the compiler's `jtbl_` jump tables from a `swallow-split` work
+directory, and leaves out library code by the object ranges in the
+[PsyQ report](psyq-libraries.md). The runtime is meant to replace the
+library at its API, so calls into it stay untranslated. Each function is
+analysed on its own, and one the translator refuses is left out of the
+module with its reason, so a single refusal does not stop the rest.
+
+| Measure | `ACE3.BIN`, Japanese Disc 1 |
+|---|---:|
+| Game functions | 1,286 |
+| Translated | 1,286 |
+| Refused | 0 |
+| Instructions translated | 121,172 |
+| Instructions left as "unsupported" traps | 0 |
+| Library functions left out | 429 |
+| Jump tables | 51 (50 `jtbl_` tables and `ulz_version_table`) |
+| `jal` sites to translated functions | 2,838 |
+| `jal` sites to library code, trapping for now | 727 |
+| `jalr` sites, through the module's dispatch | 26 |
+
+The 1,286 are the 1,284 functions in the game code range, `ulz_decompress`,
+and the 16-byte `func_800AFCF8`. Every one passes the static load-delay and
+timing checks. The module is one 9.7 MB C file. It compiles without warnings
+under `-Wall -Wextra` with GCC 13.3 (38 s at `-O1`) and Clang 18.1 (20 s).
+Built in this form, `ulz_decompress` still matches the project decoder on
+all 2,256 Ulz blobs on the disc. The summary, without per-function detail,
+is [`recompile-jp1.json`](reports/recompile-jp1.json).
+
+### Checked against the interpreter
+
+[`swallow-recompcheck`](../src/swallow_tools/recompcheck.py) calls every
+translated function natively and in the [interpreter](mips-interpreter.md)
+from the same start, and compares the outcome. Memory is mapped as the
+oracle maps it after crt0: code read-only, data, bss, heap, and stack
+writable, and the scratchpad. `$gp` is crt0's value and `$sp` is near the
+top of RAM. The four argument registers are random but shaped: small
+integers, negative ones, and pointers into the heap, the image's data, or
+the scratchpad. The heap starts full of seeded words, 40% of them heap
+pointers, so pointer chains go somewhere. The GTE starts in a random
+scene-shaped state.
+
+Each trial ends one of five ways:
+
+| Outcome | Meaning | Trials |
+|---|---|---:|
+| Match | Both returned with equal general registers, HI, LO, GTE registers, every writable byte, and write extents | 9,024 |
+| Both stopped | Both stopped, for the same kind of reason at the same address | 28,501 |
+| Boundary | The native run reached code the module does not translate, almost always a PsyQ call | 3,570 |
+| Step limit | The interpreter spent its 200,000 steps | 57 |
+| Mismatch | Anything else | **0** |
+
+That is 32 trials for each of the 1,286 functions, 41,152 in all, with seed
+`0x5A11`. 1,213 functions had at least one comparable trial and 469 had a
+matching call that returned. The report is
+[`recompcheck-jp1.json`](reports/recompcheck-jp1.json).
+
+A stop compares by its kind and the first address it names. A computed jump
+or a return through a clobbered `$ra` to an address that is not code is an
+instruction-fetch stop in the interpreter and a trap natively; both name the
+target, so they count as the same stop. Random pointers often overwrite a
+saved `$ra` on the stack, which is how the first runs found this case.
+
+As a negative control, a build whose `swallow_sra` dropped the sign bits
+gave 66 mismatches in 4 trials per function. Without the check against the
+interpreter that broken shift would have looked like a clean build.
 
 ## How a function is translated
 
@@ -101,10 +175,28 @@ register from the same base, which merges as the hardware does.
   when it is spent. This is the native counterpart of the interpreter's
   instruction limit.
 - `break` and `syscall` trap.
-- Instructions the translator does not handle yet trap with an
-  "unsupported" message when reached. These are the GTE and COP2
-  instructions and the unaligned loads and stores. The report lists them,
-  and none occurs in `ulz_decompress`.
+- `lwl`, `lwr`, `swl`, and `swr` touch exactly the bytes of their aligned
+  word that the interpreter's rules give. An `lwr` right after an `lwl` into
+  the same register reads the `lwl` result, which is the in-flight merge.
+- `mfc2`, `cfc2`, `mtc2`, `ctc2`, `lwc2`, and `swc2` go through the C GTE's
+  register accessors, with the same read and write conversions as the
+  Python model. A GTE command calls `swallow_gte_command` with its word.
+- A branch or `j` to another translated function's entry is a tail call:
+  registers are written back, the callee runs, and the function returns
+  with the callee's result. A target that is not an entry traps.
+- A computed `jr` resolves through every jump table whose words land inside
+  its function, whether the table sits inside the function, as
+  `ulz_version_table` does, or in rodata, as the compiler's tables do.
+- Words the interpreter cannot decode trap with an "unsupported" message
+  when reached. The report lists them, and none occurs in game code.
+
+**Timing.** The translation runs each instruction to completion in order.
+That is faithful only where none of the interpreter's refused timing cases
+occurs, so a static check follows every path inside the function and
+refuses: a HI/LO write within two instructions after `mfhi`/`mflo`; a GTE
+command within two after `mtc2`, `ctc2`, or `lwc2`; one of those writes
+right after a command; and any COP2 instruction in a branch delay slot.
+Paths that leave the function through a call or return are not followed.
 
 ## The runtime core
 
@@ -112,6 +204,12 @@ register from the same base, which merges as the hardware does.
 
 - `ps1/core/cpu.h` and `cpu.c` hold the register file, traps, and the
   arithmetic helpers.
+- `ps1/gte/gte.h` and `gte.c` are the GTE: a line-for-line C port of
+  [`swallow_tools.gte`](../src/swallow_tools/gte.py), with every rule the
+  [interpreter document](mips-interpreter.md#the-gte-model) lists. It works
+  in 64-bit integers and floors signed shifts the way Python's `>>` does,
+  since C leaves `>>` of a negative value implementation-defined and `<<`
+  of one undefined.
 - `ps1/core/guest.h` and `guest.c` hold guest memory: a table of mapped
   regions with the interpreter's `Memory` contract. Regions sit at fixed
   addresses and may not overlap. A misaligned or unmapped access, or a write
@@ -139,13 +237,25 @@ The runtime's CTest targets, which CI runs with GCC, Clang, and MSVC:
 - **`core`**: unit tests for the region rules, accesses, trap recovery, and
   the arithmetic helpers.
 - **`selftest`**: [`swallow_tools.selftest`](../src/swallow_tools/selftest.py)
-  assembles ten synthetic programs with `mipsasm`. They cover each shape
+  assembles twelve synthetic programs with `mipsasm`. They cover each shape
   above, including a slot that is also a target, a jump table in the text,
-  calls, faults, traps, and an endless loop. The programs are translated at
-  build time, and the 18 cases run natively and are compared with the
-  interpreter's registers, HI/LO, memory, and write extents.
+  calls, faults, traps, an endless loop, the unaligned loads and stores at
+  every misalignment, and every kind of COP2 access with a run of GTE
+  commands. The programs are translated at build time, and the 22 cases run
+  natively and are compared with the interpreter's registers, HI/LO, GTE
+  registers, memory, and write extents.
 - **`native_selftest`**: the same module built as a shared library and run
   through ctypes, as `swallow-ulzcheck --native` runs the game's routine.
+  It also compares the C GTE with the Python model directly: all 200
+  modelled command words (each command with both `sf` and `lm`, and every
+  MVMVA selector), with random ignored bits set, on 200 random states, half
+  of them scene-shaped; a sweep of 20,000 (H, SZ3) pairs through the
+  perspective divider; and 2,000 words, to check that both refuse the same
+  ones.
+
+Random states alone rarely reach every rounding case of the divider: a
+deliberately wrong rounding constant passed 200 random states. The sweep
+catches it, and also a wrong `0x80` constant in its Newton-Raphson step.
 
 The self-test caught a deliberately broken translation: running the delay
 slot before evaluating the branch condition failed two of its checks.
@@ -159,6 +269,19 @@ cmake --build ../recompiled-jp1/build --config Release
 PYTHONPATH=src python -m swallow_tools.ulzcheck "DISC1.bin" --native ../recompiled-jp1/build/libswallow_recompiled.so
 ```
 
+Every game function, then the check against the interpreter:
+
+```bash
+PYTHONPATH=src python -m swallow_tools.split "DISC1.bin" --work-dir ../split-jp1
+PYTHONPATH=src python -m swallow_tools.recompile "DISC1.bin" ../recompiled-all-jp1 --split-dir ../split-jp1
+cmake -S ../recompiled-all-jp1 -B ../recompiled-all-jp1/build -DCMAKE_BUILD_TYPE=Release
+cmake --build ../recompiled-all-jp1/build --config Release
+PYTHONPATH=src python -m swallow_tools.recompcheck "DISC1.bin" ../recompiled-all-jp1/build/libswallow_recompiled.so ../recompiled-all-jp1/recompile-report.json --trials 32 --json
+```
+
+The check took 1 minute 48 seconds in this container. It exits with `0`
+when nothing mismatches, `1` on any mismatch, and `2` on input errors.
+
 On Windows the library is `build\Release\swallow_recompiled.dll`. The
 output directory must be new or empty and outside the repository, because
 the generated C is derived from the game. The runtime's own tests:
@@ -171,12 +294,27 @@ ctest --test-dir build-runtime -C Release --output-on-failure
 
 ## Limits
 
-- One routine. It is hand-written assembly that calls nothing, so the
-  translation of calls, the GTE, unaligned accesses, and the PsyQ library
-  boundary has not met game code yet.
-- The two stream entry points are translated and checked for hazards, but
-  nothing runs them: no caller of them is known.
+- The library boundary is open: 727 call sites into PsyQ code trap, and so
+  do the 3,570 trials that reached one. Implementing the 159 library
+  functions in the runtime is the rest of M4 and M5.
+- Only `ACE3.BIN` is translated. The boot program and the four overlays
+  are not yet, and the overlays load at the same address, so they need a
+  module per overlay or a loader-aware dispatch.
+- The random calls are shaped, not recorded. Most trials stop at a wild
+  pointer, and 469 of 1,286 functions returned at least once; agreement on
+  real game inputs needs the emulator captures of M2.
+- A native call returns to its call site, so a return through a `$ra` that
+  the function changed traps, where the console would jump to that address.
+  Game code was not found to do this, but a clobbered `$ra` makes the
+  difference visible in the random check.
+- The timing check stops at calls and returns, so a case split across a
+  function boundary is not refused. `swallow-inventory` found none in
+  straight-line code.
+- The two Ulz stream entry points are translated and checked for hazards,
+  but nothing runs them: no caller of them is known.
 - The budget counts taken backward branches, not instructions, so a
   runaway routine stops later natively than under the interpreter.
+- The C GTE agrees with the Python model, which is documentation-derived.
+  Neither has been compared with hardware or an emulator capture yet.
 - MSVC builds run only in CI. The local results above are from GCC and
   Clang on Linux.

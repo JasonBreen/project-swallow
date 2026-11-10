@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "source_image": "Ace Combat 3 - Electrosphere (Japan) (Disc 1).bin",
+  "executable": {
+    "path": "ACE3.BIN",
+    "sha256": "2c3f2ce41268176128973ea0cd9b28784a26c0061bff5550c99599388f13ebe9",
+    "config": "ace3.yaml",
+    "symbols": "symbol_addrs.ace3.txt"
+  },
+  "split_dir_report": "split-report.json",
+  "library_functions_skipped": 429,
+  "game_functions": 1286,
+  "translated_functions": 1286,
+  "refused_functions": 0,
+  "refused_by_reason": {},
+  "translated_instructions": 121172,
+  "untranslated_instructions": 0,
+  "jump_tables": 51,
+  "calls": {
+    "jal_translated": 2838,
+    "jal_untranslated": 727,
+    "jalr": 26,
+    "tail_translated": 0,
+    "outside_untranslated": 0
+  },
+  "refused": [],
+  "library_target": "swallow_recompiled"
+}

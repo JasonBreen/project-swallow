@@ -21,6 +21,7 @@ from pathlib import Path
 import re
 import sys
 
+from .gte import COMMANDS as GTE_COMMANDS
 from .mips import REGISTER_NAMES, MipsError, _decode
 from .oracle import OracleError, find_executable
 from .split import DEFAULT_CONFIG_DIR, REPO_ROOT, _inside
@@ -46,6 +47,11 @@ STORES = {'sb': 1, 'sh': 2, 'sw': 4}
 # Instructions whose result lands after the next instruction on the R3000.
 DELAYED = frozenset({'lb', 'lh', 'lw', 'lbu', 'lhu', 'lwl', 'lwr', 'mfc2', 'cfc2'})
 HILO = frozenset({'mult', 'multu', 'div', 'divu', 'mfhi', 'mflo', 'mthi', 'mtlo'})
+GTE_COMMAND_NAMES = frozenset(GTE_COMMANDS.values())
+# For the timing checks: the same classes swallow_tools.mips.call refuses on.
+HILO_WRITES = frozenset({'mult', 'multu', 'div', 'divu', 'mthi', 'mtlo'})
+COP2_WRITES = frozenset({'mtc2', 'ctc2', 'lwc2'})
+COP2 = frozenset({'mfc2', 'cfc2', 'mtc2', 'ctc2', 'lwc2', 'swc2'}) | GTE_COMMAND_NAMES
 
 
 class RecompileError(ValueError):
@@ -166,8 +172,13 @@ def _always(mnemonic: str, word: int) -> bool:
 
 
 def _table_targets(module: Module, function: Function) -> list[int]:
-    return sorted({target for address, words in module.jump_tables.items()
-                   if function.start <= address < function.end
+    """Words of any jump table that land inside the function.
+
+    A table may sit inside the function (``ulz_version_table``) or in rodata,
+    as the compiler's ``jtbl_`` tables do; either way a computed ``jr`` may
+    reach exactly these addresses, and any other value traps.
+    """
+    return sorted({target for words in module.jump_tables.values()
                    for target in words if function.start <= target < function.end})
 
 
@@ -222,6 +233,7 @@ def analyse(module: Module, function: Function) -> Analysis:
             analysis.registers.update(decoded.reads | decoded.writes)
             analysis.hilo |= decoded.mnemonic in HILO
     _check_hazards(module, function, analysis, table_targets)
+    _check_timing(module, function, analysis, table_targets)
     return analysis
 
 
@@ -297,6 +309,81 @@ def _check_hazards(module: Module, function: Function, analysis: Analysis,
                              + '; '.join(problems))
 
 
+def _next_nodes(module: Module, function: Function, analysis: Analysis, node,
+                table_targets: list[int]) -> list:
+    """Instructions that run straight after ``node`` inside the function.
+
+    A node is ``(pc, branch)``: ``branch`` is the address of the branch whose
+    delay slot ``pc`` is, or None for an ordinary instruction. Control that
+    leaves the function (a call, a return, a jump outside) ends the path.
+    """
+    pc, branch = node
+    if branch is None:
+        decoded = analysis.decoded.get(pc)
+        if decoded is None or decoded.mnemonic in ('break', 'syscall'):
+            return []
+        if decoded.is_branch:
+            return [(pc + 4, pc)]
+        return [(pc + 4, None)] if pc + 4 in analysis.normal else []
+    decoded = analysis.decoded[branch]
+    word = _word(module.text, module.text_address, branch)
+    mnemonic = decoded.mnemonic
+    targets = []
+    if mnemonic in CONDITIONAL or mnemonic == 'j':
+        targets.append(_branch_target(word, branch, mnemonic))
+        if mnemonic in CONDITIONAL and not _always(mnemonic, word):
+            targets.append(branch + 8)
+    elif mnemonic == 'jr' and _fields(word)[0] != 31:
+        targets += table_targets
+    return [(target, None) for target in targets
+            if function.start <= target < function.end and target in analysis.normal]
+
+
+def _check_timing(module: Module, function: Function, analysis: Analysis,
+                  table_targets: list[int]) -> None:
+    """Refuse the timing cases swallow_tools.mips refuses, on every path inside the function.
+
+    MIPS I leaves a HI/LO write within two instructions after mfhi/mflo
+    undefined; the GTE needs two instructions between a register write and a
+    command, and one between a command and a register write; and no COP2
+    instruction may sit in a branch delay slot. The translation runs each
+    instruction to completion in order, so it is faithful only where none of
+    these occurs.
+    """
+    problems = []
+    nodes = [(pc, None) for pc in analysis.normal]
+    nodes += [(pc + 4, pc) for pc in analysis.normal
+              if analysis.decoded[pc] is not None and analysis.decoded[pc].is_branch]
+    for node in sorted(nodes, key=lambda item: (item[0], item[1] or 0)):
+        decoded = analysis.decoded.get(node[0])
+        if decoded is None:
+            continue
+        mnemonic = decoded.mnemonic
+        if node[1] is not None and mnemonic in COP2:
+            problems.append(f'0x{node[0]:08x}: {mnemonic} in a branch delay slot')
+        if mnemonic in ('mfhi', 'mflo'):
+            forbidden, reach, what = HILO_WRITES, 2, f'{mnemonic} at 0x{node[0]:08x}'
+        elif mnemonic in COP2_WRITES:
+            forbidden, reach, what = GTE_COMMAND_NAMES, 2, f'GTE write at 0x{node[0]:08x}'
+        elif mnemonic in GTE_COMMAND_NAMES:
+            forbidden, reach, what = COP2_WRITES, 1, f'GTE command at 0x{node[0]:08x}'
+        else:
+            continue
+        frontier = [node]
+        for _ in range(reach):
+            frontier = [following for current in frontier
+                        for following in _next_nodes(module, function, analysis, current,
+                                                     table_targets)]
+            for following in frontier:
+                after = analysis.decoded.get(following[0])
+                if after is not None and after.mnemonic in forbidden:
+                    problems.append(f'0x{following[0]:08x}: {after.mnemonic} too soon after the '
+                                    f'{what}')
+    if problems:
+        raise RecompileError('Timing cases in ' + function.name + ': '
+                             + '; '.join(sorted(set(problems))))
+
+
 class _Emitter:
     def __init__(self, module: Module, analyses: dict[str, Analysis]):
         self.module = module
@@ -369,6 +456,27 @@ class _Emitter:
             return self.assign(rd, 'r_hi' if mnemonic == 'mfhi' else 'r_lo')
         if mnemonic in ('mthi', 'mtlo'):
             return f'{"r_hi" if mnemonic == "mthi" else "r_lo"} = {a};'
+        if mnemonic in ('lwl', 'lwr'):
+            return self.assign(rt, f'swallow_{mnemonic}(cpu, {offset}, {b}, {at})')
+        if mnemonic in ('swl', 'swr'):
+            return f'swallow_{mnemonic}(cpu, {offset}, {b}, {at});'
+        if mnemonic == 'mfc2':
+            return self.assign(rt, f'swallow_gte_read_data(&cpu->gte, {rd}u)')
+        if mnemonic == 'cfc2':
+            return self.assign(rt, f'swallow_gte_read_control(&cpu->gte, {rd}u)')
+        if mnemonic == 'mtc2':
+            return f'swallow_gte_write_data(&cpu->gte, {rd}u, {b});'
+        if mnemonic == 'ctc2':
+            return f'swallow_gte_write_control(&cpu->gte, {rd}u, {b});'
+        if mnemonic == 'lwc2':
+            return (f'swallow_gte_write_data(&cpu->gte, {rt}u, '
+                    f'swallow_load(cpu, {offset}, 4u, {at}));')
+        if mnemonic == 'swc2':
+            return (f'swallow_store(cpu, {offset}, 4u, swallow_gte_read_data(&cpu->gte, {rt}u), '
+                    f'{at});')
+        if mnemonic in GTE_COMMAND_NAMES:
+            # The decoder accepted the word, so the C GTE models it too.
+            return f'(void)swallow_gte_command(&cpu->gte, 0x{word:08X}u); /* {mnemonic} */'
         if mnemonic in ('break', 'syscall'):
             code = (word >> 16) & 0x3FF if mnemonic == 'break' else (word >> 6) & 0xFFFFF
             return (f'swallow_trap(cpu, "{mnemonic} {code} at 0x{pc:08x}; the R3000 would '
@@ -388,6 +496,15 @@ class _Emitter:
         if analysis.hilo:
             lines += ['r_hi = cpu->hi;', 'r_lo = cpu->lo;']
         return lines
+
+    def tail_call(self, analysis: Analysis, target: int) -> list[str]:
+        """A branch or jump into another function's entry: run it in place of the rest.
+
+        ``$ra`` still holds this function's return address, so the callee
+        returns to this function's caller; its registers are the result.
+        """
+        return [*self.spill(analysis), f'{self.entry_owner[target]}(cpu, 0x{target:08X}u);',
+                'return;']
 
     def budget(self, target: int, pc: int) -> str:
         if target > pc:
@@ -415,6 +532,10 @@ class _Emitter:
             lines += [f'    const int taken = {condition};', f'    {slot}']
             if function.start <= target < function.end:
                 lines.append(f'    if (taken) {{ {self.budget(target, pc)}goto L_{target:08X}; }}')
+            elif target in self.entry_owner:
+                lines.append('    if (taken) {')
+                lines += ['        ' + line for line in self.tail_call(analysis, target)]
+                lines.append('    }')
             else:
                 lines.append(f'    if (taken) swallow_trap(cpu, "branch to 0x{target:08x}, '
                              f'outside {function.name}");')
@@ -427,6 +548,8 @@ class _Emitter:
             lines.append(f'    {slot}')
             if function.start <= target < function.end:
                 lines.append(f'    {self.budget(target, pc)}goto L_{target:08X};')
+            elif target in self.entry_owner:
+                lines += ['    ' + line for line in self.tail_call(analysis, target)]
             else:
                 lines.append(f'    swallow_trap(cpu, "jump to 0x{target:08x}, outside '
                              f'{function.name}");')
@@ -503,9 +626,11 @@ class _Emitter:
         return out
 
 
-def translate(module: Module, *, export: bool = True) -> tuple[str, dict]:
+def translate(module: Module, *, export: bool = True,
+              analyses: dict[str, Analysis] | None = None) -> tuple[str, dict]:
     """C source for every function in the module, and a summary without code."""
-    analyses = {function.name: analyse(module, function) for function in module.functions}
+    if analyses is None:
+        analyses = {function.name: analyse(module, function) for function in module.functions}
     emitter = _Emitter(module, analyses)
     prefix = module.prefix
     out = [f'/* Generated by swallow-recompile from {module.source} (SHA256 {module.sha256}).',
@@ -608,6 +733,168 @@ def recompile_image(image: Path, out_dir: Path, *, functions: list[str] | None =
     return report
 
 
+def split_functions(split_dir: Path, sha256: str, psyq_report: dict | None,
+                    symbols: list[Symbol]) -> tuple[list[Function], list[tuple[int, int]], int]:
+    """Game functions of one executable from a swallow-split work directory.
+
+    Function bounds and alternate entries come from splat's assembly;
+    ``type:func`` symbols inside a function are entries too. Library code,
+    by the PsyQ report's object ranges, is left out: the runtime replaces it
+    at its API. Returns the functions, the ``jtbl_`` tables as (address,
+    word count), and how many library functions were skipped.
+    """
+    from .inventory import library_ranges, parse_data, parse_text
+    try:
+        split = json.loads((split_dir / 'split-report.json').read_text(encoding='utf-8'))
+    except (OSError, ValueError) as exc:
+        raise RecompileError(f'Cannot read split-report.json in {split_dir}: {exc}') from exc
+    units = [item for item in split.get('executables', []) if item.get('sha256') == sha256]
+    if len(units) != 1:
+        raise RecompileError(f'{split_dir} has no split of the executable {sha256[:12]}')
+    ranges = library_ranges(psyq_report, sha256) if psyq_report is not None else None
+    if ranges is None:
+        raise RecompileError('The PsyQ report does not list this executable; library code '
+                             'cannot be told from game code')
+    parsed, tables = [], []
+    for text_file in units[0]['text_files']:
+        path = split_dir / 'asm' / text_file
+        try:
+            parsed += parse_text(path.read_text(encoding='utf-8', errors='replace'))
+        except OSError as exc:
+            raise RecompileError(f'Missing assembly {path}: {exc}') from exc
+        stem = text_file.removesuffix('_text.s')
+        for data_file in sorted((split_dir / 'asm' / 'data').glob(f'{stem}_*.s')):
+            for label, address, words in parse_data(
+                    data_file.read_text(encoding='utf-8', errors='replace')):
+                if label.startswith('jtbl_'):
+                    tables.append((address, len(words)))
+    functions, skipped = [], 0
+    for item in parsed:
+        if any(start <= item.address < end for start, end in ranges):
+            skipped += 1
+            continue
+        start = item.address
+        end = item.instructions[-1].address + 4
+        entries = {start: item.name}
+        for name, address in item.entry_addresses.items():
+            entries.setdefault(address, name)
+        for symbol in symbols:
+            if symbol.kind == 'func' and start <= symbol.address < end:
+                entries.setdefault(symbol.address, symbol.name)
+        functions.append(Function(item.name, start, end, entries))
+    return functions, tables, skipped
+
+
+def recompile_split(image: Path, split_dir: Path, out_dir: Path, *,
+                    config_dir: Path = DEFAULT_CONFIG_DIR, repo_root: Path = REPO_ROOT,
+                    psyq_report: Path | None = None, symbol: str = 'ace3_entry') -> dict:
+    """Translate every game function of one executable; refuse functions one at a time.
+
+    The executable is the one whose symbol file names ``symbol``. A function
+    the translator refuses is left out of the module, with its reason in the
+    report; calls to it, and to library code, trap at run time.
+    """
+    if _inside(out_dir, repo_root):
+        raise RecompileError(f'Output directory {out_dir} is inside the repository; '
+                             'generated C is derived from the game and stays outside commits')
+    if out_dir.exists() and any(out_dir.iterdir()):
+        raise RecompileError(f'Output directory {out_dir} is not empty')
+    try:
+        staged = find_executable(image, config_dir, symbol)
+    except OracleError as exc:
+        raise RecompileError(str(exc)) from exc
+    symbols = read_symbol_file(config_dir / staged.symbols_file)
+    report_path = psyq_report or REPO_ROOT / 'docs' / 'reports' / 'psyq-jp1.json'
+    try:
+        psyq = json.loads(Path(report_path).read_text(encoding='utf-8'))
+    except (OSError, ValueError) as exc:
+        raise RecompileError(f'Cannot read the PsyQ report {report_path}: {exc}') from exc
+    functions, jtbls, skipped = split_functions(split_dir, staged.sha256, psyq, symbols)
+    tables = {address: tuple(_word(staged.image, staged.text_address, address + 4 * index)
+                             for index in range(count)) for address, count in jtbls}
+    names = [name for name in DEFAULT_JUMP_TABLES if any(s.name == name for s in symbols)]
+    tables.update(jump_tables_from_symbols(symbols, names, staged.image, staged.text_address))
+    prefix = Path(staged.config).stem
+    candidate = Module(prefix, staged.image, staged.text_address, functions, tables,
+                       staged.path, staged.sha256)
+    analyses, refused = {}, []
+    for function in functions:
+        try:
+            analyses[function.name] = analyse(candidate, function)
+        except RecompileError as exc:
+            refused.append({'name': function.name, 'start': f'0x{function.start:08X}',
+                            'reason': str(exc)})
+    module = Module(prefix, staged.image, staged.text_address,
+                    [function for function in functions if function.name in analyses], tables,
+                    staged.path, staged.sha256)
+    source, summary = translate(module, analyses=analyses)
+    out_dir.mkdir(parents=True, exist_ok=True)
+    (out_dir / MODULE_FILE).write_text(source + '\n', encoding='utf-8')
+    (out_dir / 'CMakeLists.txt').write_text(cmake_project(), encoding='utf-8')
+    translated = summary['functions']
+    reasons: dict[str, int] = {}
+    for item in refused:
+        key = _reason_class(item['reason'])
+        reasons[key] = reasons.get(key, 0) + 1
+    report = {
+        'schema_version': SCHEMA_VERSION, 'source_image': image.name,
+        'executable': {'path': staged.path, 'sha256': staged.sha256,
+                       'config': staged.config, 'symbols': staged.symbols_file},
+        'split_dir_report': 'split-report.json',
+        'library_functions_skipped': skipped,
+        'game_functions': len(functions),
+        'translated_functions': len(translated),
+        'refused_functions': len(refused),
+        'refused_by_reason': dict(sorted(reasons.items())),
+        'translated_instructions': sum(item['instructions'] for item in translated),
+        'untranslated_instructions': sum(len(item['untranslated']) for item in translated),
+        'jump_tables': len(tables),
+        'calls': _call_summary(module, analyses),
+        'refused': refused,
+        'functions': translated,
+        'library_target': LIBRARY_TARGET,
+    }
+    (out_dir / 'recompile-report.json').write_text(json.dumps(report, indent=2) + '\n',
+                                                   encoding='utf-8')
+    return report
+
+
+def _reason_class(reason: str) -> str:
+    for marker, key in (('Load-delay hazards', 'load_delay_hazard'),
+                        ('Timing cases', 'timing_case'),
+                        ('Branch in the delay slot', 'branch_in_delay_slot'),
+                        ('Delay slot', 'delay_slot_outside'),
+                        ('Control reaches', 'control_leaves_function')):
+        if reason.startswith(marker):
+            return key
+    return 'other'
+
+
+def _call_summary(module: Module, analyses: dict[str, Analysis]) -> dict:
+    """Direct calls and tail jumps by kind of target, counted at their sites."""
+    entries = {address for function in module.functions for address in function.entries}
+    counts = {'jal_translated': 0, 'jal_untranslated': 0, 'jalr': 0,
+              'tail_translated': 0, 'outside_untranslated': 0}
+    for name, analysis in analyses.items():
+        function = analysis.function
+        for pc in analysis.normal:
+            decoded = analysis.decoded.get(pc)
+            if decoded is None or not decoded.is_branch:
+                continue
+            word = _word(module.text, module.text_address, pc)
+            if decoded.mnemonic == 'jalr':
+                counts['jalr'] += 1
+            elif decoded.mnemonic == 'jal':
+                target = _branch_target(word, pc, 'jal')
+                counts['jal_translated' if target in entries else 'jal_untranslated'] += 1
+            elif decoded.mnemonic in CONDITIONAL or decoded.mnemonic == 'j':
+                target = _branch_target(word, pc, decoded.mnemonic)
+                if not function.start <= target < function.end:
+                    counts['tail_translated' if target in entries
+                           else 'outside_untranslated'] += 1
+    return counts
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
         description='Translate original MIPS functions to C for the Project Swallow PS1 core')
@@ -620,6 +907,12 @@ def main(argv: list[str] | None = None) -> int:
                         help='Jump-table symbol inside the text (repeatable)')
     parser.add_argument('--config-dir', type=Path, default=DEFAULT_CONFIG_DIR,
                         help='splat config directory with manifest.json and symbol files')
+    parser.add_argument('--split-dir', type=Path,
+                        help='swallow-split work directory: translate every game function of '
+                             'ACE3.BIN, refusing functions one at a time')
+    parser.add_argument('--psyq-report', type=Path,
+                        help='PsyQ report that marks library code (default: '
+                             'docs/reports/psyq-jp1.json)')
     parser.add_argument('--selftest-out', type=Path,
                         help='Write the synthetic self-test C to this directory and exit')
     args = parser.parse_args(argv)
@@ -631,11 +924,24 @@ def main(argv: list[str] | None = None) -> int:
             return 0
         if args.bin is None or args.out_dir is None:
             parser.error('a disc image and an output directory are required')
-        report = recompile_image(args.bin, args.out_dir, functions=args.function,
-                                 jump_tables=args.jump_table, config_dir=args.config_dir)
+        if args.split_dir is not None:
+            report = recompile_split(args.bin, args.split_dir, args.out_dir,
+                                     config_dir=args.config_dir, psyq_report=args.psyq_report)
+        else:
+            report = recompile_image(args.bin, args.out_dir, functions=args.function,
+                                     jump_tables=args.jump_table, config_dir=args.config_dir)
     except (OSError, RecompileError, ValueError) as exc:
         print(f'ERROR: {exc}', file=sys.stderr)
         return 2
+    if args.split_dir is not None:
+        print(f"{report['executable']['path']}: {report['translated_functions']} of "
+              f"{report['game_functions']} game functions translated "
+              f"({report['translated_instructions']} instructions, "
+              f"{report['untranslated_instructions']} untranslated); "
+              f"{report['refused_functions']} refused: {report['refused_by_reason']}")
+        print(f"Build with: cmake -S {args.out_dir} -B {args.out_dir / 'build'} && "
+              f"cmake --build {args.out_dir / 'build'}")
+        return 0
     for function in report['functions']:
         print(f"{function['name']}: {function['instructions']} instructions, "
               f"{len(function['entries'])} entries, {len(function['untranslated'])} untranslated")

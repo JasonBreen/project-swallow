@@ -227,15 +227,17 @@ reaches M6, so the PS1 runtime has been proven once.
 3. **Done:** owner decisions D1–D9. D1, D5, and D6 were decided on
    2026-11-04, and the rest on 2026-11-09.
 4. Emulator spike for D6: deterministic replay and RAM dumps (M2).
-5. **Done in tooling v0.13.0:** recompiler prototype on `ulz_decompress`
-   (M4, part 1). The translated routine, built natively, matches the
-   project decoder on all 2,256 Ulz blobs on each Japanese disc, and
-   reproduces the interpreter's results on the English-labeled discs; see
-   [the recompiler](recompiler.md). Still open for M4: the rest of the
-   game's code, which needs the GTE, unaligned accesses, and the PsyQ API
-   in the runtime.
-6. **Python half done in tooling v0.12.0:** GTE core and vectors (M3). The
-   interpreter now runs every game-code instruction except the division
-   traps, with a GTE model whose rules are all documentation-derived; see
-   [the interpreter](mips-interpreter.md). Still open for M3: the C GTE
-   core, and checking the rules against a capture (M2).
+5. **Done in tooling v0.13.0 and v0.14.0:** the recompiler (M4, part 1).
+   The translated Ulz routine matches the project decoder on all 2,256 Ulz
+   blobs on each Japanese disc. Every one of `ACE3.BIN`'s 1,286 game
+   functions now translates and builds, and agrees with the interpreter on
+   41,152 random calls; see [the recompiler](recompiler.md#every-game-function).
+   Still open for M4: the 159 PsyQ functions in the runtime, which 727
+   call sites wait on, and the boot program and overlays.
+6. **Done in tooling v0.12.0 and v0.14.0:** GTE core and vectors (M3). The
+   interpreter runs every game-code instruction except the division traps,
+   with a documentation-derived GTE model; see
+   [the interpreter](mips-interpreter.md). The C core has a port of it that
+   agrees on every modelled command word over random and scene-shaped
+   states and on a 20,000-point sweep of the divider. Still open for M3:
+   checking the rules against a capture (M2), and the platform layer.

@@ -31,5 +31,12 @@ SWALLOW_API int64_t swallow_guest_write_end(const swallow_cpu *cpu, const char *
 uint32_t swallow_load(swallow_cpu *cpu, uint32_t address, uint32_t size, uint32_t pc);
 void swallow_store(swallow_cpu *cpu, uint32_t address, uint32_t size, uint32_t value,
                    uint32_t pc);
+/* The unaligned loads and stores, little-endian. lwl/lwr return rt with the
+ * addressed bytes merged into old; every byte they touch lies in one aligned
+ * word, and any unmapped byte traps before anything is read or written. */
+uint32_t swallow_lwl(swallow_cpu *cpu, uint32_t address, uint32_t old, uint32_t pc);
+uint32_t swallow_lwr(swallow_cpu *cpu, uint32_t address, uint32_t old, uint32_t pc);
+void swallow_swl(swallow_cpu *cpu, uint32_t address, uint32_t value, uint32_t pc);
+void swallow_swr(swallow_cpu *cpu, uint32_t address, uint32_t value, uint32_t pc);
 
 #endif

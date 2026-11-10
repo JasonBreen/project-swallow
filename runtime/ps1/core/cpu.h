@@ -12,6 +12,8 @@
 #include <setjmp.h>
 #include <stdint.h>
 
+#include "ps1/gte/gte.h"
+
 #if defined(_WIN32)
 #define SWALLOW_API __declspec(dllexport)
 #else
@@ -30,6 +32,8 @@
 /* Register indexes beyond the 32 general registers, for get/set_register. */
 #define SWALLOW_REG_HI 32
 #define SWALLOW_REG_LO 33
+/* GTE register indexes for swallow_gte_get/set: data 0-31, control 32-63. */
+#define SWALLOW_GTE_REGISTERS 64
 /* swallow_call() results. */
 #define SWALLOW_OK 0
 #define SWALLOW_TRAPPED 1
@@ -51,6 +55,7 @@ struct swallow_cpu {
     uint32_t r[32];
     uint32_t hi;
     uint32_t lo;
+    swallow_gte gte;
     /* Taken backward branches left before the run traps; the native
      * counterpart of the interpreter's max_steps. */
     uint64_t budget;
@@ -68,6 +73,12 @@ SWALLOW_API uint32_t swallow_get_register(const swallow_cpu *cpu, int index);
 SWALLOW_API void swallow_set_register(swallow_cpu *cpu, int index, uint32_t value);
 SWALLOW_API void swallow_set_budget(swallow_cpu *cpu, uint64_t budget);
 SWALLOW_API const char *swallow_last_trap(const swallow_cpu *cpu);
+/* GTE registers as stored (no read conversion), for tests and the oracle
+ * comparison; index 0-31 is data, 32-63 control. */
+SWALLOW_API uint32_t swallow_gte_get(const swallow_cpu *cpu, int index);
+SWALLOW_API void swallow_gte_set(swallow_cpu *cpu, int index, uint32_t value);
+/* Run one GTE command word on the CPU's GTE; a swallow_gte_command() result. */
+SWALLOW_API int swallow_gte_execute(swallow_cpu *cpu, uint32_t word);
 
 /* Run dispatch(cpu, entry); SWALLOW_TRAPPED if it trapped, SWALLOW_OK otherwise.
  * After a trap the CPU stays usable: registers hold their values from the
