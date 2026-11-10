@@ -29,16 +29,13 @@ header evidence updated after the PS-X EXE reader. Read `AGENTS.md` first.
 6. **Oracle interpreter — implemented.** `swallow_tools.mips` runs every instruction in the game's code except the compiler's division traps, which raise `MipsTrap`. `swallow_tools.gte` models the 15 GTE commands game code issues, and `swallow_tools.oracle` gives compiled functions their `$gp`, stack, and memory. All 470 game-code `break`s are division guards, and twelve hand-written divisions have none. The GTE and division rules are documentation-derived until a capture checks them. See [the interpreter](mips-interpreter.md).
 7. **Recompiler prototype — implemented.** `swallow-recompile` translates `ulz_decompress` to C, and the C runtime core in `runtime/` runs it as a shared library. `swallow-ulzcheck --native` matches all 2,256 Ulz blobs on each Japanese disc, and reproduces the interpreter's overruns on the English-labeled discs. See [the recompiler](recompiler.md).
 
-## Decision still needed: the form of recovered code
+## Decided: the form of recovered code
 
-C is now permitted, so the recovered-code form needs an owner choice. The
-options, with a recommendation (static recompilation first, then readable C
-proven equal to it), are decision D1 in the
-[reconstruction plan](reconstruction-plan.md#decisions-needed):
-
-- **Annotated assembly as the reference**, with engine C written to match measured behavior.
-- **Matching decompilation**: C that recompiles to byte-identical instructions. This needs a period-appropriate compiler setup. Its licensing and provenance need review before any adoption.
-- **Static recompilation**: every function translated mechanically to C that runs against guest RAM, then replaced by readable C one function at a time.
+The owner chose static recompilation first, then readable C proven equal to
+it, one function at a time (decision D1 in the
+[reconstruction plan](reconstruction-plan.md#decisions)). Matching
+decompilation stays optional and needs a reviewed compiler setup before any
+adoption.
 
 Either way, the engine's behavior is judged against the original code and
 reference captures, not against intuition.
