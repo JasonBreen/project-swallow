@@ -504,7 +504,7 @@ class _Emitter:
         returns to this function's caller; its registers are the result.
         """
         return [*self.spill(analysis), f'{self.entry_owner[target]}(cpu, 0x{target:08X}u);',
-                'return;']
+                'swallow_leave(cpu);', 'return;']
 
     def budget(self, target: int, pc: int) -> str:
         if target > pc:
@@ -599,6 +599,7 @@ class _Emitter:
             out += ['    uint32_t r_hi = cpu->hi;', '    uint32_t r_lo = cpu->lo;']
         if analysis.returns:
             out.append('    const uint32_t ra_entry = cpu->r[31];')
+        out.append('    swallow_enter(cpu, entry);')
         out.append('    switch (entry) {')
         for address, symbol in sorted(function.entries.items()):
             out.append(f'    case 0x{address:08X}u: goto L_{address:08X}; /* {symbol} */')
@@ -621,6 +622,7 @@ class _Emitter:
         if analysis.returns:
             out.append('swallow_exit:')
             out += ['    ' + line for line in self.spill(analysis)]
+            out.append('    swallow_leave(cpu);')
             out.append('    return;')
         out.append('}')
         return out

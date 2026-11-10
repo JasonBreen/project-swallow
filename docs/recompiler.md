@@ -171,6 +171,11 @@ register from the same base, which merges as the hardware does.
   `ulz_version_table`.
 - `jr $ra` returns, and traps if `$ra` no longer holds the caller's return
   address.
+- Every translated function is a host C frame, so the core counts the ones
+  active at once, calls and tail calls together, and traps past 4,096. A
+  guest recursion or a cycle of tail calls, which no backward branch inside
+  either function would count, then stops instead of overflowing the host
+  stack.
 - Every taken backward branch spends one unit of a budget, and the run traps
   when it is spent. This is the native counterpart of the interpreter's
   instruction limit.
@@ -237,11 +242,11 @@ The runtime's CTest targets, which CI runs with GCC, Clang, and MSVC:
 - **`core`**: unit tests for the region rules, accesses, trap recovery, and
   the arithmetic helpers.
 - **`selftest`**: [`swallow_tools.selftest`](../src/swallow_tools/selftest.py)
-  assembles twelve synthetic programs with `mipsasm`. They cover each shape
+  assembles thirteen synthetic programs with `mipsasm`. They cover each shape
   above, including a slot that is also a target, a jump table in the text,
   calls, faults, traps, an endless loop, the unaligned loads and stores at
   every misalignment, and every kind of COP2 access with a run of GTE
-  commands. The programs are translated at build time, and the 22 cases run
+  commands. The programs are translated at build time, and the 23 cases run
   natively and are compared with the interpreter's registers, HI/LO, GTE
   registers, memory, and write extents.
 - **`native_selftest`**: the same module built as a shared library and run

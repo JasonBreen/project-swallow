@@ -17,7 +17,7 @@ from .gte import GteState
 from .mips import RETURN_ADDRESS, Memory, MipsError, call, register_index
 from .mipsasm import (
     ADD, ADDI, ADDIU, ADDU, AND, BEQ, BGTZ, BLEZ, BNE, BREAK, CFC2, CTC2, DIV, DIVU, GTE, JAL,
-    JALR, JR, LB, LBU, LH, LHU, LUI, LW, LWC2, LWL, LWR, MFC2, MFHI, MFLO, MTC2, MULT, MULTU,
+    J, JALR, JR, LB, LBU, LH, LHU, LUI, LW, LWC2, LWL, LWR, MFC2, MFHI, MFLO, MTC2, MULT, MULTU,
     NOP, NOR, OR, ORI, SB, SH, SLL, SLLV, SLT, SLTI, SLTIU, SLTU, SRA, SRAV, SRL, SRLV, SUB,
     SUBU, SW, SWC2, SWL, SWR, XOR, XORI, ANDI, program)
 from .recompile import Function, Module, translate
@@ -183,6 +183,12 @@ def _gte(base: int) -> list[int]:
             JR('ra'), NOP()]
 
 
+def _tail_cycle(base: int) -> list[int]:
+    # Two functions that jump into each other forever: a tail-call cycle,
+    # which no backward branch inside either one would ever count.
+    return [J(base + 8), NOP(), J(base), NOP()]
+
+
 def _endless(base: int) -> list[int]:
     return [BEQ('zero', 'zero', -1), NOP()]
 
@@ -192,7 +198,8 @@ _BUILDERS = [('alu', _alu, None), ('slot_changes_condition', _slot_changes_condi
              ('memory', _memory, None), ('faults', _faults, None),
              ('multiply_divide', _multiply_divide, None), ('calls', _calls, None),
              ('traps', _traps, None), ('endless', _endless, None),
-             ('unaligned', _unaligned, None), ('gte', _gte, None)]
+             ('unaligned', _unaligned, None), ('gte', _gte, None),
+             ('tail_cycle', _tail_cycle, None)]
 
 
 def programs() -> list[Program]:
@@ -207,6 +214,9 @@ def programs() -> list[Program]:
                                   {base + 0x30: f'{name}_callee'}),
                          Function(f'{name}_callee2', base + 0x3C, end,
                                   {base + 0x3C: f'{name}_callee2'}))
+        elif name == 'tail_cycle':
+            functions = (Function(name, base, base + 8, {base: name}),
+                         Function(f'{name}_other', base + 8, end, {base + 8: f'{name}_other'}))
         else:
             functions = (Function(name, base, end, {base: name}),)
         tables = {}
@@ -241,6 +251,7 @@ def cases() -> list[Case]:
         Case('trap_overflow', by_name['traps'], {'a0': 0}),
         Case('trap_break', by_name['traps'], {'a0': 1, 'a1': 9}),
         Case('endless_loop', by_name['endless'], {}),
+        Case('tail_call_cycle', by_name['tail_cycle'], {}),
         Case('unaligned', by_name['unaligned'],
              {'a0': 0xA1B2C3D4, 'a1': 0x11223344, 'a2': 0x55667788}, bytes(range(1, 49))),
         Case('fault_unaligned_unmapped', by_name['unaligned'], {}, bytes(range(1, 9))),

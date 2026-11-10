@@ -142,6 +142,8 @@ class TranslationTests(unittest.TestCase):
         source = c_source(words, functions=functions)
         body = source[source.index('/* f:'):source.index('/* g:')]
         self.assertEqual(body.count('t_fn_80010010(cpu, 0x80010010u);'), 2)
+        self.assertEqual(body.count('swallow_leave(cpu);'), 2)
+        self.assertIn('swallow_enter(cpu, entry);', body)
         self.assertLess(body.index('cpu->r[2] = r_v0;'), body.index('t_fn_80010010(cpu'))
         self.assertIn('return;', body)
 
@@ -286,7 +288,8 @@ class SelftestTests(unittest.TestCase):
             self.assertFalse(outcomes[name].ok, name)
         source, summary = translate(selftest.selftest_module())
         self.assertIn('SWALLOW_API int swallow_run', source)
-        self.assertEqual(len(summary['functions']), 14)
+        self.assertEqual(len(summary['functions']), 16)
+        self.assertFalse(outcomes['tail_call_cycle'].ok)
         self.assertTrue(outcomes['unaligned'].ok)
         self.assertFalse(outcomes['fault_unaligned_unmapped'].ok)
         for name in ('gte_scene', 'gte_random'):

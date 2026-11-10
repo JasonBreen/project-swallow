@@ -91,10 +91,13 @@ SWALLOW_API int swallow_call(swallow_cpu *cpu, swallow_dispatch_fn dispatch, uin
     /* Volatile, so their values survive longjmp back into this frame. */
     swallow_cpu *volatile state = cpu;
     jmp_buf *volatile previous = cpu->trap_target;
+    volatile uint32_t depth = cpu->depth;
     jmp_buf target;
     state->trap_message[0] = '\0';
     if (setjmp(target) != 0) {
+        /* The trap skipped every swallow_leave() below this call. */
         state->trap_target = previous;
+        state->depth = depth;
         return SWALLOW_TRAPPED;
     }
     state->trap_target = &target;
