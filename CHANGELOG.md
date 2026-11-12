@@ -9,6 +9,30 @@
 - Added `docs/reconstruction-plan.md`. It plans how the recovered code becomes the C engine: a static recompiler, a runtime that replaces the PsyQ library API, and readable C proven equal to the translated code. It lists decisions D1–D9, all still open for the owner, and milestones M1–M8. It records the owner's direction to reconstruct Ace Combat Zero, Ace Combat (1995), and Ace Combat 2 after AC3; Ace Combat 04 depends on Sal's work. Nothing in the plan is implemented.
 - Measured for the plan, on Japanese Disc 1: game code and BPB entries 1–4 call 159 distinct PsyQ functions and use 3,485 inline GTE instructions across 15 commands, with 26 indirect calls and 42 computed jumps. A survey of the stored Ace Combat (1995) image found no `SYSTEM.CNF`, a `PSX.EXE` that boots seven module executables loaded at `0x80023000`, no Ulz or BPB data, and 62 CD-DA tracks.
 
+## 0.14.0 — 2026-11-09
+
+- Added the GTE to the C runtime core: `runtime/ps1/gte/`, a line-for-line port of `swallow_tools.gte` with the same registers, read and write conversions, FLAG rules, and fifteen commands. It works in 64-bit integers and floors signed shifts as Python does, so no result depends on implementation-defined C. The CPU state carries the GTE, and `swallow_gte_get`, `swallow_gte_set`, and `swallow_gte_execute` expose it to ctypes. This is the C half of M3's GTE core.
+- The core gains `swallow_lwl`, `swallow_lwr`, `swallow_swl`, and `swallow_swr`, with the interpreter's byte rules.
+- `swallow-recompile` now translates every instruction in the game's code:
+  - the unaligned loads and stores;
+  - the COP2 moves, loads, and stores, and every modelled GTE command.
+  - A branch or `j` into another translated function's entry is a tail call.
+  - The core traps when more than 4,096 translated functions are active at once, so a tail-call cycle or runaway recursion stops instead of overflowing the host stack. A new self-test case runs such a cycle. Found by review on PR #14.
+  - A tail call traps when `$ra` no longer holds the caller's return address, and the load-delay and timing checks follow a tail call into the callee's first instructions. A new self-test case changes `$ra` before a tail call. Neither case occurs in game code. Found by review on PR #14.
+  - A computed `jr` resolves through any jump table whose words land in its function, so the compiler's rodata tables work as `ulz_version_table` does.
+  - A static check refuses the interpreter's timing cases on every path inside a function: HI/LO writes too soon after `mfhi`/`mflo`, GTE commands too soon after a GTE register write and the reverse, and COP2 instructions in delay slots.
+- `swallow-recompile --split-dir WORK_DIR` translates every game function of `ACE3.BIN` from a `swallow-split` work directory. Library code is left out by the PsyQ report's object ranges, and each function is analysed on its own, so a refused function is listed with its reason instead of stopping the run.
+- Measured on Japanese Disc 1:
+  - All 1,286 game functions translate, 121,172 instructions, with none refused and no instruction left as an "unsupported" trap. 727 `jal` sites call library code and trap until the runtime implements it.
+  - The 9.7 MB module compiles without warnings under `-Wall -Wextra` with GCC 13.3 and Clang 18.1. Its `ulz_decompress` matches the project decoder on all 2,256 Ulz blobs.
+  - The summary is `docs/reports/recompile-jp1.json`.
+- Added `swallow_tools.recompcheck` and the `swallow-recompcheck` CLI. It calls every translated function natively and in the interpreter from the same state, with shaped random arguments, a seeded heap, and a random GTE state, and compares registers, HI/LO, GTE registers, all writable memory, and write extents.
+  - On Japanese Disc 1, 32 trials per function (41,152 in all): 9,024 matching returns, 28,501 agreeing stops, 3,570 that reached library code, 57 that hit the interpreter's step limit, and no mismatch. 469 functions returned at least once. Recorded in `docs/reports/recompcheck-jp1.json`.
+  - A build with a broken arithmetic shift gave 66 mismatches in 4 trials per function.
+- The native self-test has two more programs (unaligned accesses at every misalignment, and every kind of COP2 access with a run of commands) and five more cases, 23 in all. Each case now also compares the GTE registers. It also compares the C GTE with the Python model on 200 command words over 200 random states, on 20,000 points of the perspective divider, and on which words each refuses. A wrong rounding constant in the divider passed the random states and failed the sweep.
+- `inventory.parse_text` records each alternate entry's address.
+- Added 13 synthetic Python tests (315 total).
+
 ## 0.13.0 — 2026-11-06
 
 - Added `swallow_tools.recompile` and the `swallow-recompile` CLI, the recompiler prototype. It translates original MIPS functions to C that runs against a guest register file and guest memory. It writes the C, a CMake project, and a report without code to a new directory outside the repository, since the C is derived from the game. How it works:

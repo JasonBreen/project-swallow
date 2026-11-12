@@ -18,7 +18,7 @@ function(swallow_strict_warnings target)
   endif()
 endfunction()
 
-add_library(swallow_ps1_core STATIC ps1/core/cpu.c ps1/core/guest.c)
+add_library(swallow_ps1_core STATIC ps1/core/cpu.c ps1/core/guest.c ps1/gte/gte.c)
 target_include_directories(swallow_ps1_core PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 set_target_properties(swallow_ps1_core PROPERTIES
   POSITION_INDEPENDENT_CODE ON

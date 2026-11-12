@@ -61,15 +61,43 @@ SWALLOW_API const char *swallow_last_trap(const swallow_cpu *cpu)
     return cpu->trap_message;
 }
 
+SWALLOW_API uint32_t swallow_gte_get(const swallow_cpu *cpu, int index)
+{
+    if (index >= 0 && index < 32) {
+        return cpu->gte.data[index];
+    }
+    if (index >= 32 && index < SWALLOW_GTE_REGISTERS) {
+        return cpu->gte.control[index - 32];
+    }
+    return 0u;
+}
+
+SWALLOW_API void swallow_gte_set(swallow_cpu *cpu, int index, uint32_t value)
+{
+    if (index >= 0 && index < 32) {
+        cpu->gte.data[index] = value;
+    } else if (index >= 32 && index < SWALLOW_GTE_REGISTERS) {
+        cpu->gte.control[index - 32] = value;
+    }
+}
+
+SWALLOW_API int swallow_gte_execute(swallow_cpu *cpu, uint32_t word)
+{
+    return swallow_gte_command(&cpu->gte, word);
+}
+
 SWALLOW_API int swallow_call(swallow_cpu *cpu, swallow_dispatch_fn dispatch, uint32_t entry)
 {
     /* Volatile, so their values survive longjmp back into this frame. */
     swallow_cpu *volatile state = cpu;
     jmp_buf *volatile previous = cpu->trap_target;
+    volatile uint32_t depth = cpu->depth;
     jmp_buf target;
     state->trap_message[0] = '\0';
     if (setjmp(target) != 0) {
+        /* The trap skipped every swallow_leave() below this call. */
         state->trap_target = previous;
+        state->depth = depth;
         return SWALLOW_TRAPPED;
     }
     state->trap_target = &target;

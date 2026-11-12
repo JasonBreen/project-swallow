@@ -11,11 +11,15 @@ from __future__ import annotations
 from dataclasses import dataclass
 from pathlib import Path
 
+import random
+
+from .gte import GteState
 from .mips import RETURN_ADDRESS, Memory, MipsError, call, register_index
 from .mipsasm import (
-    ADD, ADDI, ADDIU, ADDU, AND, BEQ, BGTZ, BLEZ, BNE, BREAK, DIV, DIVU, JAL, JALR, JR, LB, LBU,
-    LH, LHU, LUI, LW, MFHI, MFLO, MULT, MULTU, NOP, NOR, OR, ORI, SB, SH, SLL, SLLV, SLT,
-    SLTI, SLTIU, SLTU, SRA, SRAV, SRL, SRLV, SUB, SUBU, SW, XOR, XORI, ANDI, program)
+    ADD, ADDI, ADDIU, ADDU, AND, BEQ, BGTZ, BLEZ, BNE, BREAK, CFC2, CTC2, DIV, DIVU, GTE, JAL,
+    J, JALR, JR, LB, LBU, LH, LHU, LUI, LW, LWC2, LWL, LWR, MFC2, MFHI, MFLO, MTC2, MULT, MULTU,
+    NOP, NOR, OR, ORI, SB, SH, SLL, SLLV, SLT, SLTI, SLTIU, SLTU, SRA, SRAV, SRL, SRLV, SUB,
+    SUBU, SW, SWC2, SWL, SWR, XOR, XORI, ANDI, program)
 from .recompile import Function, Module, translate
 
 TEXT_BASE = 0x80010000
@@ -44,6 +48,7 @@ class Case:
     program: Program
     arguments: dict[str, int]
     data: bytes = b''
+    gte: GteState | None = None
 
     @property
     def entry(self) -> int:
@@ -59,6 +64,7 @@ class Outcome:
     data: bytes
     write_end: int
     message: str = ''
+    gte: GteState = GteState()
 
 
 def _alu(base: int) -> list[int]:
@@ -140,6 +146,55 @@ def _traps(base: int) -> list[int]:
             BREAK(7), MFLO('v0'), JR('ra'), NOP()]
 
 
+def _unaligned(base: int) -> list[int]:
+    # lwl/lwr pairs at every misalignment, a lone lwl and lwr that merge into
+    # the register's old value, and swl/swr at every misalignment.
+    return [LUI('t0', DATA_BASE >> 16),
+            LWL('t1', 4, 't0'), LWR('t1', 1, 't0'), NOP(),
+            LWL('t2', 5, 't0'), LWR('t2', 2, 't0'), NOP(),
+            LWL('t3', 6, 't0'), LWR('t3', 3, 't0'), NOP(),
+            LWL('t4', 7, 't0'), LWR('t4', 4, 't0'), NOP(),
+            ADDU('t5', 'a0', 'zero'), LWL('t5', 9, 't0'), NOP(),
+            ADDU('t6', 'a0', 'zero'), LWR('t6', 10, 't0'), NOP(),
+            SWL('a1', 16, 't0'), SWL('a1', 21, 't0'), SWL('a1', 26, 't0'), SWL('a1', 31, 't0'),
+            SWR('a2', 32, 't0'), SWR('a2', 37, 't0'), SWR('a2', 42, 't0'), SWR('a2', 47, 't0'),
+            JR('ra'), NOP()]
+
+
+def _gte(base: int) -> list[int]:
+    # Every kind of COP2 access and a run of commands from a given GTE state.
+    return [LUI('t0', DATA_BASE >> 16),
+            LWC2(0, 0, 't0'), LWC2(1, 4, 't0'), NOP(), NOP(),
+            GTE('rtps'), MFC2('t1', 14), CFC2('t2', 31), NOP(),
+            SWC2(19, 16, 't0'), GTE('nclip'), MFC2('t3', 24), NOP(),
+            MTC2('a0', 30), MFC2('t5', 31), NOP(),
+            MTC2('a1', 28), MFC2('t6', 29), NOP(), MFC2('t7', 9), NOP(),
+            CTC2('a2', 26), CFC2('s0', 26), NOP(),
+            MTC2('a1', 15), MFC2('s1', 15), NOP(), MFC2('s2', 12), NOP(),
+            CTC2('a3', 31), CFC2('s3', 31), NOP(),
+            MTC2('a2', 1), MFC2('s4', 1), NOP(), MTC2('a2', 16), MFC2('s5', 16), NOP(),
+            NOP(), NOP(),
+            GTE('rtpt', sf=1, lm=0), GTE('avsz3'), MFC2('s6', 7), NOP(),
+            GTE('avsz4'), GTE('mvmva', sf=1, lm=1, mx=1, v=3, cv=1),
+            GTE('sqr', sf=0), GTE('dpct'), GTE('nccs', lm=1), GTE('intpl'),
+            GTE('gpf', sf=0), GTE('gpl', sf=0), GTE('ncs'), GTE('nct'), GTE('dpcs'),
+            GTE('mvmva', sf=0, mx=2, v=0, cv=3, macro=7), CFC2('s7', 31), NOP(),
+            SWC2(22, 20, 't0'), SWC2(25, 24, 't0'),
+            JR('ra'), NOP()]
+
+
+def _tail_cycle(base: int) -> list[int]:
+    # Two functions that jump into each other forever: a tail-call cycle,
+    # which no backward branch inside either one would ever count.
+    return [J(base + 8), NOP(), J(base), NOP()]
+
+
+def _tail_moved_ra(base: int) -> list[int]:
+    # A call changes $ra, then a jump into another function: that function's
+    # return would go back into this one, not to this function's caller.
+    return [JAL(base + 0x10), NOP(), J(base + 0x18), NOP(), JR('ra'), NOP(), JR('ra'), NOP()]
+
+
 def _endless(base: int) -> list[int]:
     return [BEQ('zero', 'zero', -1), NOP()]
 
@@ -148,7 +203,9 @@ _BUILDERS = [('alu', _alu, None), ('slot_changes_condition', _slot_changes_condi
              ('slot_is_target', _slot_is_target, None), ('jump_table', _jump_table, (0x20, 3)),
              ('memory', _memory, None), ('faults', _faults, None),
              ('multiply_divide', _multiply_divide, None), ('calls', _calls, None),
-             ('traps', _traps, None), ('endless', _endless, None)]
+             ('traps', _traps, None), ('endless', _endless, None),
+             ('unaligned', _unaligned, None), ('gte', _gte, None),
+             ('tail_cycle', _tail_cycle, None), ('tail_moved_ra', _tail_moved_ra, None)]
 
 
 def programs() -> list[Program]:
@@ -163,6 +220,14 @@ def programs() -> list[Program]:
                                   {base + 0x30: f'{name}_callee'}),
                          Function(f'{name}_callee2', base + 0x3C, end,
                                   {base + 0x3C: f'{name}_callee2'}))
+        elif name == 'tail_cycle':
+            functions = (Function(name, base, base + 8, {base: name}),
+                         Function(f'{name}_other', base + 8, end, {base + 8: f'{name}_other'}))
+        elif name == 'tail_moved_ra':
+            functions = (Function(name, base, base + 0x10, {base: name}),
+                         Function(f'{name}_call', base + 0x10, base + 0x18,
+                                  {base + 0x10: f'{name}_call'}),
+                         Function(f'{name}_jump', base + 0x18, end, {base + 0x18: f'{name}_jump'}))
         else:
             functions = (Function(name, base, end, {base: name}),)
         tables = {}
@@ -197,7 +262,24 @@ def cases() -> list[Case]:
         Case('trap_overflow', by_name['traps'], {'a0': 0}),
         Case('trap_break', by_name['traps'], {'a0': 1, 'a1': 9}),
         Case('endless_loop', by_name['endless'], {}),
+        Case('tail_call_cycle', by_name['tail_cycle'], {}),
+        Case('tail_call_moved_ra', by_name['tail_moved_ra'], {}),
+        Case('unaligned', by_name['unaligned'],
+             {'a0': 0xA1B2C3D4, 'a1': 0x11223344, 'a2': 0x55667788}, bytes(range(1, 49))),
+        Case('fault_unaligned_unmapped', by_name['unaligned'], {}, bytes(range(1, 9))),
+        Case('gte_scene', by_name['gte'],
+             {'a0': 0xFFFF0000, 'a1': 0x7FFF, 'a2': 0x8123, 'a3': 0xFFFFFFFF},
+             bytes(range(0x30, 0x60)), _gte_state('scene', 7)),
+        Case('gte_random', by_name['gte'],
+             {'a0': 0x00012345, 'a1': 0x1234, 'a2': 0x7FFF, 'a3': 0x7FFFF000},
+             bytes(range(0xA0, 0xD0)), _gte_state('random', 11)),
     ]
+
+
+def _gte_state(kind: str, seed: int) -> GteState:
+    from .native import _scene_gte_state, random_gte_state
+    rng = random.Random(seed)
+    return _scene_gte_state(rng) if kind == 'scene' else random_gte_state(rng)
 
 
 def regions(case: Case) -> list[tuple[str, int, bytearray, bool]]:
@@ -213,12 +295,13 @@ def interpret(case: Case) -> Outcome:
     for name, base, data, writable in regions(case):
         memory.map(name, base, data, writable=writable, executable=name == 'text')
     try:
-        result = call(memory, case.entry, case.arguments, max_steps=MAX_STEPS)
+        result = call(memory, case.entry, case.arguments, max_steps=MAX_STEPS, gte=case.gte)
     except MipsError as exc:
         return Outcome(False, (0,) * 32, 0, 0, b'', 0, str(exc))
     data = memory.region('data') if case.data else None
     return Outcome(True, result.registers, result.hi, result.lo,
-                   bytes(data.data) if data else b'', data.write_end if data else 0)
+                   bytes(data.data) if data else b'', data.write_end if data else 0,
+                   gte=result.gte)
 
 
 def selftest_module() -> Module:
@@ -249,7 +332,8 @@ def harness(case_list: list[Case]) -> str:
              '    uint32_t data_size;', '    int arguments;', '    int argument_index[4];',
              '    uint32_t argument_value[4];', '    int expect_ok;',
              '    uint32_t expect_registers[34];', '    const uint8_t *expect_data;',
-             '    uint32_t expect_write_end;', '};', '']
+             '    uint32_t expect_write_end;', '    uint32_t gte[64];', '    uint32_t expect_gte[64];',
+             '};', '']
     for item in programs():
         lines.append(f'static const uint8_t text_{item.name}[] = {{{_c_bytes(item.text)}}};')
     entries = []
@@ -259,13 +343,16 @@ def harness(case_list: list[Case]) -> str:
         lines.append(f'static const uint8_t expect_data_{index}[] = {{{_c_bytes(outcome.data)}}};')
         arguments = sorted((register_index(name), value) for name, value in case.arguments.items())
         registers = list(outcome.registers) + [outcome.hi, outcome.lo]
+        start = case.gte or GteState()
+        gte_in = ', '.join(f'0x{v:08X}u' for v in start.data + start.control)
+        gte_out = ', '.join(f'0x{v:08X}u' for v in outcome.gte.data + outcome.gte.control)
         entries.append(
             f'    {{"{case.name}", 0x{case.program.base:08X}u, text_{case.program.name}, '
             f'{len(case.program.text)}u, data_{index}, {len(case.data)}u, {len(arguments)}, '
             f'{{{", ".join(str(i) for i, _ in arguments) or "0"}}}, '
             f'{{{", ".join(f"0x{v:08X}u" for _, v in arguments) or "0"}}}, '
             f'{int(outcome.ok)}, {{{", ".join(f"0x{v:08X}u" for v in registers)}}}, '
-            f'expect_data_{index}, {outcome.write_end}u}},')
+            f'expect_data_{index}, {outcome.write_end}u, {{{gte_in}}}, {{{gte_out}}}}},')
     lines += ['', 'static const struct selftest_case cases[] = {', *entries, '};', '',
               'static uint8_t text_buffer[0x1000];', 'static uint8_t data_buffer[256];', '',
               'static int run_case(swallow_cpu *cpu, const struct selftest_case *c)', '{',
@@ -280,6 +367,8 @@ def harness(case_list: list[Case]) -> str:
               '    for (index = 0; index < c->arguments; ++index) {',
               '        swallow_set_register(cpu, c->argument_index[index], '
               'c->argument_value[index]);', '    }',
+              '    for (index = 0; index < 64; ++index) {',
+              '        swallow_gte_set(cpu, index, c->gte[index]);', '    }',
               f'    swallow_set_register(cpu, 31, 0x{RETURN_ADDRESS:08X}u);',
               f'    swallow_set_budget(cpu, {MAX_STEPS}u);',
               '    status = swallow_run(cpu, c->text_base);',
@@ -294,6 +383,13 @@ def harness(case_list: list[Case]) -> str:
               '        if (value != c->expect_registers[index]) {',
               '            printf("FAIL %s: register %d is 0x%08x, expected 0x%08x\\n", c->name,',
               '                   index, (unsigned)value, (unsigned)c->expect_registers[index]);',
+              '            ++failures;', '        }', '    }',
+              '    for (index = 0; index < 64; ++index) {',
+              '        uint32_t value = swallow_gte_get(cpu, index);',
+              '        if (value != c->expect_gte[index]) {',
+              '            printf("FAIL %s: GTE register %d is 0x%08x, expected 0x%08x\\n", '
+              'c->name,',
+              '                   index, (unsigned)value, (unsigned)c->expect_gte[index]);',
               '            ++failures;', '        }', '    }',
               '    if (c->data_size != 0u) {',
               '        if (memcmp(data_buffer, c->expect_data, c->data_size) != 0) {',

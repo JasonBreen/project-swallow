@@ -12,6 +12,8 @@
 #include <setjmp.h>
 #include <stdint.h>
 
+#include "ps1/gte/gte.h"
+
 #if defined(_WIN32)
 #define SWALLOW_API __declspec(dllexport)
 #else
@@ -27,9 +29,15 @@
 #define SWALLOW_MAX_REGIONS 16
 #define SWALLOW_REGION_NAME_BYTES 32
 #define SWALLOW_TRAP_MESSAGE_BYTES 256
+/* Translated functions active at once, calls and tail calls together. Each
+ * is a host C frame, so a guest recursion or tail-call cycle traps here
+ * rather than overflowing the host stack. */
+#define SWALLOW_MAX_DEPTH 4096u
 /* Register indexes beyond the 32 general registers, for get/set_register. */
 #define SWALLOW_REG_HI 32
 #define SWALLOW_REG_LO 33
+/* GTE register indexes for swallow_gte_get/set: data 0-31, control 32-63. */
+#define SWALLOW_GTE_REGISTERS 64
 /* swallow_call() results. */
 #define SWALLOW_OK 0
 #define SWALLOW_TRAPPED 1
@@ -51,9 +59,12 @@ struct swallow_cpu {
     uint32_t r[32];
     uint32_t hi;
     uint32_t lo;
+    swallow_gte gte;
     /* Taken backward branches left before the run traps; the native
      * counterpart of the interpreter's max_steps. */
     uint64_t budget;
+    /* Translated functions entered and not yet left (SWALLOW_MAX_DEPTH). */
+    uint32_t depth;
     swallow_region regions[SWALLOW_MAX_REGIONS];
     int region_count;
     jmp_buf *trap_target;
@@ -68,6 +79,12 @@ SWALLOW_API uint32_t swallow_get_register(const swallow_cpu *cpu, int index);
 SWALLOW_API void swallow_set_register(swallow_cpu *cpu, int index, uint32_t value);
 SWALLOW_API void swallow_set_budget(swallow_cpu *cpu, uint64_t budget);
 SWALLOW_API const char *swallow_last_trap(const swallow_cpu *cpu);
+/* GTE registers as stored (no read conversion), for tests and the oracle
+ * comparison; index 0-31 is data, 32-63 control. */
+SWALLOW_API uint32_t swallow_gte_get(const swallow_cpu *cpu, int index);
+SWALLOW_API void swallow_gte_set(swallow_cpu *cpu, int index, uint32_t value);
+/* Run one GTE command word on the CPU's GTE; a swallow_gte_command() result. */
+SWALLOW_API int swallow_gte_execute(swallow_cpu *cpu, uint32_t word);
 
 /* Run dispatch(cpu, entry); SWALLOW_TRAPPED if it trapped, SWALLOW_OK otherwise.
  * After a trap the CPU stays usable: registers hold their values from the
@@ -75,6 +92,20 @@ SWALLOW_API const char *swallow_last_trap(const swallow_cpu *cpu);
 SWALLOW_API int swallow_call(swallow_cpu *cpu, swallow_dispatch_fn dispatch, uint32_t entry);
 
 SWALLOW_NORETURN void swallow_trap(swallow_cpu *cpu, const char *format, ...);
+
+/* Entering and leaving a translated function; see SWALLOW_MAX_DEPTH. */
+static inline void swallow_enter(swallow_cpu *cpu, uint32_t entry)
+{
+    if (++cpu->depth > SWALLOW_MAX_DEPTH) {
+        swallow_trap(cpu, "call depth exceeds %u at 0x%08x", (unsigned)SWALLOW_MAX_DEPTH,
+                     (unsigned)entry);
+    }
+}
+
+static inline void swallow_leave(swallow_cpu *cpu)
+{
+    --cpu->depth;
+}
 
 /* Two's-complement conversions without implementation-defined casts. */
 static inline int32_t swallow_s32(uint32_t value)
